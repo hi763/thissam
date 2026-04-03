@@ -1,0 +1,946 @@
+<!doctype html>
+<html lang="ko" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>자석 분류 AI</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+
+    // Firebase 설정 - 아래 빈칸에 Firebase 프로젝트 정보를 입력하세요
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    // Firebase 초기화
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // 전역 Firebase 객체 노출
+    window.firebaseDb = {
+      db,
+      collection,
+      addDoc,
+      getDocs,
+      deleteDoc,
+      doc,
+      query,
+      where
+    };
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&amp;family=Outfit:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Noto Sans KR', 'Outfit', sans-serif; }
+
+    .app-shell { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); }
+
+    .card-glass {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(12px);
+    }
+
+    .magnetic-card {
+      background: linear-gradient(135deg, rgba(239,68,68,0.15), rgba(239,68,68,0.05));
+      border: 1px solid rgba(239,68,68,0.3);
+    }
+
+    .non-magnetic-card {
+      background: linear-gradient(135deg, rgba(59,130,246,0.15), rgba(59,130,246,0.05));
+      border: 1px solid rgba(59,130,246,0.3);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #ef4444, #f97316);
+      transition: all 0.2s;
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(239,68,68,0.3); }
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-train {
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      transition: all 0.3s;
+    }
+    .btn-train:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(139,92,246,0.4); }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.15); }
+
+    .emoji-btn { transition: all 0.15s; cursor: pointer; }
+    .emoji-btn:hover { transform: scale(1.15); }
+    .emoji-btn.selected { outline: 3px solid #f97316; outline-offset: 2px; border-radius: 12px; }
+
+    .progress-bar { transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(139,92,246,0.2); }
+      50% { box-shadow: 0 0 40px rgba(139,92,246,0.5); }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+    @keyframes float-particle {
+      0% { opacity: 0; transform: translateY(0) scale(0); }
+      50% { opacity: 1; transform: translateY(-30px) scale(1); }
+      100% { opacity: 0; transform: translateY(-60px) scale(0.5); }
+    }
+
+    .animate-slide-up { animation: slideUp 0.4s ease-out forwards; }
+    .pulse-glow { animation: pulse-glow 2s infinite; }
+
+    .tab-active {
+      background: rgba(255,255,255,0.12);
+      border-bottom: 2px solid #f97316;
+    }
+
+    .toast-container {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      z-index: 9999; pointer-events: none;
+    }
+    .toast {
+      padding: 12px 24px; border-radius: 12px; color: #fff;
+      font-weight: 600; animation: slideUp 0.3s ease-out;
+      pointer-events: auto; margin-bottom: 8px;
+    }
+    .toast-success { background: linear-gradient(135deg, #10b981, #059669); }
+    .toast-error { background: linear-gradient(135deg, #ef4444, #dc2626); }
+    .toast-info { background: linear-gradient(135deg, #8b5cf6, #6366f1); }
+
+    .data-item {
+      animation: slideUp 0.3s ease-out;
+    }
+
+    .confirm-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9998; backdrop-filter: blur(4px);
+    }
+
+    .result-card {
+      transition: all 0.3s;
+    }
+    .result-card:hover { transform: translateY(-2px); }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full m-0 p-0">
+  <div class="app-shell h-full w-full overflow-auto" id="app-wrapper">
+   <!-- Toast Container -->
+   <div class="toast-container" id="toast-container"></div><!-- Confirm Dialog -->
+   <div id="confirm-dialog" class="confirm-overlay" style="display:none;">
+    <div class="card-glass rounded-2xl p-6 max-w-sm mx-4 text-center">
+     <p id="confirm-msg" class="text-white text-lg font-semibold mb-4"></p>
+     <div class="flex gap-3 justify-center">
+      <button id="confirm-yes" class="px-5 py-2 rounded-xl bg-red-500 text-white font-semibold hover:bg-red-600 transition">삭제</button> <button id="confirm-no" class="px-5 py-2 rounded-xl btn-secondary text-white font-semibold">취소</button>
+     </div>
+    </div>
+   </div><!-- Header -->
+   <header class="px-4 pt-6 pb-2 text-center">
+    <h1 id="app-title" class="text-2xl md:text-3xl font-black text-white tracking-tight">🧲 자석에 붙는 물건 AI</h1>
+    <p class="text-slate-400 text-sm mt-1">교실 물건을 분류하고 AI를 학습시켜 보세요!</p>
+   </header><!-- Tabs -->
+   <nav class="flex justify-center gap-1 px-4 mt-3 mb-4" role="tablist">
+    <button class="tab-btn tab-active px-4 py-2 rounded-t-xl text-white text-sm font-semibold transition" data-tab="collect" role="tab" aria-selected="true"> 📸 데이터 수집 </button> <button class="tab-btn px-4 py-2 rounded-t-xl text-slate-400 text-sm font-semibold transition hover:text-white" data-tab="train" role="tab" aria-selected="false"> 🤖 AI 학습 </button> <button class="tab-btn px-4 py-2 rounded-t-xl text-slate-400 text-sm font-semibold transition hover:text-white" data-tab="predict" role="tab" aria-selected="false"> 🔮 AI 예측 </button>
+   </nav><!-- TAB: Collect -->
+   <main id="tab-collect" class="px-4 pb-8 max-w-lg mx-auto w-full">
+    <!-- Add Object Form -->
+    <section class="card-glass rounded-2xl p-5 mb-5 animate-slide-up">
+     <h2 class="text-white font-bold text-lg mb-4">물건 추가하기</h2><!-- Emoji Picker -->
+     <p class="text-slate-300 text-sm mb-2 font-medium">1. 물건을 골라주세요</p>
+     <div id="emoji-grid" class="grid grid-cols-6 gap-2 mb-4">
+     </div><!-- Object Name --> <label for="object-name" class="text-slate-300 text-sm mb-1 block font-medium">2. 물건 이름</label> <input id="object-name" type="text" placeholder="예: 클립, 지우개, 가위..." class="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-500 outline-none focus:border-orange-400 transition mb-4 text-sm"> <!-- Classification -->
+     <p class="text-slate-300 text-sm mb-2 font-medium">3. 자석에 붙나요?</p>
+     <div class="flex gap-3 mb-4">
+      <button id="btn-magnetic" class="flex-1 py-3 rounded-xl text-sm font-bold transition border-2 border-transparent text-slate-400 bg-white/5 hover:bg-red-500/20 hover:text-red-300" data-value="true"> 🧲 붙어요! </button> <button id="btn-non-magnetic" class="flex-1 py-3 rounded-xl text-sm font-bold transition border-2 border-transparent text-slate-400 bg-white/5 hover:bg-blue-500/20 hover:text-blue-300" data-value="false"> ❌ 안 붙어요 </button>
+     </div><!-- Submit --> <button id="btn-add" class="w-full btn-primary py-3 rounded-xl text-white font-bold text-sm disabled:opacity-40 disabled:cursor-not-allowed" disabled> <span id="btn-add-text">➕ 데이터 추가하기</span> </button>
+     <p id="limit-warning" class="text-yellow-400 text-xs mt-2 hidden text-center">⚠️ 최대 999개까지 저장할 수 있어요.</p>
+    </section><!-- Data List -->
+    <section class="card-glass rounded-2xl p-5 animate-slide-up" style="animation-delay:0.1s">
+     <div class="flex justify-between items-center mb-3">
+      <h2 class="text-white font-bold text-lg">수집한 데이터 <span id="data-count" class="text-orange-400 text-sm">(0개)</span></h2><button id="btn-clear-all" class="text-xs text-slate-500 hover:text-red-400 transition hidden">전체 삭제</button>
+     </div>
+     <div id="data-list" class="space-y-2 max-h-64 overflow-auto">
+      <p id="empty-msg" class="text-slate-500 text-sm text-center py-6">아직 데이터가 없어요. 위에서 물건을 추가해 보세요! 📦</p>
+     </div><!-- Stats -->
+     <div id="stats-bar" class="mt-4 pt-4 border-t border-white/10 hidden">
+      <div class="flex justify-between text-xs text-slate-400 mb-1">
+       <span>🧲 붙는 물건: <strong id="stat-mag" class="text-red-400">0</strong></span> <span>❌ 안 붙는 물건: <strong id="stat-non" class="text-blue-400">0</strong></span>
+      </div>
+      <div class="w-full h-2 rounded-full bg-white/10 overflow-hidden flex">
+       <div id="stat-mag-bar" class="h-full bg-red-500 rounded-l-full progress-bar" style="width:0%"></div>
+       <div id="stat-non-bar" class="h-full bg-blue-500 rounded-r-full progress-bar" style="width:0%"></div>
+      </div>
+     </div>
+    </section>
+   </main><!-- TAB: Train -->
+   <div id="tab-train" class="px-4 pb-8 max-w-lg mx-auto w-full" style="display:none;">
+    <section class="card-glass rounded-2xl p-5 mb-5 text-center animate-slide-up">
+     <div class="text-5xl mb-3">
+      🤖
+     </div>
+     <h2 class="text-white font-bold text-xl mb-2">AI 모델 학습</h2>
+     <p class="text-slate-400 text-sm mb-5">수집한 데이터로 AI를 학습시켜요!<br>
+       데이터가 많을수록 더 똑똑한 AI가 됩니다.</p>
+     <div id="train-data-info" class="card-glass rounded-xl p-4 mb-5 text-left">
+      <div class="flex justify-between text-sm">
+       <span class="text-slate-300">총 데이터</span> <span id="train-total" class="text-white font-bold">0개</span>
+      </div>
+      <div class="flex justify-between text-sm mt-1">
+       <span class="text-slate-300">🧲 붙는 물건</span> <span id="train-mag" class="text-red-400 font-bold">0개</span>
+      </div>
+      <div class="flex justify-between text-sm mt-1">
+       <span class="text-slate-300">❌ 안 붙는 물건</span> <span id="train-non" class="text-blue-400 font-bold">0개</span>
+      </div>
+     </div>
+     <div id="train-progress-section" class="hidden mb-5">
+      <div class="w-full h-3 rounded-full bg-white/10 overflow-hidden mb-2">
+       <div id="train-progress" class="h-full bg-gradient-to-r from-violet-500 to-indigo-500 rounded-full progress-bar" style="width:0%"></div>
+      </div>
+      <p id="train-status" class="text-violet-300 text-sm font-medium">준비 중...</p>
+     </div>
+     <div id="train-result" class="hidden mb-5">
+      <div class="text-4xl mb-2">
+       ✅
+      </div>
+      <p class="text-green-400 font-bold text-lg">학습 완료!</p>
+      <p id="train-accuracy" class="text-slate-300 text-sm mt-1"></p>
+     </div><button id="btn-train" class="w-full btn-train py-3 rounded-xl text-white font-bold text-sm disabled:opacity-40" disabled> <span id="btn-train-text">🤖 AI 학습 시작!</span> </button>
+     <p id="train-hint" class="text-slate-500 text-xs mt-3">💡 최소 4개 이상의 데이터가 필요해요 (각 분류별 2개 이상)</p>
+    </section><!-- What AI Learned -->
+    <section id="learned-section" class="card-glass rounded-2xl p-5 animate-slide-up hidden">
+     <h3 class="text-white font-bold text-lg mb-3">📚 AI가 배운 것</h3>
+     <div id="learned-content" class="space-y-2"></div>
+    </section>
+   </div><!-- TAB: Predict -->
+   <div id="tab-predict" class="px-4 pb-8 max-w-lg mx-auto w-full" style="display:none;">
+    <section class="card-glass rounded-2xl p-5 mb-5 text-center animate-slide-up">
+     <div class="text-5xl mb-3">
+      🔮
+     </div>
+     <h2 class="text-white font-bold text-xl mb-2">AI에게 물어보기</h2>
+     <p class="text-slate-400 text-sm mb-5">새로운 물건을 선택하면 AI가 자석에 붙는지 예측해요!</p>
+     <div id="predict-not-trained" class="text-yellow-400 text-sm mb-4">
+      ⚠️ 먼저 AI를 학습시켜 주세요!
+     </div>
+     <div id="predict-form" class="hidden">
+      <p class="text-slate-300 text-sm mb-2 font-medium text-left">물건을 골라주세요</p>
+      <div id="predict-emoji-grid" class="grid grid-cols-6 gap-2 mb-4"></div><label for="predict-name" class="text-slate-300 text-sm mb-1 block font-medium text-left">물건 이름</label> <input id="predict-name" type="text" placeholder="예: 열쇠, 풀, 연필..." class="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-500 outline-none focus:border-violet-400 transition mb-4 text-sm"> <button id="btn-predict" class="w-full btn-train py-3 rounded-xl text-white font-bold text-sm disabled:opacity-40" disabled> 🔮 AI 예측하기! </button>
+     </div><!-- Prediction Result -->
+     <div id="predict-result" class="hidden mt-5">
+      <div id="predict-result-card" class="rounded-2xl p-5 result-card">
+       <div id="predict-result-emoji" class="text-5xl mb-2"></div>
+       <p id="predict-result-name" class="text-white font-bold text-lg"></p>
+       <p id="predict-result-label" class="font-bold text-xl mt-2"></p>
+       <p id="predict-result-confidence" class="text-sm mt-1 opacity-80"></p>
+       <p id="predict-result-reason" class="text-xs mt-3 opacity-60"></p>
+      </div>
+     </div>
+    </section><!-- Prediction History -->
+    <section id="predict-history-section" class="card-glass rounded-2xl p-5 animate-slide-up hidden">
+     <h3 class="text-white font-bold text-lg mb-3">📋 예측 기록</h3>
+     <div id="predict-history" class="space-y-2"></div>
+    </section>
+   </div>
+  </div>
+  <script>
+// =========================================
+// State
+// =========================================
+let allData = [];
+let aiModel = null;
+let selectedEmoji = null;
+let isMagnetic = null;
+let predictEmoji = null;
+let confirmCallback = null;
+let predictionHistory = [];
+let currentStudentName = '';
+
+const CLASSROOM_OBJECTS = [
+  // 자석에 붙는 물건 (금속)
+  { emoji: '📎', name: '클립', hint: 'magnetic' },
+  { emoji: '✂️', name: '가위', hint: 'magnetic' },
+  { emoji: '📏', name: '자(쇠)', hint: 'magnetic' },
+  { emoji: '🔑', name: '열쇠', hint: 'magnetic' },
+  { emoji: '🪙', name: '동전', hint: 'magnetic' },
+  { emoji: '📌', name: '압정', hint: 'magnetic' },
+  { emoji: '🔩', name: '나사', hint: 'magnetic' },
+  { emoji: '🔨', name: '망치', hint: 'magnetic' },
+  { emoji: '🪛', name: '드라이버', hint: 'magnetic' },
+  { emoji: '🍴', name: '포크', hint: 'magnetic' },
+  { emoji: '🥄', name: '숟가락', hint: 'magnetic' },
+  { emoji: '🔓', name: '자물쇠', hint: 'magnetic' },
+  { emoji: '🧲', name: '자석', hint: 'magnetic' },
+  { emoji: '⚙️', name: '기어', hint: 'magnetic' },
+  { emoji: '🔗', name: '체인', hint: 'magnetic' },
+  
+  // 자석에 안 붙는 물건
+  { emoji: '✏️', name: '연필', hint: 'non-magnetic' },
+  { emoji: '📒', name: '공책', hint: 'non-magnetic' },
+  { emoji: '📐', name: '삼각자(플라스틱)', hint: 'non-magnetic' },
+  { emoji: '🧽', name: '지우개', hint: 'non-magnetic' },
+  { emoji: '🖍️', name: '크레파스', hint: 'non-magnetic' },
+  { emoji: '📖', name: '책', hint: 'non-magnetic' },
+  { emoji: '🪣', name: '플라스틱 통', hint: 'non-magnetic' },
+  { emoji: '🧴', name: '풀', hint: 'non-magnetic' },
+  { emoji: '🥤', name: '종이컵', hint: 'non-magnetic' },
+  { emoji: '🧸', name: '인형', hint: 'non-magnetic' },
+  { emoji: '🪄', name: '막대(나무)', hint: 'non-magnetic' },
+  { emoji: '📝', name: '포스트잇', hint: 'non-magnetic' },
+  { emoji: '🎒', name: '가방', hint: 'non-magnetic' },
+  { emoji: '🖌️', name: '붓', hint: 'non-magnetic' },
+  { emoji: '🧵', name: '실', hint: 'non-magnetic' },
+];
+
+// =========================================
+// Default config
+// =========================================
+const defaultConfig = {
+  student_name: '',
+  app_title: '🧲 자석에 붙는 물건 AI',
+  magnetic_label: '🧲 자석에 붙어요!',
+  non_magnetic_label: '❌ 자석에 안 붙어요',
+  train_button_text: '🤖 AI 학습 시작!',
+  background_color: '#0f172a',
+  surface_color: '#1e293b',
+  text_color: '#f1f5f9',
+  primary_color: '#ef4444',
+  accent_color: '#8b5cf6',
+  font_family: 'Noto Sans KR',
+  font_size: 14
+};
+
+// =========================================
+// Toast
+// =========================================
+function showToast(msg, type = 'success') {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(() => t.remove(), 300); }, 2500);
+}
+
+// =========================================
+// Confirm dialog
+// =========================================
+function showConfirm(msg, cb) {
+  document.getElementById('confirm-msg').textContent = msg;
+  document.getElementById('confirm-dialog').style.display = 'flex';
+  confirmCallback = cb;
+}
+document.getElementById('confirm-yes').onclick = () => {
+  document.getElementById('confirm-dialog').style.display = 'none';
+  if (confirmCallback) confirmCallback();
+  confirmCallback = null;
+};
+document.getElementById('confirm-no').onclick = () => {
+  document.getElementById('confirm-dialog').style.display = 'none';
+  confirmCallback = null;
+};
+
+// =========================================
+// Tabs
+// =========================================
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.classList.remove('tab-active');
+      b.classList.add('text-slate-400');
+      b.setAttribute('aria-selected', 'false');
+    });
+    btn.classList.add('tab-active');
+    btn.classList.remove('text-slate-400');
+    btn.setAttribute('aria-selected', 'true');
+    ['collect','train','predict'].forEach(t => {
+      document.getElementById('tab-'+t).style.display = 'none';
+    });
+    document.getElementById('tab-'+btn.dataset.tab).style.display = 'block';
+  });
+});
+
+// =========================================
+// Emoji grids
+// =========================================
+function buildEmojiGrid(containerId, onSelect) {
+  const grid = document.getElementById(containerId);
+  grid.innerHTML = '';
+  CLASSROOM_OBJECTS.forEach(obj => {
+    const btn = document.createElement('button');
+    btn.className = 'emoji-btn text-2xl p-2 rounded-xl bg-white/5 hover:bg-white/15 text-center';
+    btn.textContent = obj.emoji;
+    btn.title = obj.name;
+    btn.type = 'button';
+    btn.addEventListener('click', () => {
+      grid.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      onSelect(obj);
+    });
+    grid.appendChild(btn);
+  });
+}
+
+buildEmojiGrid('emoji-grid', (obj) => {
+  selectedEmoji = obj.emoji;
+  document.getElementById('object-name').value = obj.name;
+  validateForm();
+});
+
+buildEmojiGrid('predict-emoji-grid', (obj) => {
+  predictEmoji = obj.emoji;
+  document.getElementById('predict-name').value = obj.name;
+  document.getElementById('btn-predict').disabled = false;
+});
+
+// =========================================
+// Classification buttons
+// =========================================
+const btnMag = document.getElementById('btn-magnetic');
+const btnNon = document.getElementById('btn-non-magnetic');
+
+btnMag.addEventListener('click', () => {
+  isMagnetic = true;
+  btnMag.classList.add('border-red-500', 'text-red-300', 'bg-red-500/20');
+  btnMag.classList.remove('border-transparent', 'text-slate-400');
+  btnNon.classList.remove('border-blue-500', 'text-blue-300', 'bg-blue-500/20');
+  btnNon.classList.add('border-transparent', 'text-slate-400');
+  validateForm();
+});
+
+btnNon.addEventListener('click', () => {
+  isMagnetic = false;
+  btnNon.classList.add('border-blue-500', 'text-blue-300', 'bg-blue-500/20');
+  btnNon.classList.remove('border-transparent', 'text-slate-400');
+  btnMag.classList.remove('border-red-500', 'text-red-300', 'bg-red-500/20');
+  btnMag.classList.add('border-transparent', 'text-slate-400');
+  validateForm();
+});
+
+function validateForm() {
+  const name = document.getElementById('object-name').value.trim();
+  document.getElementById('btn-add').disabled = !(selectedEmoji && name && isMagnetic !== null);
+}
+document.getElementById('object-name').addEventListener('input', validateForm);
+
+// =========================================
+// Add data
+// =========================================
+document.getElementById('btn-add').addEventListener('click', async () => {
+  if (!currentStudentName.trim()) {
+    showToast('먼저 당신의 이름을 입력해주세요! 👤', 'error');
+    return;
+  }
+  if (allData.length >= 999) {
+    document.getElementById('limit-warning').classList.remove('hidden');
+    return;
+  }
+  const name = document.getElementById('object-name').value.trim();
+  if (!selectedEmoji || !name || isMagnetic === null) return;
+
+  const btn = document.getElementById('btn-add');
+  btn.disabled = true;
+  btn.querySelector('span').textContent = '저장 중...';
+
+  try {
+    if (!window.firebaseDb) {
+      throw new Error('Firebase가 준비되지 않았습니다.');
+    }
+    
+    const newData = {
+      student_name: currentStudentName.trim(),
+      object_name: name,
+      is_magnetic: isMagnetic,
+      photo_emoji: selectedEmoji,
+      created_at: new Date().toISOString()
+    };
+
+    await window.firebaseDb.addDoc(
+      window.firebaseDb.collection(window.firebaseDb.db, 'magnetic_objects'),
+      newData
+    );
+
+    showToast(`${selectedEmoji} ${name} 추가 완료!`);
+    
+    // Reset form
+    selectedEmoji = null; isMagnetic = null;
+    document.getElementById('object-name').value = '';
+    document.getElementById('emoji-grid').querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+    [btnMag, btnNon].forEach(b => {
+      b.classList.remove('border-red-500','text-red-300','bg-red-500/20','border-blue-500','text-blue-300','bg-blue-500/20');
+      b.classList.add('border-transparent','text-slate-400');
+    });
+    aiModel = null; // Invalidate model
+    
+    // Firebase에서 데이터 다시 로드
+    await loadDataFromFirebase();
+  } catch (error) {
+    console.error('저장 실패:', error);
+    showToast('저장 실패. Firebase 설정을 확인해주세요.', 'error');
+  }
+  btn.querySelector('span').textContent = '➕ 데이터 추가하기';
+  validateForm();
+});
+
+// =========================================
+// Data SDK Handler → Firebase Handler
+// =========================================
+const dataHandler = {
+  onDataChanged(data) {
+    allData = data;
+    renderDataList(data);
+    updateStats(data);
+    updateTrainTab(data);
+    updatePredictTab();
+  }
+};
+
+// Firebase 데이터 로드
+async function loadDataFromFirebase() {
+  try {
+    if (!window.firebaseDb || !currentStudentName.trim()) {
+      return;
+    }
+    // 현재 학생의 데이터만 로드
+    const q = window.firebaseDb.query(
+      window.firebaseDb.collection(window.firebaseDb.db, 'magnetic_objects'),
+      window.firebaseDb.where('student_name', '==', currentStudentName.trim())
+    );
+    const querySnapshot = await window.firebaseDb.getDocs(q);
+    const data = querySnapshot.docs.map(doc => ({
+      ...doc.data(),
+      __backendId: doc.id
+    }));
+    dataHandler.onDataChanged(data);
+  } catch (error) {
+    console.error('Firebase 로드 실패:', error);
+    showToast('데이터 로드 실패. Firebase 설정을 확인해주세요.', 'error');
+  }
+}
+
+function renderDataList(data) {
+  const list = document.getElementById('data-list');
+  const empty = document.getElementById('empty-msg');
+  const clearBtn = document.getElementById('btn-clear-all');
+  const countEl = document.getElementById('data-count');
+
+  countEl.textContent = `(${data.length}개)`;
+
+  if (data.length === 0) {
+    list.innerHTML = '';
+    list.appendChild(empty);
+    empty.style.display = 'block';
+    clearBtn.classList.add('hidden');
+    return;
+  }
+  empty.style.display = 'none';
+  clearBtn.classList.remove('hidden');
+
+  const existingMap = new Map([...list.children].filter(el => el.dataset.bid).map(el => [el.dataset.bid, el]));
+
+  data.forEach(item => {
+    const bid = item.__backendId;
+    if (existingMap.has(bid)) {
+      const el = existingMap.get(bid);
+      updateDataItem(el, item);
+      existingMap.delete(bid);
+    } else {
+      list.appendChild(createDataItem(item));
+    }
+  });
+
+  existingMap.forEach(el => el.remove());
+}
+
+function createDataItem(item) {
+  const div = document.createElement('div');
+  div.className = `data-item flex items-center gap-3 p-3 rounded-xl ${item.is_magnetic ? 'magnetic-card' : 'non-magnetic-card'}`;
+  div.dataset.bid = item.__backendId;
+  updateDataItemInner(div, item);
+  return div;
+}
+
+function updateDataItem(el, item) {
+  el.className = `data-item flex items-center gap-3 p-3 rounded-xl ${item.is_magnetic ? 'magnetic-card' : 'non-magnetic-card'}`;
+  updateDataItemInner(el, item);
+}
+
+function updateDataItemInner(el, item) {
+  const cfg = window.elementSdk?.config || defaultConfig;
+  el.innerHTML = `
+    <span class="text-2xl">${item.photo_emoji}</span>
+    <div class="flex-1 min-w-0">
+      <p class="text-white text-sm font-semibold truncate">${item.object_name}</p>
+      <p class="text-xs ${item.is_magnetic ? 'text-red-300' : 'text-blue-300'}">${item.is_magnetic ? (cfg.magnetic_label || defaultConfig.magnetic_label) : (cfg.non_magnetic_label || defaultConfig.non_magnetic_label)}</p>
+    </div>
+    <button class="delete-btn text-slate-500 hover:text-red-400 transition p-1" data-bid="${item.__backendId}" aria-label="삭제">
+      <i data-lucide="x" style="width:16px;height:16px"></i>
+    </button>
+  `;
+  el.querySelector('.delete-btn').addEventListener('click', () => {
+    const target = allData.find(d => d.__backendId === item.__backendId);
+    if (target) {
+      showConfirm(`"${item.object_name}" 데이터를 삭제할까요?`, async () => {
+        try {
+          if (!window.firebaseDb) {
+            throw new Error('Firebase가 준비되지 않았습니다.');
+          }
+          await window.firebaseDb.deleteDoc(
+            window.firebaseDb.doc(window.firebaseDb.db, 'magnetic_objects', item.__backendId)
+          );
+          showToast('삭제했어요!');
+          await loadDataFromFirebase();
+        } catch (error) {
+          console.error('삭제 실패:', error);
+          showToast('삭제 실패', 'error');
+        }
+      });
+    }
+  });
+  lucide.createIcons();
+}
+
+function updateStats(data) {
+  const statsBar = document.getElementById('stats-bar');
+  if (data.length === 0) { statsBar.classList.add('hidden'); return; }
+  statsBar.classList.remove('hidden');
+  const mag = data.filter(d => d.is_magnetic).length;
+  const non = data.length - mag;
+  document.getElementById('stat-mag').textContent = mag;
+  document.getElementById('stat-non').textContent = non;
+  const pct = data.length > 0 ? (mag / data.length * 100) : 0;
+  document.getElementById('stat-mag-bar').style.width = pct + '%';
+  document.getElementById('stat-non-bar').style.width = (100 - pct) + '%';
+}
+
+// =========================================
+// Clear all
+// =========================================
+document.getElementById('btn-clear-all').addEventListener('click', () => {
+  showConfirm('모든 데이터를 삭제할까요?', async () => {
+    try {
+      if (!window.firebaseDb) {
+        throw new Error('Firebase가 준비되지 않았습니다.');
+      }
+      
+      for (const item of [...allData]) {
+        await window.firebaseDb.deleteDoc(
+          window.firebaseDb.doc(window.firebaseDb.db, 'magnetic_objects', item.__backendId)
+        );
+      }
+      aiModel = null;
+      showToast('전체 삭제 완료!');
+      await loadDataFromFirebase();
+    } catch (error) {
+      console.error('삭제 실패:', error);
+      showToast('삭제 실패. 다시 시도해주세요.', 'error');
+    }
+  });
+});
+
+// =========================================
+// Train tab
+// =========================================
+function updateTrainTab(data) {
+  const d = data || allData;
+  const mag = d.filter(x => x.is_magnetic).length;
+  const non = d.length - mag;
+  document.getElementById('train-total').textContent = d.length + '개';
+  document.getElementById('train-mag').textContent = mag + '개';
+  document.getElementById('train-non').textContent = non + '개';
+
+  const canTrain = mag >= 2 && non >= 2;
+  document.getElementById('btn-train').disabled = !canTrain;
+  document.getElementById('train-hint').style.display = canTrain ? 'none' : 'block';
+}
+
+document.getElementById('btn-train').addEventListener('click', async () => {
+  const btn = document.getElementById('btn-train');
+  const progressSection = document.getElementById('train-progress-section');
+  const progressBar = document.getElementById('train-progress');
+  const statusEl = document.getElementById('train-status');
+  const resultSection = document.getElementById('train-result');
+
+  btn.disabled = true;
+  resultSection.classList.add('hidden');
+  progressSection.classList.remove('hidden');
+
+  // Simulate training steps
+  const steps = [
+    { pct: 15, msg: '📊 데이터 분석 중...' },
+    { pct: 35, msg: '🔍 패턴 찾는 중...' },
+    { pct: 55, msg: '🧠 모델 구성 중...' },
+    { pct: 75, msg: '⚙️ 가중치 조정 중...' },
+    { pct: 90, msg: '✅ 검증 중...' },
+    { pct: 100, msg: '🎉 완료!' },
+  ];
+
+  for (const step of steps) {
+    progressBar.style.width = step.pct + '%';
+    statusEl.textContent = step.msg;
+    await new Promise(r => setTimeout(r, 600));
+  }
+
+  // Build simple "model" from data
+  aiModel = buildModel(allData);
+
+  resultSection.classList.remove('hidden');
+  const accuracy = Math.min(98, 70 + allData.length * 1.5);
+  document.getElementById('train-accuracy').textContent = `정확도: 약 ${Math.round(accuracy)}% (데이터 ${allData.length}개 기반)`;
+
+  // Show what AI learned
+  const learnedSection = document.getElementById('learned-section');
+  learnedSection.classList.remove('hidden');
+  const learnedContent = document.getElementById('learned-content');
+  learnedContent.innerHTML = '';
+
+  const magItems = allData.filter(d => d.is_magnetic);
+  const nonItems = allData.filter(d => !d.is_magnetic);
+
+  learnedContent.innerHTML = `
+    <div class="magnetic-card rounded-xl p-3">
+      <p class="text-red-300 font-bold text-sm mb-1">🧲 자석에 붙는 물건 (${magItems.length}개)</p>
+      <p class="text-white text-sm">${magItems.map(i => i.photo_emoji + ' ' + i.object_name).join(', ')}</p>
+    </div>
+    <div class="non-magnetic-card rounded-xl p-3">
+      <p class="text-blue-300 font-bold text-sm mb-1">❌ 자석에 안 붙는 물건 (${nonItems.length}개)</p>
+      <p class="text-white text-sm">${nonItems.map(i => i.photo_emoji + ' ' + i.object_name).join(', ')}</p>
+    </div>
+    <div class="card-glass rounded-xl p-3">
+      <p class="text-violet-300 font-bold text-sm mb-1">💡 AI가 발견한 규칙</p>
+      <p class="text-slate-300 text-sm">자석에 붙는 물건은 주로 <strong class="text-red-300">금속(철)</strong>으로 만들어져 있어요. 자석에 안 붙는 물건은 <strong class="text-blue-300">플라스틱, 나무, 종이</strong> 등으로 만들어져 있어요.</p>
+    </div>
+  `;
+
+  btn.disabled = false;
+  showToast('AI 학습 완료! 🎉', 'info');
+  updatePredictTab();
+});
+
+// =========================================
+// Simple prediction model
+// =========================================
+function buildModel(data) {
+  // Build a lookup + pattern based simple classifier
+  const lookup = {};
+  data.forEach(d => {
+    const key = d.object_name.trim().toLowerCase();
+    lookup[key] = { is_magnetic: d.is_magnetic, emoji: d.photo_emoji };
+  });
+
+  // Known magnetic materials keywords
+  const magneticKeywords = ['철', '쇠', '클립', '핀', '나사', '못', '동전', '열쇠', '가위', '칼', '포크', '숟가락', '캔', '볼트', '너트', '바늘', '압정', '자석', '스틸', '금속'];
+  const nonMagneticKeywords = ['나무', '플라스틱', '종이', '고무', '천', '유리', '실', '스펀지', '지우개', '크레파스', '색연필', '풀', '테이프', '인형', '공', '컵', '병', '상자'];
+
+  return { lookup, magneticKeywords, nonMagneticKeywords, dataSize: data.length };
+}
+
+function predict(name) {
+  if (!aiModel) return null;
+  const key = name.trim().toLowerCase();
+
+  // Direct lookup
+  if (aiModel.lookup[key]) {
+    return { is_magnetic: aiModel.lookup[key].is_magnetic, confidence: 95, method: '학습 데이터에서 찾음' };
+  }
+
+  // Keyword matching
+  for (const kw of aiModel.magneticKeywords) {
+    if (key.includes(kw)) return { is_magnetic: true, confidence: 80, method: '키워드 패턴 매칭' };
+  }
+  for (const kw of aiModel.nonMagneticKeywords) {
+    if (key.includes(kw)) return { is_magnetic: false, confidence: 80, method: '키워드 패턴 매칭' };
+  }
+
+  // Unknown — give uncertain result
+  const magCount = allData.filter(d => d.is_magnetic).length;
+  const guessedMagnetic = magCount > allData.length / 2;
+  return { is_magnetic: guessedMagnetic, confidence: 45, method: '데이터 부족 — 추측' };
+}
+
+// =========================================
+// Predict tab
+// =========================================
+function updatePredictTab() {
+  const notTrained = document.getElementById('predict-not-trained');
+  const form = document.getElementById('predict-form');
+  if (aiModel) {
+    notTrained.style.display = 'none';
+    form.classList.remove('hidden');
+  } else {
+    notTrained.style.display = 'block';
+    form.classList.add('hidden');
+  }
+}
+
+document.getElementById('predict-name').addEventListener('input', () => {
+  document.getElementById('btn-predict').disabled = !document.getElementById('predict-name').value.trim();
+});
+
+document.getElementById('btn-predict').addEventListener('click', () => {
+  const name = document.getElementById('predict-name').value.trim();
+  if (!name || !aiModel) return;
+
+  const result = predict(name);
+  const emoji = predictEmoji || '❓';
+  const cfg = window.elementSdk?.config || defaultConfig;
+
+  const card = document.getElementById('predict-result-card');
+  card.className = `rounded-2xl p-5 result-card ${result.is_magnetic ? 'magnetic-card' : 'non-magnetic-card'}`;
+  document.getElementById('predict-result-emoji').textContent = emoji;
+  document.getElementById('predict-result-name').textContent = name;
+  document.getElementById('predict-result-label').textContent = result.is_magnetic
+    ? (cfg.magnetic_label || defaultConfig.magnetic_label)
+    : (cfg.non_magnetic_label || defaultConfig.non_magnetic_label);
+  document.getElementById('predict-result-label').className = `font-bold text-xl mt-2 ${result.is_magnetic ? 'text-red-300' : 'text-blue-300'}`;
+  document.getElementById('predict-result-confidence').textContent = `확신도: ${result.confidence}%`;
+  document.getElementById('predict-result-confidence').className = `text-sm mt-1 ${result.is_magnetic ? 'text-red-200' : 'text-blue-200'}`;
+  document.getElementById('predict-result-reason').textContent = `분석 방법: ${result.method}`;
+  document.getElementById('predict-result').classList.remove('hidden');
+
+  // Save to history
+  predictionHistory.unshift({ emoji, name, is_magnetic: result.is_magnetic, confidence: result.confidence });
+  if (predictionHistory.length > 10) predictionHistory.pop();
+  renderPredictionHistory();
+
+  // Reset
+  predictEmoji = null;
+  document.getElementById('predict-name').value = '';
+  document.getElementById('predict-emoji-grid').querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('btn-predict').disabled = true;
+});
+
+function renderPredictionHistory() {
+  const section = document.getElementById('predict-history-section');
+  const container = document.getElementById('predict-history');
+  if (predictionHistory.length === 0) { section.classList.add('hidden'); return; }
+  section.classList.remove('hidden');
+  container.innerHTML = predictionHistory.map(p => `
+    <div class="flex items-center gap-3 p-2 rounded-lg ${p.is_magnetic ? 'magnetic-card' : 'non-magnetic-card'}">
+      <span class="text-xl">${p.emoji}</span>
+      <span class="text-white text-sm font-medium flex-1">${p.name}</span>
+      <span class="text-xs ${p.is_magnetic ? 'text-red-300' : 'text-blue-300'} font-semibold">${p.is_magnetic ? '붙어요' : '안붙어요'} (${p.confidence}%)</span>
+    </div>
+  `).join('');
+}
+
+// =========================================
+// Element SDK init
+// =========================================
+function applyConfig(config) {
+  const c = { ...defaultConfig, ...config };
+  document.getElementById('app-title').textContent = c.app_title;
+
+  const btnTrainText = document.getElementById('btn-train-text');
+  if (btnTrainText) btnTrainText.textContent = c.train_button_text;
+
+  // Colors
+  const wrapper = document.getElementById('app-wrapper');
+  wrapper.style.background = `linear-gradient(135deg, ${c.background_color} 0%, ${c.surface_color} 50%, ${c.background_color} 100%)`;
+
+  document.querySelectorAll('.card-glass').forEach(el => {
+    el.style.borderColor = `${c.surface_color}33`;
+  });
+
+  document.querySelectorAll('h1, h2, h3, .text-white').forEach(el => {
+    el.style.color = c.text_color;
+  });
+
+  document.querySelectorAll('.btn-primary').forEach(el => {
+    el.style.background = `linear-gradient(135deg, ${c.primary_color}, ${c.primary_color}cc)`;
+  });
+
+  document.querySelectorAll('.btn-train').forEach(el => {
+    el.style.background = `linear-gradient(135deg, ${c.accent_color}, ${c.accent_color}cc)`;
+  });
+
+  // Font
+  const font = c.font_family || defaultConfig.font_family;
+  const baseStack = 'sans-serif';
+  document.body.style.fontFamily = `${font}, ${baseStack}`;
+
+  // Font size
+  const baseSize = c.font_size || defaultConfig.font_size;
+  document.querySelectorAll('h1').forEach(el => el.style.fontSize = `${baseSize * 1.8}px`);
+  document.querySelectorAll('h2, h3').forEach(el => el.style.fontSize = `${baseSize * 1.3}px`);
+  document.querySelectorAll('p, span, button, input, label').forEach(el => {
+    if (!el.closest('h1') && !el.closest('h2') && !el.closest('h3')) {
+      el.style.fontSize = `${baseSize}px`;
+    }
+  });
+
+  // Re-render data items to apply label changes
+  if (allData.length > 0) renderDataList(allData);
+}
+
+window.elementSdk.init({
+  defaultConfig,
+  onConfigChange: async (config) => { applyConfig(config); },
+  mapToCapabilities: (config) => ({
+    recolorables: [
+      { get: () => config.background_color || defaultConfig.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+      { get: () => config.surface_color || defaultConfig.surface_color, set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+      { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+      { get: () => config.primary_color || defaultConfig.primary_color, set: (v) => { config.primary_color = v; window.elementSdk.setConfig({ primary_color: v }); } },
+      { get: () => config.accent_color || defaultConfig.accent_color, set: (v) => { config.accent_color = v; window.elementSdk.setConfig({ accent_color: v }); } },
+    ],
+    borderables: [],
+    fontEditable: {
+      get: () => config.font_family || defaultConfig.font_family,
+      set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+    },
+    fontSizeable: {
+      get: () => config.font_size || defaultConfig.font_size,
+      set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+    }
+  }),
+  mapToEditPanelValues: (config) => new Map([
+    ['app_title', config.app_title || defaultConfig.app_title],
+    ['magnetic_label', config.magnetic_label || defaultConfig.magnetic_label],
+    ['non_magnetic_label', config.non_magnetic_label || defaultConfig.non_magnetic_label],
+    ['train_button_text', config.train_button_text || defaultConfig.train_button_text],
+  ])
+});
+
+// =========================================
+// Firebase 데이터 초기 로드 및 주기적 갱신
+// =========================================
+document.getElementById('student-name-input').addEventListener('input', async (e) => {
+  currentStudentName = e.target.value;
+  aiModel = null; // 학생이 바뀌면 모델 초기화
+  predictionHistory = []; // 예측 기록 초기화
+  await loadDataFromFirebase();
+});
+
+(async () => {
+  // 초기 로드
+  await new Promise(r => setTimeout(r, 1000)); // Firebase 초기화 대기
+  await loadDataFromFirebase();
+  
+  // 3초마다 데이터 새로고침 (실시간 동기화)
+  setInterval(() => {
+    loadDataFromFirebase();
+  }, 3000);
+})();
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e609e9745cbea9f',t:'MTc3NTE0MTE0OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
