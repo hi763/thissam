@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ko" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 용어 사전</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&amp;display=swap" rel="stylesheet">
+  <style>
+* { font-family: 'Noto Sans KR', sans-serif; }
+html, body { height: 100%; margin: 0; }
+.btn-term { transition: all 0.2s; }
+.btn-term.active { transform: scale(1.05); box-shadow: 0 0 0 3px #2563eb, 0 4px 12px rgba(37,99,235,0.3); }
+.card-enter { animation: cardIn 0.35s ease; }
+@keyframes cardIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.icon-wrap { font-size: 3.5rem; line-height: 1; }
+@media (max-width: 640px) { .icon-wrap { font-size: 2.5rem; } }
+</style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full bg-slate-900 text-white overflow-auto">
+  <div id="app" class="w-full min-h-full flex flex-col items-center px-4 py-6 sm:py-10">
+   <h1 id="pageTitle" class="text-3xl sm:text-4xl font-black text-center mb-8 tracking-tight bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">AI 용어 사전</h1><!-- Button Grid -->
+   <div id="btnGrid" class="grid grid-cols-5 sm:grid-cols-10 gap-2 sm:gap-2.5 w-full max-w-4xl mb-6 auto-rows-max"></div><!-- Content Area with Arrows -->
+   <div class="flex items-center w-full max-w-5xl gap-2 sm:gap-4">
+    <button id="prevBtn" onclick="navigate(-1)" class="shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-slate-700 hover:bg-blue-600 flex items-center justify-center transition-colors"> <i data-lucide="chevron-left" style="width:24px;height:24px;"></i> </button>
+    <div id="contentCard" class="flex-1 rounded-2xl bg-slate-800 border border-slate-700 p-5 sm:p-8 min-h-[280px] sm:min-h-[320px] flex flex-col items-center justify-center text-center card-enter select-none" style="touch-action: pan-y pinch-zoom;">
+     <div id="cardIcon" class="icon-wrap mb-4"></div>
+     <h2 id="cardTitle" class="text-xl sm:text-2xl font-bold text-blue-300 mb-3"></h2>
+     <p id="cardDesc" class="text-sm sm:text-base text-slate-300 leading-relaxed max-w-lg"></p>
+    </div><button id="nextBtn" onclick="navigate(1)" class="shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-slate-700 hover:bg-blue-600 flex items-center justify-center transition-colors"> <i data-lucide="chevron-right" style="width:24px;height:24px;"></i> </button>
+   </div>
+   <p id="counter" class="mt-4 text-xs text-slate-500"></p>
+  </div>
+  <script>
+const terms = [
+  {name:"인공지능(AI)",desc:"사람처럼 생각하고 학습하는 똑똑한 컴퓨터 프로그램",icon:"🤖"},
+  {name:"챗GPT",desc:"질문을 하면 대답을 해주는 대화형 인공지능 친구",icon:"💬"},
+  {name:"생성형 AI",desc:"글, 그림, 음악 등을 새롭게 만들어내는 인공지능",icon:"🎨"},
+  {name:"머신러닝",desc:"컴퓨터가 데이터를 통해 스스로 공부하는 방법 (기계학습)",icon:"📚"},
+  {name:"딥러닝",desc:"엄청나게 많은 데이터를 깊고 자세하게 공부하는 AI 기술",icon:"🧠"},
+  {name:"인공신경망",desc:"사람의 뇌세포가 신호를 주고받는 모습을 본떠 만든 AI의 '생각 주머니'",icon:"🕸️"},
+  {name:"프롬프트",desc:"AI에게 명령을 내리거나 질문을 하는 '말 걸기'",icon:"✍️"},
+  {name:"할루시네이션",desc:"AI가 모르는 것을 마치 사실인 것처럼 자신 있게 거짓말하는 현상",icon:"🌀"},
+  {name:"빅데이터",desc:"AI가 공부할 수 있게 모아놓은 엄청나게 많은 양의 정보",icon:"📊"},
+  {name:"데이터 라벨링",desc:'AI가 공부할 수 있게 사진 속 물체에 "이건 고양이", "이건 강아지"라고 이름을 붙여주는 작업',icon:"🏷️"},
+  {name:"데이터 수집",desc:"AI를 가르치기 위해 필요한 정보를 차곡차곡 모으는 과정",icon:"📦"},
+  {name:"챗봇",desc:"채팅창에서 궁금한 점을 물어보면 바로 대답해주는 로봇",icon:"🤖"},
+  {name:"음성 인식",desc:'"하이 지니!", "헤이 시리!"처럼 사람의 목소리를 알아듣는 기능',icon:"🎙️"},
+  {name:"얼굴 인식",desc:"카메라로 사람의 얼굴을 알아보고 잠금을 해제하는 기술",icon:"👤"},
+  {name:"AI 스피커",desc:"목소리를 알아듣고 음악을 틀거나 날씨를 알려주는 스피커",icon:"🔊"},
+  {name:"자율주행차",desc:"운전자가 핸들을 잡지 않아도 스스로 길을 찾아가는 자동차",icon:"🚗"},
+  {name:"로봇 청소기",desc:"집안 구조를 파악해 스스로 돌아다니며 바닥을 닦는 로봇",icon:"🧹"},
+  {name:"네비게이션",desc:"목적지까지 가장 빠르고 안 막히는 길을 안내해주는 기술",icon:"🗺️"},
+  {name:"스마트 워치",desc:"내 심장박동이나 걸음 수를 체크해주는 똑똑한 시계",icon:"⌚"},
+  {name:"AI 헬스케어",desc:"스마트 워치나 앱으로 내 몸 상태를 체크하고 건강해지는 방법을 알려주는 기술",icon:"🏥"},
+  {name:"넷플릭스 추천",desc:"내가 봤던 영화를 기억해서 내가 좋아할 만한 영상을 쏙쏙 골라주는 기능",icon:"🎬"},
+  {name:"유튜브 알고리즘",desc:"내가 좋아할 만한 영상을 추천 리스트에 보여주는 기능",icon:"▶️"},
+  {name:"스팸메일 차단",desc:"광고나 사기 메일을 AI가 미리 읽어보고 편지함에 들어오지 못하게 막는 것",icon:"🛡️"},
+  {name:"AI 번역기",desc:"서로 다른 나라 말을 순식간에 바꿔주는 편리한 도구",icon:"🌐"},
+  {name:"스노우(SNOW)",desc:"내 얼굴에 귀여운 동물 귀나 화장을 입혀주는 AI 카메라 필터",icon:"📸"},
+  {name:"AI 심판",desc:"야구나 축구에서 사람보다 더 정확하게 반칙을 잡아내는 AI",icon:"⚽"},
+  {name:"무인 매장",desc:"점원 없이 AI 카메라와 센서가 물건 값을 계산해주는 가게",icon:"🏪"},
+  {name:"AI 그림 작가",desc:"내가 원하는 내용을 말하면 멋진 그림을 뚝딱 그려주는 인공지능",icon:"🖼️"},
+  {name:"AI 윤리",desc:"인공지능을 사용할 때 사람들이 지켜야 하는 올바른 규칙",icon:"⚖️"},
+  {name:"가짜 뉴스",desc:"AI가 만든 진짜 같은 사진이나 글로 사람들을 속이는 나쁜 정보",icon:"📰"}
+];
+
+let currentIdx = 0;
+
+const defaultConfig = {
+  page_title: "AI 용어 사전",
+  background_color: "#0f172a",
+  card_color: "#1e293b",
+  text_color: "#cbd5e1",
+  primary_action: "#2563eb",
+  accent_color: "#67e8f9",
+  font_family: "Noto Sans KR",
+  font_size: 16
+};
+
+// Build buttons
+const grid = document.getElementById('btnGrid');
+terms.forEach((t, i) => {
+  const btn = document.createElement('button');
+  btn.className = 'btn-term rounded-lg px-1 py-2 text-xs font-medium bg-slate-700 hover:bg-slate-600 text-slate-200 whitespace-normal flex items-center justify-center text-center h-16 transition-all';
+  btn.textContent = t.name;
+  btn.dataset.idx = i;
+  btn.onclick = () => selectTerm(i);
+  grid.appendChild(btn);
+});
+
+function selectTerm(i) {
+  currentIdx = i;
+  render();
+}
+
+function navigate(dir) {
+  currentIdx = (currentIdx + dir + terms.length) % terms.length;
+  render();
+}
+
+function render() {
+  const t = terms[currentIdx];
+  const card = document.getElementById('contentCard');
+  // Re-trigger animation
+  card.classList.remove('card-enter');
+  void card.offsetWidth;
+  card.classList.add('card-enter');
+
+  document.getElementById('cardIcon').textContent = t.icon;
+  document.getElementById('cardTitle').textContent = t.name;
+  document.getElementById('cardDesc').textContent = t.desc;
+  document.getElementById('counter').textContent = `${currentIdx + 1} / ${terms.length}`;
+
+  // Active button
+  grid.querySelectorAll('.btn-term').forEach((btn, i) => {
+    if (i === currentIdx) {
+      btn.classList.add('active', 'bg-blue-600', 'text-white');
+      btn.classList.remove('bg-slate-700', 'text-slate-200');
+    } else {
+      btn.classList.remove('active', 'bg-blue-600', 'text-white');
+      btn.classList.add('bg-slate-700', 'text-slate-200');
+    }
+  });
+}
+
+// Swipe support
+let touchStartX = 0;
+const card = document.getElementById('contentCard');
+card.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+card.addEventListener('touchend', e => {
+  const diff = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(diff) > 50) navigate(diff < 0 ? 1 : -1);
+});
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft') navigate(-1);
+  if (e.key === 'ArrowRight') navigate(1);
+});
+
+// Init
+selectTerm(0);
+lucide.createIcons();
+
+// Element SDK
+function applyConfig(config) {
+  const c = { ...defaultConfig, ...config };
+  const font = c.font_family || defaultConfig.font_family;
+  const size = c.font_size || defaultConfig.font_size;
+  document.body.style.backgroundColor = c.background_color;
+  document.body.style.fontFamily = `${font}, sans-serif`;
+  document.getElementById('pageTitle').textContent = c.page_title || defaultConfig.page_title;
+  document.getElementById('contentCard').style.backgroundColor = c.card_color;
+  document.getElementById('cardDesc').style.color = c.text_color;
+  document.getElementById('cardDesc').style.fontSize = `${size}px`;
+  document.getElementById('cardTitle').style.fontSize = `${size * 1.5}px`;
+  document.querySelectorAll('.btn-term').forEach(b => { b.style.fontSize = `${size * 0.8}px`; });
+}
+
+if (window.elementSdk) {
+  window.elementSdk.init({
+    defaultConfig,
+    onConfigChange: async (config) => { applyConfig(config); },
+    mapToCapabilities: (config) => ({
+      recolorables: [
+        { get: () => config.background_color || defaultConfig.background_color, set: v => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+        { get: () => config.card_color || defaultConfig.card_color, set: v => { config.card_color = v; window.elementSdk.setConfig({ card_color: v }); } },
+        { get: () => config.text_color || defaultConfig.text_color, set: v => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+        { get: () => config.primary_action || defaultConfig.primary_action, set: v => { config.primary_action = v; window.elementSdk.setConfig({ primary_action: v }); } },
+        { get: () => config.accent_color || defaultConfig.accent_color, set: v => { config.accent_color = v; window.elementSdk.setConfig({ accent_color: v }); } }
+      ],
+      borderables: [],
+      fontEditable: { get: () => config.font_family || defaultConfig.font_family, set: v => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); } },
+      fontSizeable: { get: () => config.font_size || defaultConfig.font_size, set: v => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); } }
+    }),
+    mapToEditPanelValues: (config) => new Map([
+      ["page_title", config.page_title || defaultConfig.page_title]
+    ])
+  });
+}
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e7f17ab06506995',t:'MTc3NTQ2MDY4MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
