@@ -806,6 +806,7 @@
     ];
 
     // Render projects
+   // button==>   <button class="btn-secondary" onclick="openProjectModal(${p.id})"><i data-lucide="book-open" style="width: 14px; height: 14px;"></i>자세히</button>
     function renderProjects(filter = 'all') {
       const grid = document.getElementById('projectGrid');
       const filtered = filter === 'all' ? projects : projects.filter(p => p.level.includes(filter));
@@ -834,7 +835,7 @@
             </div>
             <div class="button-group">
               <button class="btn-primary" onclick="openProjectLink(${p.id})"><i data-lucide="external-link" style="width: 14px; height: 14px;"></i>방문</button>
-              // <button class="btn-secondary" onclick="openProjectModal(${p.id})"><i data-lucide="book-open" style="width: 14px; height: 14px;"></i>자세히</button>
+            
             </div>
           </div>
         `;
