@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-
+ 
 const NEWS_DATA = [
   {
     id: 1,
