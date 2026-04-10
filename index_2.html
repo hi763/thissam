@@ -540,20 +540,37 @@
    </nav>
   </div>
   <script>
-    let projects = []; // 전역 변수로 선언
+      // 기존 projects 배열은 삭제하고 아래 코드로 교체하세요.
+    let projects = []; 
 
-async function loadProjects() {
-  try {
-    const response = await fetch('projectsdata.json');
-    projects = await response.json();
-    renderProjects(); // 데이터를 다 받은 후 렌더링 시작
-  } catch (error) {
-    console.error("데이터를 불러오지 못했습니다:", error);
-  }
-}
+    // 데이터를 불러오는 함수
+    async function initApp() {
+      try {
+        // 1. JSON 파일 가져오기 (경로가 같은 폴더면 'projects.json')
+        const response = await fetch('data.json');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP 에러 발생! 상태: ${response.status}`);
+        }
 
-loadProjects(); // 실행
+        // 2. 데이터를 변수에 할당
+        projects = await response.json();
+        console.log("데이터 로드 성공:", projects); // 개발자 도구(F12) 콘솔에서 확인 가능
 
+        // 3. 데이터가 들어온 후 렌더링 실행
+        renderProjects('all');
+        lucide.createIcons();
+
+      } catch (error) {
+        console.error("데이터를 불러오는데 실패했습니다:", error);
+        // 에러 발생 시 사용자에게 알림 (선택사항)
+        document.getElementById('projectGrid').innerHTML = 
+          `<p style="color: white; text-align: center;">데이터를 불러올 수 없습니다.</p>`;
+      }
+    }
+
+    // 앱 시작
+    initApp();
     // Render projects
     function renderProjects(filter = 'all') {
       const grid = document.getElementById('projectGrid');
