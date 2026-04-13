@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>팩트체크 퀴즈</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f0f2f5; font-family: 'Pretendard', sans-serif; }
+        .quiz-container { max-width: 600px; margin: 50px auto; }
+        .explanation { display: none; margin-top: 20px; }
+        .btn-custom { font-weight: bold; padding: 15px; }
+        .stats-box { font-size: 1.1rem; font-weight: bold; }
+        #timer { color: #dc3545; }
+        .q-number { font-size: 0.9rem; color: #6c757d; margin-bottom: 5px; display: block; }
+    </style>
+</head>
+<body>
+
+<div class="container quiz-container">
+    <div id="main-card" class="card shadow-sm border-0 p-4">
+        <div id="quiz-header" class="text-center mb-4">
+            <h2 class="fw-bold">🧐 팩트체크: 가짜 뉴스 찾기</h2>
+            <div class="d-flex justify-content-between stats-box mt-3 px-3">
+                <span>점수: <span id="score">0</span>점</span>
+                <span>남은 시간: <span id="timer">10</span>초</span>
+            </div>
+        </div>
+
+        <div id="quiz-content">
+            <div id="quiz-box">
+                <span class="q-number text-center" id="question-count">문제 1 / 10</span>
+                <div class="progress mb-4" style="height: 10px;">
+                    <div id="progress-bar" class="progress-bar bg-info" style="width: 0%"></div>
+                </div>
+                
+                <div class="alert alert-light border p-4 mb-4" style="min-height: 120px; display: flex; align-items: center; justify-content: center;">
+                    <h4 id="question" class="text-center mb-0">문제를 불러오는 중...</h4>
+                </div>
+
+                <div class="row g-2" id="button-group">
+                    <div class="col-6">
+                        <button onclick="checkAnswer(true)" class="btn btn-outline-success btn-lg w-100 btn-custom">⭕ 진실</button>
+                    </div>
+                    <div class="col-6">
+                        <button onclick="checkAnswer(false)" class="btn btn-outline-danger btn-lg w-100 btn-custom">❌ 가짜</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="explanation" class="explanation p-3 border rounded bg-light shadow-sm">
+                <h5 id="result-text" class="fw-bold"></h5>
+                <p id="desc-text" class="mb-3"></p>
+                <button onclick="handleNextStep()" id="nextBtn" class="btn btn-primary w-100 btn-custom">다음 문제로</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const originalData = [
+        { q: "AI 생성 이미지는 손가락 모양이 어색한 경우가 많다.", a: true, d: "맞습니다! 세부 묘사 오류는 AI 이미지의 대표적 특징입니다." },
+        { q: "유명 연예인의 투자 권유 영상은 무조건 믿어야 한다.", a: false, d: "틀렸습니다! 딥페이크 사기 영상일 확률이 매우 높습니다." },
+        { q: "출처가 없는 뉴스는 공유 전 공식 보도를 확인해야 한다.", a: true, d: "정답입니다! 비판적 검증이 리터러시의 시작입니다." },
+        { q: "웹사이트 주소가 공식 주소와 한 글자라도 다르면 가짜 사이트일 수 있다.", a: true, d: "맞습니다! 피싱 사이트는 교묘하게 주소를 변조합니다." },
+        { q: "공짜 경품 당첨 문자의 링크는 일단 클릭해서 확인한다.", a: false, d: "안 됩니다! 스미싱을 통한 개인정보 유출 위험이 큽니다." },
+        { q: "자극적인 제목의 기사는 팩트체크가 필요하지 않다.", a: false, d: "틀렸습니다! 클릭을 유도하는 낚시성 기사일수록 확인이 필요합니다." },
+        { q: "딥페이크 기술은 목소리까지 똑같이 흉내 낼 수 있다.", a: true, d: "정답입니다! 오디오 딥페이크를 활용한 보이스피싱도 늘고 있습니다." },
+        { q: "뉴스의 날짜가 아주 오래된 것이라면 현재 사실과 다를 수 있다.", a: true, d: "맞습니다! 과거 기사를 최신 정보처럼 퍼뜨리는 것도 가짜 뉴스의 일종입니다." },
+        { q: "메신저로 온 친구의 돈 빌려달라는 부탁은 전화로 확인해야 한다.", a: true, d: "정답입니다! 계정 탈취를 통한 메신저 피싱일 수 있습니다." },
+        { q: "온라인상의 모든 정보는 전문가가 검증한 내용이다.", a: false, d: "틀렸습니다! 누구나 정보를 생산할 수 있어 필터링이 중요합니다." }
+    ];
+
+    let quizData = [];
+    let currentIdx = 0;
+    let score = 0;
+    let timeLeft = 10;
+    let timerInterval;
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    function initQuiz() {
+        // 화면 리셋 (결과창에서 다시하기 눌렀을 때 대비)
+        location.reload(); 
+    }
+
+    // 실제 시작 로직 (페이지 로드 시 호출)
+    function startQuiz() {
+        quizData = [...originalData];
+        shuffleArray(quizData);
+        currentIdx = 0;
+        score = 0;
+        loadQuestion();
+    }
+
+    function startTimer() {
+        timeLeft = 10;
+        document.getElementById('timer').innerText = timeLeft;
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            document.getElementById('timer').innerText = timeLeft;
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                timeOut();
+            }
+        }, 1000);
+    }
+
+    function loadQuestion() {
+        if (currentIdx < quizData.length) {
+            document.getElementById('question').innerText = quizData[currentIdx].q;
+            document.getElementById('question-count').innerText = `문제 ${currentIdx + 1} / ${quizData.length}`;
+            document.getElementById('explanation').style.display = 'none';
+            document.getElementById('button-group').style.pointerEvents = 'auto';
+            document.getElementById('button-group').style.opacity = '1';
+            
+            const nextBtn = document.getElementById('nextBtn');
+            if (currentIdx === quizData.length - 1) {
+                nextBtn.innerText = "결과 확인하기";
+                nextBtn.className = "btn btn-warning w-100 btn-custom text-white"; // 결과 확인은 주황색
+            } else {
+                nextBtn.innerText = "다음 문제로";
+                nextBtn.className = "btn btn-primary w-100 btn-custom";
+            }
+
+            updateProgressBar();
+            startTimer();
+        } else {
+            showFinalResult();
+        }
+    }
+
+    function checkAnswer(userAns) {
+        clearInterval(timerInterval);
+        const correct = quizData[currentIdx].a;
+        const resultText = document.getElementById('result-text');
+        
+        document.getElementById('button-group').style.pointerEvents = 'none';
+        document.getElementById('button-group').style.opacity = '0.5';
+
+        if (userAns === correct) {
+            score += 10;
+            document.getElementById('score').innerText = score;
+            resultText.innerText = "✅ 정답입니다!";
+            resultText.className = "fw-bold text-success";
+        } else {
+            resultText.innerText = "🚨 오답입니다!";
+            resultText.className = "fw-bold text-danger";
+        }
+        showExplanation();
+    }
+
+    function timeOut() {
+        document.getElementById('result-text').innerText = "⏰ 시간 초과!";
+        document.getElementById('result-text').className = "fw-bold text-warning";
+        document.getElementById('button-group').style.pointerEvents = 'none';
+        showExplanation();
+    }
+
+    function showExplanation() {
+        document.getElementById('desc-text').innerText = quizData[currentIdx].d;
+        document.getElementById('explanation').style.display = 'block';
+    }
+
+    function handleNextStep() {
+        if (currentIdx === quizData.length - 1) {
+            showFinalResult(); // 마지막이면 결과창으로
+        } else {
+            currentIdx++;
+            loadQuestion();
+        }
+    }
+
+    function updateProgressBar() {
+        const progress = (currentIdx / quizData.length) * 100;
+        document.getElementById('progress-bar').style.width = progress + "%";
+    }
+
+    function showFinalResult() {
+        clearInterval(timerInterval);
+        const mainContent = document.getElementById('quiz-content');
+        const header = document.getElementById('quiz-header');
+        
+        header.style.display = 'none'; // 헤더 숨김
+        mainContent.innerHTML = `
+            <div class="text-center py-5">
+                <h3 class="mb-3 fw-bold">🎉 학습 완료!</h3>
+                <p class="text-muted">당신의 최종 점수는?</p>
+                <h1 class="display-1 fw-bold text-primary mb-4">${score}<small style="font-size: 2rem">점</small></h1>
+                <p class="mb-5">훌륭합니다! 당신은 이제 가짜 뉴스를 <br>판별할 수 있는 디지털 시민입니다.</p>
+                <button onclick="location.reload()" class="btn btn-warning btn-lg w-100 text-white fw-bold btn-custom">
+                    처음부터 다시 도전하기
+                </button>
+            </div>
+        `;
+    }
+
+    startQuiz(); 
+</script>
+
+</body>
+</html>
