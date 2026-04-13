@@ -3,28 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>안전 AR 카메라</title>
+    <title>최종 완성 AR 카메라</title>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils"></script>
     <style>
-        body { margin: 0; background: #000; color: white; height: 100vh; display: flex; flex-direction: column; font-family: sans-serif; }
+        body { margin: 0; background: #000; color: white; height: 100vh; display: flex; flex-direction: column; font-family: sans-serif; overflow: hidden; }
         #container { flex: 1; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; }
         canvas { max-width: 100%; max-height: 100%; object-fit: contain; }
         .mirror { transform: scaleX(-1); }
         video { display: none; }
         
         /* 버튼 바 */
-        .controls { height: 80px; background: #111; display: flex; justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom); border-top: 1px solid #333; }
-        button, .file-label { width: 50px; height: 50px; border-radius: 50%; border: 1px solid #444; background: #222; color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-        #captureBtn { width: 60px; height: 60px; background: #ff4757; border: 4px solid white; }
+        .controls { height: 90px; background: #111; display: flex; justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom); border-top: 1px solid #333; }
+        button, .file-label { width: 50px; height: 50px; border-radius: 50%; border: 1px solid #444; background: #222; color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; outline: none; }
+        #captureBtn { width: 65px; height: 65px; background: #ff4757; border: 4px solid white; font-size: 24px; }
 
-        /* 미리보기 팝업 (가장 확실한 방식) */
+        /* 미리보기 팝업 보정 */
         #resultView { 
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.95); z-index: 9999; flex-direction: column; align-items: center; justify-content: center;
         }
-        #resultImg { max-width: 90%; max-height: 70%; border: 2px solid #fff; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
-        .p-msg { margin: 15px; font-size: 14px; text-align: center; color: #ccc; }
+        #resultImg { max-width: 85%; max-height: 65%; border: 2px solid #fff; object-fit: contain; }
+        .p-msg { margin: 15px; font-size: 14px; text-align: center; color: #ccc; line-height: 1.4; }
+        #closeBtn { padding: 12px 25px; border-radius: 25px; background: #fff; color: #000; border: none; font-weight: bold; font-size: 15px; cursor: pointer; }
+        
         input[type="file"] { display: none; }
     </style>
 </head>
@@ -36,9 +38,9 @@
     </div>
 
     <div id="resultView">
-        <div class="p-msg">사진을 <b>길게 눌러서</b> 갤러리에 저장하세요!</div>
+        <div class="p-msg">사진을 <b>길게 눌러서</b> 저장하세요!</div>
         <img id="resultImg" src="">
-        <button onclick="closeResult()" style="margin-top:20px; padding:10px 30px; border-radius:20px; background:#fff; color:#000; border:none; font-weight:bold;">다시 찍기</button>
+        <button id="closeBtn" onclick="closeResult()">다시 찍기</button>
     </div>
 
     <div class="controls">
@@ -56,31 +58,26 @@
         const resultImg = document.getElementById('resultImg');
 
         let currentMode = 'user';
-        let camHandler = null;
+        let camera = null;
         let bg = new Image();
         bg.crossOrigin = "anonymous";
         bg.src = 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800';
 
         const segmenter = new SelfieSegmentation({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`});
-        
-        // 극단적 최적화: 0(Landscape) 모델 사용
         segmenter.setOptions({ modelSelection: 0 });
 
         segmenter.onResults((results) => {
             if (!results.image) return;
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
-
             ctx.save();
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // 1. 사람 마스크
             ctx.drawImage(results.segmentationMask, 0, 0, canvas.width, canvas.height);
-            // 2. 사람 영상 합성
             ctx.globalCompositeOperation = 'source-in';
             ctx.drawImage(results.image, 0, 0, canvas.width, canvas.height);
-            // 3. 배경 이미지 (비율 유지 Cover 로직)
             ctx.globalCompositeOperation = 'destination-over';
+            
+            // 배경 Cover 로직 (가로세로 회전 완벽 대응)
             const cw = canvas.width, ch = canvas.height;
             const iw = bg.width, ih = bg.height;
             const cRatio = cw / ch, iRatio = iw / ih;
@@ -91,33 +88,44 @@
             ctx.restore();
         });
 
-        async function start() {
-            if (camHandler) await camHandler.stop();
+        async function startApp() {
+            // 1. 기존 카메라 인스턴스 완전 종료 (가장 중요)
+            if (camera) {
+                await camera.stop();
+                const tracks = video.srcObject ? video.srcObject.getTracks() : [];
+                tracks.forEach(track => track.stop());
+                video.srcObject = null;
+            }
+
             canvas.className = (currentMode === 'user') ? 'mirror' : '';
             
-            camHandler = new Camera(video, {
+            // 2. 새로운 설정으로 카메라 시작
+            camera = new Camera(video, {
                 onFrame: async () => { await segmenter.send({image: video}); },
-                width: 480, height: 360 // 해상도를 더 낮춰서 멈춤 방지
+                width: 640, height: 480, // 안정성을 위한 중간 해상도
+                facingMode: currentMode
             });
-            camHandler.start().catch(() => alert("카메라를 켤 수 없습니다. HTTPS 주소인지 확인하세요!"));
+            
+            try {
+                await camera.start();
+            } catch (err) {
+                alert("카메라 전환에 실패했습니다. 페이지를 새로고침 해주세요.");
+            }
         }
 
-        // 촬영 버튼
         document.getElementById('captureBtn').onclick = () => {
-            const data = canvas.toDataURL("image/png");
-            resultImg.src = data;
-            resultView.style.display = 'flex'; // 팝업 표시
+            resultImg.src = canvas.toDataURL("image/png");
+            resultView.style.display = 'flex';
         };
 
         function closeResult() { resultView.style.display = 'none'; }
 
-        // 전환 버튼
-        document.getElementById('switchBtn').onclick = () => {
+        // 전환 버튼: 비동기 처리 보완
+        document.getElementById('switchBtn').onclick = async () => {
             currentMode = (currentMode === 'user') ? 'environment' : 'user';
-            start();
+            await startApp();
         };
 
-        // 배경 변경
         document.getElementById('bgInput').onchange = (e) => {
             const file = e.target.files[0];
             if (file) {
@@ -127,7 +135,7 @@
             }
         };
 
-        window.onload = start;
+        window.onload = startApp;
     </script>
 </body>
 </html>
