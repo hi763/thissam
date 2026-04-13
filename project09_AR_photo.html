@@ -3,32 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>반응형 AR 카메라</title>
+    <title>초경량 AR 카메라</title>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils"></script>
     <style>
-        body { 
-            margin: 0; padding: 0; overflow: hidden; background: #000; color: white; 
-            height: 100vh; display: flex; flex-direction: column; 
-        }
-        .container { 
-            flex: 1; position: relative; display: flex; justify-content: center; align-items: center; overflow: hidden; 
-        }
+        body { margin: 0; padding: 0; overflow: hidden; background: #000; font-family: sans-serif; height: 100vh; display: flex; flex-direction: column; }
+        .container { flex: 1; position: relative; display: flex; justify-content: center; align-items: center; background: #111; }
         canvas { max-width: 100%; max-height: 100%; object-fit: contain; }
         .mirror { transform: scaleX(-1); }
         video { display: none; }
-
-        /* 하단 컨트롤 영역 */
-        .controls { 
-            height: 90px; background: #111; display: flex; justify-content: space-around; 
-            align-items: center; padding-bottom: env(safe-area-inset-bottom); border-top: 1px solid #333; 
+        
+        /* 촬영 버튼 바 */
+        .controls { height: 100px; background: #141414; display: flex; justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom); }
+        button, .file-label { width: 55px; height: 55px; background: #333; border-radius: 50%; border: 1px solid #444; color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        #captureBtn { width: 70px; height: 70px; background: #fff; border: 5px solid #ff4757; }
+        
+        /* 촬영 결과 미리보기 팝업 */
+        #previewOverlay { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.9); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; 
         }
-        button, .file-label { 
-            width: 50px; height: 50px; background: #222; border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; border: 1px solid #444; 
-            color: white; font-size: 20px; -webkit-tap-highlight-color: transparent;
-        }
-        #captureBtn { width: 65px; height: 65px; background: #fff; border: 4px solid #ff4757; color: #000; }
+        #previewImg { max-width: 80%; max-height: 70%; border: 2px solid white; margin-bottom: 20px; }
+        .preview-btns { display: flex; gap: 20px; }
+        .p-btn { padding: 10px 20px; border-radius: 5px; border: none; font-weight: bold; }
         input[type="file"] { display: none; }
     </style>
 </head>
@@ -39,12 +36,19 @@
         <canvas id="output_canvas"></canvas>
     </div>
 
+    <div id="previewOverlay">
+        <p>사진을 길게 눌러 저장하거나 아래 버튼을 누르세요</p>
+        <img id="previewImg" src="">
+        <div class="preview-btns">
+            <button class="p-btn" style="background:#555; color:white;" onclick="closePreview()">다시 찍기</button>
+            <button id="saveLink" class="p-btn" style="background:#ff4757; color:white;">저장하기</button>
+        </div>
+    </div>
+
     <div class="controls">
         <label for="bgInput" class="file-label">🖼️</label>
         <input type="file" id="bgInput" accept="image/*">
-        
         <button id="captureBtn">📸</button>
-        
         <button id="switchBtn">🔄</button>
     </div>
 
@@ -52,113 +56,86 @@
         const videoElement = document.getElementById('input_video');
         const canvasElement = document.getElementById('output_canvas');
         const canvasCtx = canvasElement.getContext('2d');
-        const bgInput = document.getElementById('bgInput');
-        const captureBtn = document.getElementById('captureBtn');
-        const switchBtn = document.getElementById('switchBtn');
+        const previewOverlay = document.getElementById('previewOverlay');
+        const previewImg = document.getElementById('previewImg');
+        const saveLink = document.getElementById('saveLink');
 
         let currentFacingMode = 'user';
         let camera = null;
         let customBgImage = new Image();
         customBgImage.crossOrigin = "anonymous";
-        // 기본 배경 이미지
         customBgImage.src = 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800';
 
-        // 1. 배경 이미지 업로드 로직
-        bgInput.onchange = (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (event) => { customBgImage.src = event.target.result; };
-                reader.readAsDataURL(file);
-            }
-        };
-
-        // 2. AI 세그멘테이션 설정 (가벼운 모델인 modelSelection: 0 사용)
         const selfieSegmentation = new SelfieSegmentation({locateFile: (file) => {
             return `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`;
         }});
-        selfieSegmentation.setOptions({ modelSelection: 0 });
+
+        // 모바일 멈춤 방지: 가장 가벼운 설정
+        selfieSegmentation.setOptions({ modelSelection: 0, selfSmoothing: true });
 
         selfieSegmentation.onResults((results) => {
-            // 카메라 해상도에 맞춰 캔버스 크기 동기화
             canvasElement.width = videoElement.videoWidth;
             canvasElement.height = videoElement.videoHeight;
-
             canvasCtx.save();
             canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-
-            // 마스크 영역 추출
             canvasCtx.drawImage(results.segmentationMask, 0, 0, canvasElement.width, canvasElement.height);
-
-            // 사람 영역만 그리기
             canvasCtx.globalCompositeOperation = 'source-in';
             canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
-
-            // 배경 그리기 (사람 뒤에)
             canvasCtx.globalCompositeOperation = 'destination-over';
             
-            // 배경 이미지를 비율에 맞춰 꽉 채우는 계산 (Cover)
-            const cw = canvasElement.width;
-            const ch = canvasElement.height;
-            const iw = customBgImage.width;
-            const ih = customBgImage.height;
-            const canvasAspect = cw / ch;
-            const imgAspect = iw / ih;
-
+            // 배경 Cover 로직
+            const cw = canvasElement.width; const ch = canvasElement.height;
+            const iw = customBgImage.width; const ih = customBgImage.height;
+            const canvasAspect = cw / ch; const imgAspect = iw / ih;
             let sx, sy, sw, sh;
-            if (imgAspect > canvasAspect) {
-                sh = ih;
-                sw = ih * canvasAspect;
-                sx = (iw - sw) / 2;
-                sy = 0;
-            } else {
-                sw = iw;
-                sh = iw / canvasAspect;
-                sx = 0;
-                sy = (ih - sh) / 2;
-            }
+            if (imgAspect > canvasAspect) { sw = ih * canvasAspect; sh = ih; sx = (iw - sw) / 2; sy = 0; }
+            else { sw = iw; sh = iw / canvasAspect; sx = 0; sy = (ih - sh) / 2; }
             canvasCtx.drawImage(customBgImage, sx, sy, sw, sh, 0, 0, cw, ch);
-
             canvasCtx.restore();
         });
 
-        // 3. 카메라 초기화 및 실행
         async function startApp() {
             if (camera) { await camera.stop(); }
-
-            // 전면 카메라일 때만 좌우 반전
             canvasElement.className = (currentFacingMode === 'user') ? 'mirror' : '';
-
             camera = new Camera(videoElement, {
-                onFrame: async () => {
-                    await selfieSegmentation.send({image: videoElement});
-                },
-                width: { ideal: 640 }, // 모바일 부하 감소를 위해 해상도 낮춤
-                height: { ideal: 480 },
+                onFrame: async () => { await selfieSegmentation.send({image: videoElement}); },
+                width: 480, height: 360, // 성능을 위해 해상도 더 낮춤
                 facingMode: currentFacingMode
             });
             camera.start();
         }
 
-        // 4. 이벤트 리스너
-        switchBtn.onclick = () => {
+        // 촬영 로직 수정
+        document.getElementById('captureBtn').onclick = () => {
+            const dataUrl = canvasElement.toDataURL("image/png");
+            previewImg.src = dataUrl;
+            previewOverlay.style.display = 'flex';
+            
+            // 저장 버튼 동작 설정
+            saveLink.onclick = () => {
+                const a = document.createElement('a');
+                a.href = dataUrl;
+                a.download = `AR_Snap_${Date.now()}.png`;
+                a.click();
+                alert("다운로드를 시도합니다. 반응이 없다면 사진을 길게 눌러주세요!");
+            };
+        };
+
+        function closePreview() { previewOverlay.style.display = 'none'; }
+
+        document.getElementById('switchBtn').onclick = () => {
             currentFacingMode = (currentFacingMode === 'user') ? 'environment' : 'user';
             startApp();
         };
 
-        captureBtn.onclick = () => {
-            const dataUrl = canvasElement.toDataURL("image/png");
-            const link = document.createElement('a');
-            link.download = `AR_Snap_${Date.now()}.png`;
-            link.href = dataUrl;
-            link.click();
-            if (navigator.vibrate) navigator.vibrate(50); // 촬영 피드백
+        document.getElementById('bgInput').onchange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (ev) => { customBgImage.src = ev.target.result; };
+                reader.readAsDataURL(file);
+            }
         };
-
-        // 화면 회전 감지 시 레이아웃 갱신
-        window.addEventListener('resize', () => {
-            // 별도의 로직 없이 onResults에서 캔버스 크기를 다시 잡으므로 자연스럽게 대응됩니다.
-        });
 
         window.onload = startApp;
     </script>
