@@ -115,8 +115,8 @@
 
             camera = new Camera(videoElement, {
                 onFrame: async () => { await selfieSegmentation.send({image: videoElement}); },
-                width: { ideal: 1280 },
-                height: { ideal: 720 },
+                width: { ideal: 640 },
+                height: { ideal: 480 },
                 facingMode: currentFacingMode
             });
             camera.start();
