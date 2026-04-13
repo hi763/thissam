@@ -61,7 +61,7 @@
 
         let customBgImage = new Image();
         customBgImage.crossOrigin = "anonymous";
-        customBgImage.src = 'https://hi763.github.io/thissam/imgaes/AR_photo.pnt?w=1280'; 
+        customBgImage.src = 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1600'; 
 
         bgInput.onchange = (e) => {
             const file = e.target.files[0];
@@ -116,8 +116,8 @@
                         await selfieSegmentation.send({image: videoElement});
                     },
                     // 전면 카메라 강제 설정 및 모바일 해상도 최적화
-                    width: { ideal: 640 },
-                    height: { ideal: 480 },
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 },
                     facingMode: 'user'
                 });
                 await camera.start();
