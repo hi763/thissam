@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>웹 AR 배경 교체</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-segmentation"></script>
+    <style>
+        body { text-align: center; background: #222; color: white; }
+        canvas { width: 80%; border: 2px solid #fff; border-radius: 10px; }
+        video { display: none; } /* 원본 영상은 숨김 */
+    </style>
+</head>
+<body>
+    <h2>AR 실시간 배경 합성</h2>
+    <video id="video" autoplay playsinline></video>
+    <canvas id="output"></canvas>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('output');
+        const ctx = canvas.getContext('2d');
+
+        // 합성하고 싶은 AR 배경 이미지 설정
+        const bgImage = new Image();
+        bgImage.src = '/images/AR_photo.png?w=800'; // 예시 풍경 사진
+
+        async function setupAR() {
+            // 1. 웹캠 연결
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+
+            // 2. 모델 로드 (Selfie Segmentation)
+            const model = bodySegmentation.SupportedModels.MediaPipeSelfieSegmentation;
+            const segmenter = await bodySegmentation.createSegmenter(model, {
+                runtime: 'tfjs',
+                modelType: 'general'
+            });
+
+            // 3. 실시간 렌더링 시작
+            async function render() {
+                // 사람 영역 마스크 생성
+                const segmentation = await segmenter.segmentPeople(video);
+                
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+
+                // (A) 배경 이미지 먼저 그리기
+                ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+
+                // (B) 마스크를 이용해 사람 부분만 그려넣기
+                // 캔버스 전역 합성 설정 (이미 그려진 배경 위에 사람만 올림)
+                const mask = await bodySegmentation.toBinaryMask(segmentation);
+                
+                // 마스크를 이용해 사람만 남기고 배경은 투명하게 처리하는 과정 (브라우저 최적화 방식)
+                const foregroundCanvas = document.createElement('canvas');
+                foregroundCanvas.width = canvas.width;
+                foregroundCanvas.height = canvas.height;
+                const fgCtx = foregroundCanvas.getContext('2d');
+                
+                // 사람만 그림
+                fgCtx.drawImage(video, 0, 0);
+                fgCtx.globalCompositeOperation = 'destination-in';
+                const maskImage = await posenet.toImageData(mask); // 간략화를 위해 개념적 설명
+                // 실제로는 body-segmentation의 drawMask API를 쓰면 더 편합니다.
+                
+                await bodySegmentation.drawMask(
+                    canvas, video, mask, 1, 0 // 1: 사람 불투명, 0: 배경 투명
+                );
+
+                requestAnimationFrame(render);
+            }
+            
+            video.onloadeddata = () => render();
+        }
+
+        setupAR();
+    </script>
+</body>
+</html>
