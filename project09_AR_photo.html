@@ -1,79 +1,134 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>웹 AR 배경 교체</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-segmentation"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>모바일 AR 카메라</title>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils"></script>
     <style>
-        body { text-align: center; background: #222; color: white; }
-        canvas { width: 80%; border: 2px solid #fff; border-radius: 10px; }
-        video { display: none; } /* 원본 영상은 숨김 */
+        body { 
+            margin: 0; padding: 0; overflow: hidden;
+            font-family: sans-serif; background: #000; color: white; 
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .container { 
+            position: relative; width: 100vw; height: 80vh; 
+            display: flex; justify-content: center; align-items: center;
+        }
+        canvas { 
+            max-width: 100%; max-height: 100%; 
+            transform: scaleX(-1); /* 셀카 모드 좌우 반전 */
+            object-fit: contain;
+        }
+        video { display: none; }
+        .controls { 
+            width: 100%; height: 20vh; background: rgba(34, 34, 34, 0.9);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            gap: 10px; z-index: 10;
+        }
+        .btn-group { display: flex; gap: 15px; }
+        button, label { 
+            padding: 12px 20px; font-size: 14px; font-weight: bold;
+            cursor: pointer; background: #ff4757; color: white; 
+            border: none; border-radius: 25px; touch-action: manipulation;
+        }
+        input[type="file"] { display: none; }
     </style>
 </head>
 <body>
-    <h2>AR 실시간 배경 합성</h2>
-    <video id="video" autoplay playsinline></video>
-    <canvas id="output"></canvas>
+
+    <div class="container">
+        <video id="input_video" playsinline></video>
+        <canvas id="output_canvas"></canvas>
+    </div>
+
+    <div class="controls">
+        <div class="btn-group">
+            <label for="bgInput">🖼️ 배경 변경</label>
+            <input type="file" id="bgInput" accept="image/*">
+            <button id="captureBtn">📸 사진 찍기</button>
+        </div>
+        <p style="font-size: 12px; color: #aaa;">카메라가 안 나오면 '새로고침' 후 '허용'을 눌러주세요.</p>
+    </div>
 
     <script>
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('output');
-        const ctx = canvas.getContext('2d');
+        const videoElement = document.getElementById('input_video');
+        const canvasElement = document.getElementById('output_canvas');
+        const canvasCtx = canvasElement.getContext('2d');
+        const bgInput = document.getElementById('bgInput');
+        const captureBtn = document.getElementById('captureBtn');
 
-        // 합성하고 싶은 AR 배경 이미지 설정
-        const bgImage = new Image();
-        bgImage.src = '/images/AR_photo.png?w=800'; // 예시 풍경 사진
+        let customBgImage = new Image();
+        customBgImage.crossOrigin = "anonymous";
+        customBgImage.src = 'https://hi763.github.io/thissam/imgaes/AR_photo.pnt?w=1280'; 
 
-        async function setupAR() {
-            // 1. 웹캠 연결
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            video.srcObject = stream;
-
-            // 2. 모델 로드 (Selfie Segmentation)
-            const model = bodySegmentation.SupportedModels.MediaPipeSelfieSegmentation;
-            const segmenter = await bodySegmentation.createSegmenter(model, {
-                runtime: 'tfjs',
-                modelType: 'general'
-            });
-
-            // 3. 실시간 렌더링 시작
-            async function render() {
-                // 사람 영역 마스크 생성
-                const segmentation = await segmenter.segmentPeople(video);
-                
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-
-                // (A) 배경 이미지 먼저 그리기
-                ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
-
-                // (B) 마스크를 이용해 사람 부분만 그려넣기
-                // 캔버스 전역 합성 설정 (이미 그려진 배경 위에 사람만 올림)
-                const mask = await bodySegmentation.toBinaryMask(segmentation);
-                
-                // 마스크를 이용해 사람만 남기고 배경은 투명하게 처리하는 과정 (브라우저 최적화 방식)
-                const foregroundCanvas = document.createElement('canvas');
-                foregroundCanvas.width = canvas.width;
-                foregroundCanvas.height = canvas.height;
-                const fgCtx = foregroundCanvas.getContext('2d');
-                
-                // 사람만 그림
-                fgCtx.drawImage(video, 0, 0);
-                fgCtx.globalCompositeOperation = 'destination-in';
-                const maskImage = await posenet.toImageData(mask); // 간략화를 위해 개념적 설명
-                // 실제로는 body-segmentation의 drawMask API를 쓰면 더 편합니다.
-                
-                await bodySegmentation.drawMask(
-                    canvas, video, mask, 1, 0 // 1: 사람 불투명, 0: 배경 투명
-                );
-
-                requestAnimationFrame(render);
+        bgInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => { customBgImage.src = event.target.result; };
+                reader.readAsDataURL(file);
             }
-            
-            video.onloadeddata = () => render();
+        };
+
+        const selfieSegmentation = new SelfieSegmentation({locateFile: (file) => {
+            return `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`;
+        }});
+
+        // 모바일 성능을 위해 modelSelection을 0(가벼운 모델)으로 설정
+        selfieSegmentation.setOptions({ modelSelection: 0 });
+
+        selfieSegmentation.onResults((results) => {
+            canvasElement.width = videoElement.videoWidth;
+            canvasElement.height = videoElement.videoHeight;
+
+            canvasCtx.save();
+            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+
+            // 1. 마스크 영역 추출
+            canvasCtx.drawImage(results.segmentationMask, 0, 0, canvasElement.width, canvasElement.height);
+
+            // 2. 사람만 그리기
+            canvasCtx.globalCompositeOperation = 'source-in';
+            canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+
+            // 3. 배경 이미지 합성 (사람 뒤에)
+            canvasCtx.globalCompositeOperation = 'destination-over';
+            canvasCtx.drawImage(customBgImage, 0, 0, canvasElement.width, canvasElement.height);
+
+            canvasCtx.restore();
+        });
+
+        captureBtn.addEventListener('click', () => {
+            const dataUrl = canvasElement.toDataURL("image/png");
+            const link = document.createElement('a');
+            link.download = `AR_Selfie_${Date.now()}.png`;
+            link.href = dataUrl;
+            link.click();
+            alert("사진이 저장되었습니다!");
+        });
+
+        async function startApp() {
+            try {
+                const camera = new Camera(videoElement, {
+                    onFrame: async () => {
+                        await selfieSegmentation.send({image: videoElement});
+                    },
+                    // 전면 카메라 강제 설정 및 모바일 해상도 최적화
+                    width: { ideal: 640 },
+                    height: { ideal: 480 },
+                    facingMode: 'user'
+                });
+                await camera.start();
+            } catch (err) {
+                console.error("Mobile Camera Error:", err);
+                alert("카메라를 실행할 수 없습니다. 브라우저 설정에서 카메라 권한을 확인해주세요.");
+            }
         }
 
-        setupAR();
+        // 페이지 로드 후 실행
+        window.onload = startApp;
     </script>
 </body>
 </html>
