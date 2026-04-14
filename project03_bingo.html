@@ -3,7 +3,6 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>인공지능 용어 빙고</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet">
@@ -12,8 +11,8 @@
 html, body { height: 100%; margin: 0; }
 
 .term-card {
-  padding: 6px 12px;
-  border-radius: 10px;
+  padding: 3px 6px;
+  border-radius: 8px;
   cursor: grab;
   font-size: 13px;
   font-weight: 600;
@@ -137,24 +136,30 @@ html, body { height: 100%; margin: 0; }
  </head>
  <body class="h-full">
   <div id="app" class="h-full w-full overflow-auto" style="background: linear-gradient(135deg, #f0f4ff 0%, #fdf2f8 50%, #f0fdf4 100%);">
-   <div class="max-w-2xl mx-auto px-4 py-6"><!-- Title -->
-    <h1 class="text-center text-2xl md:text-3xl font-black mb-5" style="color: #3730a3;">🤖 인공지능 용어 빙고</h1>
+   <div class="max-w-2xl mx-auto px-4 py-6">
     
-    </div><!-- Bingo Board -->
-    <div class="flex justify-center mb-5">
+    <!-- Title -->
+    <h1 class="text-center text-2xl md:text-3xl font-black mb-5" style="color: #3730a3;">🤖 인공지능 용어 빙고</h1>
+
+    <div class="flex mb-5">
+    <!-- Bingo Board -->
+    <div class="flex justify-center mb-5 mr-6">
      <div class="bingo-grid-wrapper" id="gridWrapper">
       <div id="bingoGrid" class="grid grid-cols-5 gap-2" style="width: 360px;"><!-- 320px에서 360px로 확대 -->
       </div>
       <div id="linesLayer"></div>
      </div>
     </div>
-
-   <!-- Term Cards Pool -->
-    <div id="termPool" class="p-4 rounded-2xl mb-5" style="background: white; box-shadow: 0 2px 12px rgba(0,0,0,0.06); min-height: 60px;">
+    
+        <!-- Term Cards Pool -->
+    <div id="termPool" class="p-4 rounded-2xl mb-5" style="background: white; box-shadow: 0 2px 12px rgba(0,0,0,0.06); min-height: 20px;">
      <p class="text-xs font-bold mb-3" style="color: #6366f1;">📋 용어 카드 (드래그하여 빙고판에 놓으세요)</p>
      <div id="poolCards" class="flex flex-wrap gap-2"></div>
-   
-   <!-- Buttons -->
+    </div>
+
+    </div>
+    
+    <!-- Buttons -->
     <div class="flex justify-center gap-3 mb-4"><button id="mainBtn" class="btn-primary" style="background: #6366f1; color: white;" disabled>빙고판 만들기</button> <button id="resetBtn" class="btn-primary" style="background: #f43f5e; color: white; display: none;">다시 하기</button>
     </div><!-- Bingo Count -->
     <div id="bingoCount" class="text-center font-black text-lg" style="color: #4f46e5; display: none;">
@@ -177,10 +182,9 @@ const TERMS = [
     "스마트 침대","인공지능 스피커","스마트 워치","스마트홈","AI헬스케어",
     "웨어러블 기기","반려동을 케어앱", "스마트 냉장고", "스마트 에어컨", "로봇 청소기",
     "스마트 인덕션", "자율 주행 자동차", "얼굴인식", "카메라앱", "인공지능 공부앱",
-    "유튜브 추천 알고리즘", "인공지능(AI)", "챗GPR", "AI 번역기", "챗봇",
+    "유튜브 추천 알고리즘", "인공지능(AI)", "챗GPT", "AI 번역기", "챗봇",
     "서빙로봇", "머신러닝", "프롬프트", "네비게이션", "AI 심판"
 ];
-
 
 const CARD_COLORS = [
   "#6366f1","#8b5cf6","#a855f7","#d946ef","#ec4899",
