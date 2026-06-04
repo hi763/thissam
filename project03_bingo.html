@@ -1,455 +1,896 @@
-<!doctype html>
-<html lang="ko" class="h-full">
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet">
-  <style>
-* { font-family: 'Noto Sans KR', sans-serif; }
-html, body { height: 100%; margin: 0; }
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>인공지능 용어 빙고</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2236;
+    --accent: #00e5ff;
+    --accent2: #7c3aed;
+    --accent3: #f59e0b;
+    --text: #e2e8f0;
+    --text-muted: #64748b;
+    --card-bg: #1e293b;
+    --card-hover: #263347;
+    --border: #2a3a52;
+    --bingo-line: #00e5ff;
+    --glow: 0 0 20px rgba(0,229,255,0.4);
+  }
 
-.term-card {
-  padding: 3px 6px;
-  border-radius: 8px;
-  cursor: grab;
-  font-size: 13px;
-  font-weight: 600;
-  user-select: none;
-  transition: transform 0.15s, box-shadow 0.15s;
-  display: inline-block;
-  white-space: nowrap;
-}
-.term-card:active { cursor: grabbing; }
-.term-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-.term-card.dragging { opacity: 0.4; }
-.term-card.in-board { display: none; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-.bingo-cell {
-  aspect-ratio: 1;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  font-size: 13px;
-  font-weight: 700;
-  transition: all 0.2s;
-  position: relative;
-  overflow: hidden;
-  padding: 6px;
-  line-height: 1.2;
-  word-break: keep-all;
-}
-@media (min-width: 640px) {
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    touch-action: pan-y;
+  }
+
+  /* BG Grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px 16px 60px;
+  }
+
+  /* HEADER */
+  header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+  header .sub {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    opacity: 0.8;
+  }
+  header h1 {
+    font-size: clamp(26px, 6vw, 42px);
+    font-weight: 900;
+    color: var(--text);
+    line-height: 1.1;
+    letter-spacing: -1px;
+  }
+  header h1 span {
+    color: var(--accent);
+    text-shadow: 0 0 30px rgba(0,229,255,0.5);
+  }
+  header .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    background: rgba(0,229,255,0.08);
+    border: 1px solid rgba(0,229,255,0.2);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 12px;
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* TERM POOL */
+  .section-label {
+    font-size: 11px;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 3px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .section-label .count-badge {
+    background: var(--accent);
+    color: var(--bg);
+    border-radius: 10px;
+    padding: 1px 8px;
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  #term-pool {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+    min-height: 80px;
+    margin-bottom: 32px;
+  }
+
+  .term-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 13px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: grab;
+    user-select: none;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+    position: relative;
+    overflow: hidden;
+  }
+  .term-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,229,255,0.08), transparent);
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .term-card:hover::before { opacity: 1; }
+  .term-card:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,229,255,0.15);
+  }
+  .term-card:active { cursor: grabbing; transform: scale(0.97); }
+  .term-card.dragging {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+  .term-card.placed {
+    opacity: 0.35;
+    pointer-events: none;
+    filter: grayscale(0.5);
+  }
+
+  /* BINGO BOARD */
+  .board-section {
+    margin-bottom: 28px;
+  }
+  #bingo-board-wrap {
+    display: flex;
+    justify-content: center;
+  }
+  #bingo-board {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    width: 100%;
+    max-width: 520px;
+    position: relative;
+  }
+
   .bingo-cell {
+    aspect-ratio: 1;
+    background: var(--surface);
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(9px, 2vw, 13px);
+    font-weight: 700;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 4px;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+  }
+  .bingo-cell.drag-over {
+    border-color: var(--accent);
+    background: rgba(0,229,255,0.08);
+    box-shadow: var(--glow);
+  }
+  .bingo-cell.filled {
+    border: 2px solid var(--border);
+    border-style: solid;
+    background: var(--card-bg);
+    color: var(--text);
+    cursor: grab;
+  }
+  .bingo-cell.filled:hover {
+    border-color: #f59e0b;
+    color: var(--accent3);
+    background: rgba(245,158,11,0.08);
+  }
+  .bingo-cell.filled:active { cursor: grabbing; }
+  .bingo-cell.marked {
+    background: rgba(0,229,255,0.12) !important;
+    border-color: var(--accent) !important;
+    color: var(--accent) !important;
+    cursor: pointer;
+    text-shadow: 0 0 10px rgba(0,229,255,0.5);
+  }
+  .bingo-cell.marked::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(0,229,255,0.15), transparent 70%);
+    pointer-events: none;
+  }
+  .bingo-cell.game-active.filled {
+    cursor: pointer;
+  }
+  .bingo-cell.game-active.filled:hover {
+    border-color: var(--accent);
+    background: rgba(0,229,255,0.06);
+    color: var(--text);
+  }
+
+  /* Bingo line canvas overlay */
+  #bingo-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  /* BUTTONS */
+  .btn-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+  }
+
+  .btn {
+    padding: 12px 32px;
+    border-radius: 10px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    letter-spacing: -0.3px;
+  }
+
+  #btn-make {
+    background: linear-gradient(135deg, var(--accent2), #4f46e5);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(124,58,237,0.35);
+  }
+  #btn-make:disabled {
+    background: var(--surface2);
+    color: var(--text-muted);
+    box-shadow: none;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  #btn-make:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(124,58,237,0.5);
+  }
+  #btn-make.start-mode {
+    background: linear-gradient(135deg, #059669, #10b981);
+    box-shadow: 0 4px 20px rgba(16,185,129,0.35);
+  }
+  #btn-make.start-mode:hover {
+    box-shadow: 0 8px 28px rgba(16,185,129,0.5);
+  }
+
+  #btn-reset {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    display: none;
+  }
+  #btn-reset:hover {
+    border-color: var(--accent3);
+    color: var(--accent3);
+    background: rgba(245,158,11,0.06);
+  }
+  #btn-reset.visible { display: block; }
+
+  /* BINGO COUNT */
+  .bingo-status {
+    text-align: center;
+    margin-top: 16px;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--text-muted);
+    min-height: 24px;
+  }
+  .bingo-status .bingo-count {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 20px;
+    display: inline-block;
+  }
+  .bingo-status .bingo-word {
+    letter-spacing: 4px;
+    color: var(--accent);
+    font-size: 22px;
+    font-weight: 700;
+    text-shadow: var(--glow);
+    animation: pulse 1s ease infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  /* DRAG GHOST */
+  #drag-ghost {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    background: var(--accent);
+    color: var(--bg);
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.1s;
+    box-shadow: 0 8px 30px rgba(0,229,255,0.4);
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--accent3);
+    color: var(--bg);
+    padding: 10px 24px;
+    border-radius: 30px;
+    font-weight: 700;
     font-size: 14px;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 9999;
+    white-space: nowrap;
   }
-}
-.bingo-cell.empty {
-  border: 2px dashed #cbd5e1;
-  background: #f8fafc;
-}
-.bingo-cell.filled {
-  border: 2px solid #6366f1;
-  background: #eef2ff;
-  color: #3730a3;
-}
-.bingo-cell.drag-over {
-  border-color: #f59e0b;
-  background: #fef3c7;
-  transform: scale(1.05);
-}
-.bingo-cell.clicked {
-  background: #4f46e5 !important;
-  color: white !important;
-  border-color: #4338ca !important;
-}
-.bingo-cell.clickable { cursor: pointer; }
-.bingo-cell.clickable:hover { transform: scale(1.05); }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 
-.bingo-line {
-  position: absolute;
-  background: #ef4444;
-  z-index: 10;
-  border-radius: 4px;
-  opacity: 0.7;
-  pointer-events: none;
-}
+  /* BINGO CELEBRATION */
+  .bingo-flash {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,229,255,0.06);
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0;
+    animation: none;
+  }
+  .bingo-flash.flash {
+    animation: flashAnim 0.6s ease forwards;
+  }
+  @keyframes flashAnim {
+    0% { opacity: 0; }
+    30% { opacity: 1; }
+    100% { opacity: 0; }
+  }
 
-.toast {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%) translateY(-100px);
-  background: #ef4444;
-  color: white;
-  padding: 12px 24px;
-  border-radius: 12px;
-  font-weight: 700;
-  z-index: 100;
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 8px 24px rgba(239,68,68,0.3);
-}
-.toast.show { transform: translateX(-50%) translateY(0); }
+  /* Filled cell content */
+  .cell-text {
+    line-height: 1.3;
+    text-align: center;
+    font-size: clamp(9px, 1.8vw, 13px);
+    word-break: keep-all;
+  }
 
-.btn-primary {
-  padding: 14px 32px;
-  border-radius: 14px;
-  font-weight: 800;
-  font-size: 16px;
-  transition: all 0.2s;
-  border: none;
-  cursor: pointer;
-}
-.btn-primary:disabled {
-  background: #cbd5e1 !important;
-  color: #94a3b8 !important;
-  cursor: not-allowed;
-  transform: none !important;
-}
-.btn-primary:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
-
-.confetti-container {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  pointer-events: none;
-  z-index: 200;
-}
-.confetti-piece {
-  position: absolute;
-  width: 10px; height: 10px;
-  animation: confetti-fall 2s ease-out forwards;
-}
-@keyframes confetti-fall {
-  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
-  100% { transform: translateY(600px) rotate(720deg); opacity: 0; }
-}
-
-.bingo-grid-wrapper { position: relative; display: inline-block; }
+  @media (max-width: 520px) {
+    #bingo-board { gap: 4px; }
+    .bingo-cell { border-radius: 7px; }
+    .term-card { font-size: 12px; padding: 6px 10px; }
+    .btn { padding: 11px 24px; font-size: 14px; }
+  }
 </style>
-  <style>body { box-sizing: border-box; }</style>
-  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
-  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
- </head>
- <body class="h-full">
-  <div id="app" class="h-full w-full overflow-auto" style="background: linear-gradient(135deg, #f0f4ff 0%, #fdf2f8 50%, #f0fdf4 100%);">
-   <div class="max-w-2xl mx-auto px-4 py-6">
-    
-    <!-- Title -->
-    <h1 class="text-center text-2xl md:text-3xl font-black mb-5" style="color: #3730a3;">🤖 인공지능 용어 빙고</h1>
+</head>
+<body>
 
-    <div class="flex mb-5">
-    <!-- Bingo Board -->
-    <div class="flex justify-center mb-5 mr-6">
-     <div class="bingo-grid-wrapper" id="gridWrapper">
-      <div id="bingoGrid" class="grid grid-cols-5 gap-2" style="width: 360px;"><!-- 320px에서 360px로 확대 -->
-      </div>
-      <div id="linesLayer"></div>
-     </div>
-    </div>
-    
-        <!-- Term Cards Pool -->
-    <div id="termPool" class="p-4 rounded-2xl mb-5" style="background: white; box-shadow: 0 2px 12px rgba(0,0,0,0.06); min-height: 20px;">
-     <p class="text-xs font-bold mb-3" style="color: #6366f1;">📋 용어 카드 (드래그하여 빙고판에 놓으세요)</p>
-     <div id="poolCards" class="flex flex-wrap gap-2"></div>
-    </div>
+<div id="bingo-flash" class="bingo-flash"></div>
+<div id="drag-ghost"></div>
+<div id="toast" class="toast"></div>
 
+<div class="wrapper">
+  <header>
+    <div class="sub">AI Terminology</div>
+    <h1>인공지능 용어 <span>빙고</span></h1>
+    <div class="badge">
+      <span>▣</span>
+      25개를 선택하여 빙고판을 완성하세요
     </div>
-    
-    <!-- Buttons -->
-    <div class="flex justify-center gap-3 mb-4"><button id="mainBtn" class="btn-primary" style="background: #6366f1; color: white;" disabled>빙고판 만들기</button> <button id="resetBtn" class="btn-primary" style="background: #f43f5e; color: white; display: none;">다시 하기</button>
-    </div><!-- Bingo Count -->
-    <div id="bingoCount" class="text-center font-black text-lg" style="color: #4f46e5; display: none;">
-     빙고: <span id="bingoNum">0</span>줄 🎉
-    </div>
-   </div>
-   <div id="toast" class="toast"></div>
+  </header>
+
+  <!-- Term Pool -->
+  <div class="section-label">
+    용어 카드
+    <span class="count-badge" id="pool-count">30</span>
   </div>
-  <script>
-// const TERMS = [
-//   "인공신경망","넷플릭스 추천","스팸메일 차단","데이터 라벨링","AI 헬스케어",
-//   "인공지능(AI)","챗GPT","할루시네이션","프롬프트","생성형 AI",
-//   "머신러닝","빅데이터","자율주행차","얼굴 인식","유튜브 알고리즘",
-//   "AI 스피커","데이터 수집","로봇 청소기","AI 번역기","챗봇",
-//   "스노우(SNOW)","AI 심판","딥러닝","음성 인식","스마트 워치",
-//   "네비게이션","무인 매장","AI 그림 작가","AI 윤리","가짜 뉴스"
-// ];
+  <div id="term-pool"></div>
 
+  <!-- Bingo Board -->
+  <div class="board-section">
+    <div class="section-label">
+      빙고판
+      <span class="count-badge" id="board-count">0 / 25</span>
+    </div>
+    <div id="bingo-board-wrap">
+      <div id="bingo-board">
+        <canvas id="bingo-canvas"></canvas>
+      </div>
+    </div>
+    <div class="bingo-status" id="bingo-status"></div>
+  </div>
+
+  <!-- Buttons -->
+  <div class="btn-area">
+    <button class="btn" id="btn-make" disabled>빙고판 만들기</button>
+    <button class="btn" id="btn-reset">다시 하기</button>
+  </div>
+</div>
+
+<script>
 const TERMS = [
-    "스마트 침대","인공지능 스피커","스마트 워치","스마트홈","AI헬스케어",
-    "웨어러블 기기","반려동물 케어앱", "스마트 냉장고", "스마트 에어컨", "로봇 청소기",
-    "스마트 인덕션", "자율 주행 자동차", "얼굴인식", "카메라앱", "인공지능 공부앱",
-    "유튜브 추천 알고리즘", "인공지능(AI)", "챗GPT", "AI 번역기", "챗봇",
-    "서빙로봇", "머신러닝", "프롬프트", "네비게이션", "AI 심판"
+  '인공신경망','넷플릭스 추천','스팸메일 차단','데이터 라벨링','AI 헬스케어',
+  '인공지능(AI)','챗GPT','할루시네이션','프롬프트','생성형 AI',
+  '머신러닝','빅데이터','자율주행차','얼굴 인식','유튜브 알고리즘',
+  'AI 스피커','데이터 수집','로봇 청소기','AI 번역기','챗봇',
+  '스노우(SNOW)','AI 심판','딥러닝','음성 인식','스마트 워치',
+  '네비게이션','무인 매장','AI 그림 작가','AI 윤리','가짜 뉴스'
 ];
 
-const CARD_COLORS = [
-  "#6366f1","#8b5cf6","#a855f7","#d946ef","#ec4899",
-  "#f43f5e","#f97316","#eab308","#22c55e","#14b8a6",
-  "#06b6d4","#3b82f6"
-];
+const GRID = 5;
+let board = Array(25).fill(null); // null or term string
+let gameStarted = false;
+let marked = new Set(); // cell indices
+let bingoLines = []; // arrays of 5 indices
 
-let state = 'building'; // building | ready | playing
-let board = Array(25).fill(null); // term or null
-let clicked = Array(25).fill(false);
-let bingoLines = [];
-let dragData = null;
+// Drag state
+let dragSource = null; // {type:'pool'|'board', term, index?}
+let touchDragInfo = null;
 
-const defaultConfig = {
-  main_title: "인공지능 용어 빙고",
-  primary_color: "#3730a3",
-  surface_color: "#ffffff",
-  text_color: "#1e1b4b",
-  accent_color: "#6366f1",
-  secondary_color: "#f43f5e"
-};
+const poolEl = document.getElementById('term-pool');
+const boardEl = document.getElementById('bingo-board');
+const canvasEl = document.getElementById('bingo-canvas');
+const btnMake = document.getElementById('btn-make');
+const btnReset = document.getElementById('btn-reset');
+const boardCountEl = document.getElementById('board-count');
+const poolCountEl = document.getElementById('pool-count');
+const statusEl = document.getElementById('bingo-status');
+const ghost = document.getElementById('drag-ghost');
+const flashEl = document.getElementById('bingo-flash');
 
-function getColor(i) { return CARD_COLORS[i % CARD_COLORS.length]; }
+// ── Prevent pull-to-refresh on mobile ──────────────────────────
+let startY = 0;
+document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, {passive: true});
+document.addEventListener('touchmove', e => {
+  if (touchDragInfo) {
+    e.preventDefault(); // block scroll while dragging
+  }
+}, {passive: false});
 
-function init() {
-  renderPool();
-  renderGrid();
-  bindButtons();
-}
-
+// ── Render pool ──────────────────────────────────────────────────
 function renderPool() {
-  const container = document.getElementById('poolCards');
-  container.innerHTML = '';
-  
-  // Add drop zone for pool
-  container.addEventListener('dragover', (e) => {
-    if (state !== 'building') return;
-    e.preventDefault();
-    container.style.background = '#fef3c7';
-    container.style.borderRadius = '12px';
-  });
-  
-  container.addEventListener('dragleave', () => {
-    container.style.background = '';
-  });
-  
-  container.addEventListener('drop', (e) => {
-    e.preventDefault();
-    container.style.background = '';
-    handleDropToPool();
-  });
-  
-  TERMS.forEach((term, i) => {
-    const el = document.createElement('div');
-    el.className = 'term-card';
-    el.textContent = term;
-    el.dataset.term = term;
-    el.dataset.index = i;
-    el.style.background = getColor(i);
-    el.style.color = 'white';
-    el.draggable = true;
-    if (board.includes(term)) el.classList.add('in-board');
-
-    el.addEventListener('dragstart', (e) => {
-      if (state !== 'building') { e.preventDefault(); return; }
-      dragData = { term, source: 'pool', colorIndex: i };
-      el.classList.add('dragging');
-      e.dataTransfer.effectAllowed = 'move';
-    });
-    el.addEventListener('dragend', () => el.classList.remove('dragging'));
-
-    // Touch support
-    let touchStart = null;
-    el.addEventListener('touchstart', (e) => {
-      if (state !== 'building') return;
-      touchStart = e.touches[0];
-      dragData = { term, source: 'pool', colorIndex: i };
-      el.classList.add('dragging');
-    });
-
-    el.addEventListener('touchmove', (e) => {
-      if (!dragData) return;
-      const touch = e.touches[0];
-      const el2 = document.elementFromPoint(touch.clientX, touch.clientY);
-      
-      // Visual feedback for board drop zone
-      if (el2 && el2.dataset.idx !== undefined) {
-        const cell = el2.closest('.bingo-cell');
-        if (cell) cell.classList.add('drag-over');
+  poolEl.innerHTML = '';
+  const placedTerms = new Set(board.filter(Boolean));
+  let available = 0;
+  TERMS.forEach(term => {
+    const card = document.createElement('div');
+    card.className = 'term-card' + (placedTerms.has(term) ? ' placed' : '');
+    card.textContent = term;
+    card.dataset.term = term;
+    if (!placedTerms.has(term)) {
+      if (!gameStarted) {
+        card.draggable = true;
+        addDragHandlers(card, 'pool', term);
+        addTouchHandlers(card, 'pool', term);
       }
-    });
+      available++;
+    }
+    poolEl.appendChild(card);
+  });
+  poolCountEl.textContent = available;
+}
 
-    container.appendChild(el);
+// ── Render board ──────────────────────────────────────────────────
+function renderBoard() {
+  // Keep canvas
+  const cells = boardEl.querySelectorAll('.bingo-cell');
+  cells.forEach(c => c.remove());
+
+  board.forEach((term, i) => {
+    const cell = document.createElement('div');
+    cell.className = 'bingo-cell' + (term ? ' filled' : '');
+    cell.dataset.index = i;
+
+    if (term) {
+      const span = document.createElement('span');
+      span.className = 'cell-text';
+      span.textContent = term;
+      cell.appendChild(span);
+
+      if (gameStarted) {
+        cell.classList.add('game-active');
+        if (marked.has(i)) cell.classList.add('marked');
+        cell.addEventListener('click', () => toggleMark(i));
+      } else {
+        cell.draggable = true;
+        addDragHandlers(cell, 'board', term, i);
+        addTouchHandlers(cell, 'board', term, i);
+      }
+    } else {
+      cell.textContent = '';
+      if (!gameStarted) {
+        addDropTarget(cell, i);
+      }
+    }
+
+    boardEl.appendChild(cell);
+  });
+
+  const filled = board.filter(Boolean).length;
+  boardCountEl.textContent = `${filled} / 25`;
+  btnMake.disabled = filled === 0;
+
+  // Redraw bingo lines if game started
+  if (gameStarted) drawLines();
+}
+
+// ── Drag & Drop (Desktop HTML5) ───────────────────────────────────
+function addDragHandlers(el, type, term, index) {
+  el.addEventListener('dragstart', e => {
+    if (gameStarted) return;
+    dragSource = {type, term, index};
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', term);
+    setTimeout(() => el.classList.add('dragging'), 0);
+  });
+  el.addEventListener('dragend', () => {
+    el.classList.remove('dragging');
+    dragSource = null;
   });
 }
 
-function renderGrid() {
-  const grid = document.getElementById('bingoGrid');
-  grid.innerHTML = '';
-  for (let i = 0; i < 25; i++) {
-    const cell = document.createElement('div');
-    cell.className = 'bingo-cell ' + (board[i] ? 'filled' : 'empty');
-    cell.dataset.idx = i;
-    if (board[i]) {
-      cell.textContent = board[i];
-      if (clicked[i]) cell.classList.add('clicked');
-      if (state === 'playing') cell.classList.add('clickable');
-    }
-
-    // Drop events
-    cell.addEventListener('dragover', (e) => {
-      if (state !== 'building') return;
-      e.preventDefault();
-      cell.classList.add('drag-over');
-    });
-    cell.addEventListener('dragleave', () => cell.classList.remove('drag-over'));
-    cell.addEventListener('drop', (e) => {
-      e.preventDefault();
-      cell.classList.remove('drag-over');
-      if (state !== 'building' || !dragData) return;
-      handleDrop(i);
-    });
-
-    // Drag from board cell
-    if (board[i] && state === 'building') {
-      cell.draggable = true;
-      cell.style.cursor = 'grab';
-      cell.addEventListener('dragstart', (e) => {
-        if (state !== 'building') { e.preventDefault(); return; }
-        const termIdx = TERMS.indexOf(board[i]);
-        dragData = { term: board[i], source: 'board', sourceIdx: i, colorIndex: termIdx };
-        cell.classList.add('dragging');
-      });
-      cell.addEventListener('dragend', () => cell.classList.remove('dragging'));
-    }
-
-    // Click for playing
-    cell.addEventListener('click', () => {
-      if (state !== 'playing' || !board[i] || clicked[i]) return;
-      clicked[i] = true;
-      cell.classList.add('clicked');
-      checkBingo();
-    });
-
-    grid.appendChild(cell);
-  }
-  document.getElementById('linesLayer').innerHTML = '';
-  drawBingoLines();
+function addDropTarget(cellEl, index) {
+  cellEl.addEventListener('dragover', e => {
+    if (gameStarted) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    cellEl.classList.add('drag-over');
+  });
+  cellEl.addEventListener('dragleave', () => cellEl.classList.remove('drag-over'));
+  cellEl.addEventListener('drop', e => {
+    if (gameStarted) return;
+    e.preventDefault();
+    cellEl.classList.remove('drag-over');
+    if (!dragSource) return;
+    const {type, term, index: srcIndex} = dragSource;
+    // Place term into this cell
+    if (type === 'board' && srcIndex !== undefined) board[srcIndex] = null;
+    board[index] = term;
+    renderPool();
+    renderBoard();
+  });
 }
 
-function handleDrop(cellIdx) {
-  if (!dragData) return;
-  const { term, source, sourceIdx } = dragData;
-
-  if (source === 'pool') {
-    if (board[cellIdx] && board[cellIdx] !== term) {
-      // Swap: put existing term back to pool
-      board[cellIdx] = term;
-    } else if (!board[cellIdx]) {
-      board[cellIdx] = term;
-    }
-  } else if (source === 'board') {
-    // Swap cells
-    const existing = board[cellIdx];
-    board[cellIdx] = term;
-    board[sourceIdx] = existing;
+// Pool drop (board card → pool)
+poolEl.addEventListener('dragover', e => {
+  if (gameStarted) return;
+  e.preventDefault();
+});
+poolEl.addEventListener('drop', e => {
+  if (gameStarted) return;
+  e.preventDefault();
+  if (!dragSource) return;
+  const {type, index} = dragSource;
+  if (type === 'board' && index !== undefined) {
+    board[index] = null;
+    renderPool();
+    renderBoard();
   }
-
-  dragData = null;
-  renderPool();
-  renderGrid();
-  updateMainBtn();
-}
-
-// Drop back to pool - remove from board
-function handleDropToPool() {
-  if (!dragData || dragData.source !== 'board') return;
-  const { sourceIdx } = dragData;
-  board[sourceIdx] = null;
-  dragData = null;
-  renderPool();
-  renderGrid();
-  updateMainBtn();
-}
-
-// Touch drop on grid cells
-document.addEventListener('touchend', (e) => {
-  if (state !== 'building' || !dragData) return;
-  const touch = e.changedTouches[0];
-  const el = document.elementFromPoint(touch.clientX, touch.clientY);
-  
-  // Remove drag-over from all cells
-  document.querySelectorAll('.bingo-cell').forEach(cell => cell.classList.remove('drag-over'));
-  
-  // Check if dropped on pool area
-  const poolCards = document.getElementById('poolCards');
-  const poolRect = poolCards.getBoundingClientRect();
-  if (touch.clientX >= poolRect.left && touch.clientX <= poolRect.right &&
-      touch.clientY >= poolRect.top && touch.clientY <= poolRect.bottom) {
-    handleDropToPool();
-  } else if (el && el.dataset.idx !== undefined) {
-    // Check if dropped on grid cell
-    const cell = el.closest('.bingo-cell');
-    if (cell) {
-      handleDrop(parseInt(cell.dataset.idx));
-    }
-  }
-  dragData = null;
 });
 
-function updateMainBtn() {
-  const btn = document.getElementById('mainBtn');
-  const filledCount = board.filter(Boolean).length;
-  if (state === 'building') {
-    btn.textContent = '빙고판 만들기';
-    btn.disabled = filledCount === 0;
-    btn.style.background = filledCount > 0 ? '#6366f1' : '';
+// Filled board cell drop (swap)
+boardEl.addEventListener('dragover', e => {
+  if (gameStarted) return;
+  const cell = e.target.closest('.bingo-cell.filled');
+  if (cell) {
+    e.preventDefault();
+    cell.classList.add('drag-over');
   }
-}
-
-function bindButtons() {
-  const mainBtn = document.getElementById('mainBtn');
-  const resetBtn = document.getElementById('resetBtn');
-
-  mainBtn.addEventListener('click', () => {
-    if (state === 'building') {
-      const filledCount = board.filter(Boolean).length;
-      if (filledCount < 25) {
-        showToast(`용어 카드 25개를 채워주세요 (현재 ${filledCount}개)`);
-        return;
-      }
-      state = 'ready';
-      mainBtn.textContent = '게임 시작';
-      mainBtn.style.background = '#22c55e';
-      resetBtn.style.display = 'inline-block';
-      renderPool();
-      renderGrid();
-    } else if (state === 'ready') {
-      state = 'playing';
-      mainBtn.style.display = 'none';
-      document.getElementById('bingoCount').style.display = 'block';
-      renderGrid();
-    }
-  });
-
-  resetBtn.addEventListener('click', resetGame);
-}
-
-function resetGame() {
-  state = 'building';
-  board = Array(25).fill(null);
-  clicked = Array(25).fill(false);
-  bingoLines = [];
-  const mainBtn = document.getElementById('mainBtn');
-  mainBtn.style.display = 'inline-block';
-  mainBtn.textContent = '빙고판 만들기';
-  mainBtn.disabled = true;
-  mainBtn.style.background = '#6366f1';
-  document.getElementById('resetBtn').style.display = 'none';
-  document.getElementById('bingoCount').style.display = 'none';
-  document.getElementById('bingoNum').textContent = '0';
+});
+boardEl.addEventListener('dragleave', e => {
+  const cell = e.target.closest('.bingo-cell');
+  if (cell) cell.classList.remove('drag-over');
+});
+boardEl.addEventListener('drop', e => {
+  if (gameStarted) return;
+  const cell = e.target.closest('.bingo-cell.filled');
+  if (!cell || !dragSource) return;
+  e.preventDefault();
+  cell.classList.remove('drag-over');
+  const destIndex = parseInt(cell.dataset.index);
+  const {type, term: srcTerm, index: srcIndex} = dragSource;
+  const destTerm = board[destIndex];
+  if (type === 'board' && srcIndex !== undefined) {
+    board[srcIndex] = destTerm; // swap
+  } else {
+    // from pool: push dest back to pool
+  }
+  board[destIndex] = srcTerm;
   renderPool();
-  renderGrid();
+  renderBoard();
+});
+
+// ── Touch Drag & Drop ─────────────────────────────────────────────
+function addTouchHandlers(el, type, term, index) {
+  el.addEventListener('touchstart', e => {
+    if (gameStarted) return;
+    const touch = e.touches[0];
+    touchDragInfo = {type, term, index, startX: touch.clientX, startY: touch.clientY, moved: false};
+    ghost.textContent = term;
+    ghost.style.left = touch.clientX + 'px';
+    ghost.style.top = touch.clientY + 'px';
+    // delay ghost show to distinguish tap
+    touchDragInfo.showTimer = setTimeout(() => {
+      ghost.style.opacity = '1';
+      el.classList.add('dragging');
+    }, 120);
+  }, {passive: true});
 }
 
+document.addEventListener('touchmove', e => {
+  if (!touchDragInfo) return;
+  const touch = e.touches[0];
+  ghost.style.left = touch.clientX + 'px';
+  ghost.style.top = touch.clientY + 'px';
+  touchDragInfo.moved = true;
+  // Highlight drop target
+  ghost.style.opacity = '0';
+  const el = document.elementFromPoint(touch.clientX, touch.clientY);
+  ghost.style.opacity = '1';
+  // clear all drag-over
+  document.querySelectorAll('.drag-over').forEach(c => c.classList.remove('drag-over'));
+  if (el) {
+    const cell = el.closest('.bingo-cell');
+    if (cell && !gameStarted) cell.classList.add('drag-over');
+  }
+}, {passive: false});
+
+document.addEventListener('touchend', e => {
+  if (!touchDragInfo) return;
+  clearTimeout(touchDragInfo.showTimer);
+  ghost.style.opacity = '0';
+  document.querySelectorAll('.drag-over').forEach(c => c.classList.remove('drag-over'));
+
+  const {type, term, index: srcIndex, moved} = touchDragInfo;
+  touchDragInfo = null;
+
+  // Find element under finger
+  const touch = e.changedTouches[0];
+  ghost.style.opacity = '0';
+  const el = document.elementFromPoint(touch.clientX, touch.clientY);
+
+  // Remove dragging class from all
+  document.querySelectorAll('.dragging').forEach(c => c.classList.remove('dragging'));
+
+  if (!moved) return; // was a tap, not drag
+
+  if (!el) return;
+
+  // Dropped on pool?
+  if (el.closest('#term-pool')) {
+    if (type === 'board' && srcIndex !== undefined) {
+      board[srcIndex] = null;
+      renderPool(); renderBoard();
+    }
+    return;
+  }
+
+  // Dropped on a board cell?
+  const cell = el.closest('.bingo-cell');
+  if (cell) {
+    const destIndex = parseInt(cell.dataset.index);
+    if (cell.classList.contains('filled')) {
+      // Swap
+      const destTerm = board[destIndex];
+      if (type === 'board' && srcIndex !== undefined) board[srcIndex] = destTerm;
+      board[destIndex] = term;
+    } else {
+      if (type === 'board' && srcIndex !== undefined) board[srcIndex] = null;
+      board[destIndex] = term;
+    }
+    renderPool(); renderBoard();
+  }
+}, {passive: true});
+
+// ── Mark cell ────────────────────────────────────────────────────
+function toggleMark(index) {
+  if (!gameStarted) return;
+  if (!board[index]) return;
+  if (marked.has(index)) {
+    marked.delete(index);
+  } else {
+    marked.add(index);
+  }
+  renderBoard();
+  checkBingo();
+}
+
+// ── Bingo check ──────────────────────────────────────────────────
+function getBingoLines() {
+  const lines = [];
+  // Rows
+  for (let r = 0; r < GRID; r++) {
+    const line = [];
+    for (let c = 0; c < GRID; c++) line.push(r*GRID+c);
+    lines.push(line);
+  }
+  // Cols
+  for (let c = 0; c < GRID; c++) {
+    const line = [];
+    for (let r = 0; r < GRID; r++) line.push(r*GRID+c);
+    lines.push(line);
+  }
+  // Diag
+  lines.push([0,6,12,18,24]);
+  lines.push([4,8,12,16,20]);
+  return lines;
+}
+
+function checkBingo() {
+  const allLines = getBingoLines();
+  const newBingo = allLines.filter(line => line.every(i => marked.has(i)));
+  const newCount = newBingo.length;
+  const oldCount = bingoLines.length;
+  bingoLines = newBingo;
+
+  if (newCount > oldCount) {
+    flashEl.classList.remove('flash');
+    void flashEl.offsetWidth;
+    flashEl.classList.add('flash');
+    showToast(`🎉 ${newCount}빙고!`);
+  }
+
+  // Update status
+  if (newCount === 0) {
+    statusEl.innerHTML = `<span style="color:var(--text-muted)">클릭하여 용어를 선택하세요</span>`;
+  } else {
+    const bingoWord = 'BINGO'.split('').map((ch, i) => `<span style="animation-delay:${i*0.1}s" class="bingo-word">${ch}</span>`).join('');
+    statusEl.innerHTML = `<span class="bingo-count">${newCount}</span> ${bingoWord}`;
+  }
+
+  drawLines();
+}
+
+// ── Draw bingo lines on canvas ───────────────────────────────────
+function drawLines() {
+  const boardRect = boardEl.getBoundingClientRect();
+  canvasEl.width = boardEl.offsetWidth;
+  canvasEl.height = boardEl.offsetHeight;
+  const ctx = canvasEl.getContext('2d');
+  ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+
+  if (bingoLines.length === 0) return;
+
+  const cells = boardEl.querySelectorAll('.bingo-cell');
+  if (cells.length < 25) return;
+
+  ctx.strokeStyle = 'rgba(0,229,255,0.75)';
+  ctx.lineWidth = 4;
+  ctx.lineCap = 'round';
+  ctx.shadowColor = 'rgba(0,229,255,0.8)';
+  ctx.shadowBlur = 12;
+
+  bingoLines.forEach(line => {
+    const first = cells[line[0]];
+    const last = cells[line[line.length-1]];
+    if (!first || !last) return;
+
+    const fr = first.getBoundingClientRect();
+    const lr = last.getBoundingClientRect();
+    const bRect = boardEl.getBoundingClientRect();
+
+    const x1 = fr.left - bRect.left + fr.width/2;
+    const y1 = fr.top - bRect.top + fr.height/2;
+    const x2 = lr.left - bRect.left + lr.width/2;
+    const y2 = lr.top - bRect.top + lr.height/2;
+
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+  });
+}
+
+// ── Buttons ──────────────────────────────────────────────────────
+btnMake.addEventListener('click', () => {
+  if (gameStarted) return;
+  const filled = board.filter(Boolean).length;
+
+  if (btnMake.dataset.mode === 'start') {
+    // Start game
+    gameStarted = true;
+    marked.clear();
+    bingoLines = [];
+    btnMake.textContent = '게임 진행 중';
+    btnMake.disabled = true;
+    btnMake.classList.remove('start-mode');
+    statusEl.innerHTML = `<span style="color:var(--text-muted)">클릭하여 용어를 선택하세요</span>`;
+    renderBoard();
+    return;
+  }
+
+  if (filled < 25) {
+    alert('용어 카드 25개를 채워주세요');
+    return;
+  }
+
+  // Lock board
+  btnMake.textContent = '게임 시작';
+  btnMake.dataset.mode = 'start';
+  btnMake.classList.add('start-mode');
+  btnReset.classList.add('visible');
+  renderPool();
+  renderBoard();
+});
+
+btnReset.addEventListener('click', () => {
+  board = Array(25).fill(null);
+  gameStarted = false;
+  marked.clear();
+  bingoLines = [];
+  btnMake.textContent = '빙고판 만들기';
+  btnMake.dataset.mode = '';
+  btnMake.disabled = true;
+  btnMake.classList.remove('start-mode');
+  btnReset.classList.remove('visible');
+  statusEl.innerHTML = '';
+  renderPool();
+  renderBoard();
+  // Clear canvas
+  const ctx = canvasEl.getContext('2d');
+  ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+});
+
+// ── Toast ─────────────────────────────────────────────────────────
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -457,91 +898,14 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-function checkBingo() {
-  const lines = [];
-  // Rows
-  for (let r = 0; r < 5; r++) {
-    const idxs = [0,1,2,3,4].map(c => r*5+c);
-    if (idxs.every(i => clicked[i])) lines.push(idxs);
-  }
-  // Cols
-  for (let c = 0; c < 5; c++) {
-    const idxs = [0,1,2,3,4].map(r => r*5+c);
-    if (idxs.every(i => clicked[i])) lines.push(idxs);
-  }
-  // Diags
-  const d1 = [0,6,12,18,24];
-  const d2 = [4,8,12,16,20];
-  if (d1.every(i => clicked[i])) lines.push(d1);
-  if (d2.every(i => clicked[i])) lines.push(d2);
+// ── Resize → redraw lines ─────────────────────────────────────────
+window.addEventListener('resize', () => {
+  if (gameStarted) drawLines();
+});
 
-  const newCount = lines.length;
-  const oldCount = bingoLines.length;
-  bingoLines = lines;
-  document.getElementById('bingoNum').textContent = newCount;
-  drawBingoLines();
-
-  if (newCount > oldCount) {
-    showToast(`🎉 ${newCount}빙고!`);
-    spawnConfetti();
-  }
-}
-
-function drawBingoLines() {
-  const layer = document.getElementById('linesLayer');
-  layer.innerHTML = '';
-  const grid = document.getElementById('bingoGrid');
-  if (!grid.children.length) return;
-
-  bingoLines.forEach(idxs => {
-    const first = grid.children[idxs[0]];
-    const last = grid.children[idxs[4]];
-    const gRect = grid.getBoundingClientRect();
-    const fRect = first.getBoundingClientRect();
-    const lRect = last.getBoundingClientRect();
-
-    const x1 = fRect.left + fRect.width/2 - gRect.left;
-    const y1 = fRect.top + fRect.height/2 - gRect.top;
-    const x2 = lRect.left + lRect.width/2 - gRect.left;
-    const y2 = lRect.top + lRect.height/2 - gRect.top;
-
-    const len = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
-    const angle = Math.atan2(y2-y1, x2-x1) * 180 / Math.PI;
-
-    const line = document.createElement('div');
-    line.className = 'bingo-line';
-    line.style.width = len + 'px';
-    line.style.height = '6px';
-    line.style.left = x1 + 'px';
-    line.style.top = (y1 - 3) + 'px';
-    line.style.transformOrigin = '0 50%';
-    line.style.transform = `rotate(${angle}deg)`;
-    layer.appendChild(line);
-  });
-}
-
-function spawnConfetti() {
-  const container = document.createElement('div');
-  container.className = 'confetti-container';
-  document.body.appendChild(container);
-  const colors = ['#6366f1','#f43f5e','#22c55e','#eab308','#ec4899','#06b6d4'];
-  for (let i = 0; i < 40; i++) {
-    const p = document.createElement('div');
-    p.className = 'confetti-piece';
-    p.style.left = Math.random()*100 + '%';
-    p.style.top = -10 + 'px';
-    p.style.background = colors[Math.floor(Math.random()*colors.length)];
-    p.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
-    p.style.animationDelay = Math.random()*0.5 + 's';
-    p.style.animationDuration = (1.5 + Math.random()) + 's';
-    container.appendChild(p);
-  }
-  setTimeout(() => container.remove(), 3000);
-}
-
-init();
-window.addEventListener('resize', drawBingoLines);
-lucide.createIcons();
+// ── Init ──────────────────────────────────────────────────────────
+renderPool();
+renderBoard();
 </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e78fde9252aea25',t:'MTc3NTM5NjcxMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
