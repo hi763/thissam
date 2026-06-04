@@ -414,7 +414,99 @@
     word-break: keep-all;
   }
 
-  @media (max-width: 520px) {
+  /* ── LAYOUT: portrait (default) = stacked ── */
+  #main-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  #pool-col {
+    width: 100%;
+    margin-bottom: 32px;
+  }
+  #board-col {
+    width: 100%;
+  }
+  #term-pool {
+    max-height: none;
+    overflow-y: visible;
+  }
+
+  /* ── LAYOUT: landscape (width > height, narrow screen) ── */
+  @media (orientation: landscape) and (max-height: 600px) {
+    .wrapper {
+      padding: 12px 16px 24px;
+      max-width: 100%;
+    }
+    header {
+      margin-bottom: 14px;
+    }
+    header h1 {
+      font-size: clamp(18px, 4vw, 28px);
+    }
+    header .badge {
+      font-size: 10px;
+      padding: 3px 10px;
+      margin-top: 6px;
+    }
+    header .sub {
+      font-size: 9px;
+      margin-bottom: 4px;
+    }
+
+    #main-layout {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    #pool-col {
+      width: 42%;
+      flex-shrink: 0;
+      margin-bottom: 0;
+    }
+    #board-col {
+      flex: 1;
+      min-width: 0;
+    }
+    #term-pool {
+      max-height: calc(100dvh - 140px);
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+      margin-bottom: 0;
+    }
+    #term-pool::-webkit-scrollbar { width: 4px; }
+    #term-pool::-webkit-scrollbar-track { background: transparent; }
+    #term-pool::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .board-section {
+      margin-bottom: 10px;
+    }
+    #bingo-board {
+      max-width: 100%;
+    }
+    .section-label {
+      margin-bottom: 8px;
+    }
+    .bingo-status {
+      margin-top: 8px;
+    }
+    .btn-area {
+      margin-top: 10px;
+    }
+    .bingo-cell {
+      border-radius: 6px;
+      font-size: clamp(8px, 1.6vw, 11px);
+    }
+    .cell-text {
+      font-size: clamp(8px, 1.4vw, 11px);
+    }
+    .term-card { font-size: 11px; padding: 5px 9px; }
+    .btn { padding: 9px 20px; font-size: 13px; }
+  }
+
+  /* ── Small portrait phones ── */
+  @media (max-width: 520px) and (orientation: portrait) {
     #bingo-board { gap: 4px; }
     .bingo-cell { border-radius: 7px; }
     .term-card { font-size: 12px; padding: 6px 10px; }
@@ -438,32 +530,41 @@
     </div>
   </header>
 
-  <!-- Term Pool -->
-  <div class="section-label">
-    용어 카드
-    <span class="count-badge" id="pool-count">30</span>
-  </div>
-  <div id="term-pool"></div>
+  <!-- Main content: landscape = side-by-side, portrait = stacked -->
+  <div id="main-layout">
 
-  <!-- Bingo Board -->
-  <div class="board-section">
-    <div class="section-label">
-      빙고판
-      <span class="count-badge" id="board-count">0 / 25</span>
+    <!-- LEFT col (pool) -->
+    <div id="pool-col">
+      <div class="section-label">
+        용어 카드
+        <span class="count-badge" id="pool-count">30</span>
+      </div>
+      <div id="term-pool"></div>
     </div>
-    <div id="bingo-board-wrap">
-      <div id="bingo-board">
-        <canvas id="bingo-canvas"></canvas>
+
+    <!-- RIGHT col (board) -->
+    <div id="board-col">
+      <div class="board-section">
+        <div class="section-label">
+          빙고판
+          <span class="count-badge" id="board-count">0 / 25</span>
+        </div>
+        <div id="bingo-board-wrap">
+          <div id="bingo-board">
+            <canvas id="bingo-canvas"></canvas>
+          </div>
+        </div>
+        <div class="bingo-status" id="bingo-status"></div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="btn-area">
+        <button class="btn" id="btn-make" disabled>빙고판 만들기</button>
+        <button class="btn" id="btn-reset">다시 하기</button>
       </div>
     </div>
-    <div class="bingo-status" id="bingo-status"></div>
-  </div>
 
-  <!-- Buttons -->
-  <div class="btn-area">
-    <button class="btn" id="btn-make" disabled>빙고판 만들기</button>
-    <button class="btn" id="btn-reset">다시 하기</button>
-  </div>
+  </div><!-- /main-layout -->
 </div>
 
 <script>
@@ -898,10 +999,12 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// ── Resize → redraw lines ─────────────────────────────────────────
-window.addEventListener('resize', () => {
-  if (gameStarted) drawLines();
-});
+// ── Resize / orientation change → redraw lines ───────────────────
+function onLayoutChange() {
+  if (gameStarted) requestAnimationFrame(() => drawLines());
+}
+window.addEventListener('resize', onLayoutChange);
+window.addEventListener('orientationchange', () => setTimeout(onLayoutChange, 200));
 
 // ── Init ──────────────────────────────────────────────────────────
 renderPool();
