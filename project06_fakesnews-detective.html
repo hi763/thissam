@@ -30,38 +30,9 @@
     }
     .logo-text { font-size: 16px; font-weight: 800; letter-spacing: -0.5px; }
     .progress-dots { display: flex; gap: 4px; }
-    .dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: #2a2a3a; transition: background 0.3s;
-    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #2a2a3a; transition: background 0.3s; }
     .dot.done { background: #22c55e; }
     .dot.current { background: #f0f; }
-
-    /* API Key setup */
-    #api-setup {
-      margin-top: 2rem;
-      background: #111118; border: 1px solid #1e1e2e; border-radius: 16px;
-      padding: 1.5rem;
-    }
-    #api-setup h2 { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: #a78bfa; }
-    #api-setup p { font-size: 13px; color: #666; line-height: 1.7; margin-bottom: 14px; }
-    .api-row { display: flex; gap: 8px; }
-    #api-key-input {
-      flex: 1; background: #0d0d1a; border: 1px solid #2a2a4a;
-      border-radius: 8px; padding: 10px 14px; font-size: 13px;
-      color: #ddd; outline: none; font-family: monospace;
-    }
-    #api-key-input:focus { border-color: #7c3aed; }
-    #api-save-btn {
-      background: #7c3aed; color: #fff; border: none;
-      border-radius: 8px; padding: 10px 18px; font-size: 13px;
-      font-weight: 700; cursor: pointer;
-    }
-    #api-save-btn:hover { background: #6d28d9; }
-    .api-note {
-      font-size: 11px; color: #444; margin-top: 10px; line-height: 1.6;
-    }
-    .api-note a { color: #7c3aed; text-decoration: none; }
 
     /* News Card */
     .news-card {
@@ -80,9 +51,7 @@
     }
     .source-name { font-size: 13px; font-weight: 600; color: #ccc; }
     .source-date { font-size: 11px; color: #555; margin-top: 1px; }
-    .diff-badge {
-      font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px;
-    }
+    .diff-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
     .diff-low  { background: #dcfce7; color: #166534; }
     .diff-mid  { background: #fef9c3; color: #854d0e; }
     .diff-high { background: #fee2e2; color: #991b1b; }
@@ -93,10 +62,7 @@
       line-height: 1.4; margin-bottom: 12px; letter-spacing: -0.3px;
     }
     .news-text { font-size: 14px; color: #888; line-height: 1.75; }
-    .news-text mark {
-      background: #fbbf24; color: #1a1a1a;
-      border-radius: 3px; padding: 0 2px;
-    }
+    .news-text mark { background: #fbbf24; color: #1a1a1a; border-radius: 3px; padding: 0 2px; }
 
     .clue-section { padding: 0 1.25rem 1rem; }
     .clue-toggle {
@@ -110,30 +76,20 @@
     .clue-pill {
       font-size: 12px; padding: 5px 12px; border-radius: 20px;
       cursor: pointer; border: 1px solid #2a2a3a;
-      background: #1a1a24; color: #777; font-weight: 600;
-      transition: all 0.15s;
+      background: #1a1a24; color: #777; font-weight: 600; transition: all 0.15s;
     }
-    .clue-pill.active {
-      border-color: #fbbf24; background: #2a2000; color: #fbbf24;
-    }
+    .clue-pill.active { border-color: #fbbf24; background: #2a2000; color: #fbbf24; }
 
     /* Verdict phase */
     .verdict-label {
-      font-size: 13px; color: #555; margin-bottom: 12px; text-align: center;
-      margin-top: 1.5rem;
+      font-size: 13px; color: #555; margin-bottom: 12px;
+      text-align: center; margin-top: 1.5rem;
     }
     .verdict-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .verdict-btn {
-      border-radius: 14px; padding: 20px; cursor: pointer;
-      transition: all 0.15s; text-align: center;
-    }
-    .verdict-btn.real {
-      background: #0d2d1a; border: 1.5px solid #22c55e33;
-    }
+    .verdict-btn { border-radius: 14px; padding: 20px; cursor: pointer; transition: all 0.15s; text-align: center; }
+    .verdict-btn.real { background: #0d2d1a; border: 1.5px solid #22c55e33; }
     .verdict-btn.real:hover { border-color: #22c55e; }
-    .verdict-btn.fake {
-      background: #2d0d0d; border: 1.5px solid #ef444433;
-    }
+    .verdict-btn.fake { background: #2d0d0d; border: 1.5px solid #ef444433; }
     .verdict-btn.fake:hover { border-color: #ef4444; }
     .verdict-icon { font-size: 28px; margin-bottom: 6px; }
     .verdict-title { font-size: 16px; font-weight: 800; }
@@ -145,9 +101,7 @@
 
     /* Reasoning phase */
     .phase-box { margin-top: 1.5rem; }
-    .verdict-indicator {
-      display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
-    }
+    .verdict-indicator { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
     .verdict-chip {
       width: 24px; height: 24px; border-radius: 6px;
       display: flex; align-items: center; justify-content: center;
@@ -160,10 +114,7 @@
     .reasoning-box {
       background: #111118; border: 1px solid #1e1e2e; border-radius: 14px; overflow: hidden;
     }
-    .reasoning-header {
-      padding: 10px 14px; border-bottom: 1px solid #1e1e2e;
-      font-size: 12px; color: #555;
-    }
+    .reasoning-header { padding: 10px 14px; border-bottom: 1px solid #1e1e2e; font-size: 12px; color: #555; }
     #reasoning-input {
       width: 100%; min-height: 120px;
       background: transparent; border: none; outline: none;
@@ -180,12 +131,9 @@
     #submit-btn {
       background: #1e1e2e; color: #444; border: none;
       border-radius: 8px; padding: 8px 20px;
-      font-size: 13px; font-weight: 700;
-      cursor: not-allowed; transition: all 0.2s;
+      font-size: 13px; font-weight: 700; cursor: not-allowed; transition: all 0.2s;
     }
-    #submit-btn.ready {
-      background: #f0f; color: #fff; cursor: pointer;
-    }
+    #submit-btn.ready { background: #f0f; color: #fff; cursor: pointer; }
     #submit-btn.ready:hover { background: #d400d4; }
 
     /* Feedback phase */
@@ -201,32 +149,48 @@
     .result-banner.wrong   .result-title { color: #fca5a5; }
     .result-explanation { font-size: 12px; color: #888; margin-top: 3px; line-height: 1.5; }
 
-    .ai-feedback-box {
+    /* Static feedback card */
+    .feedback-card {
       background: #0d0d1a; border: 1px solid #2a2a4a; border-radius: 14px; overflow: hidden;
     }
-    .ai-feedback-header {
+    .feedback-card-header {
       padding: 10px 16px; background: #13132a;
       border-bottom: 1px solid #2a2a4a;
       display: flex; align-items: center; gap: 8px;
     }
-    .ai-icon {
+    .feedback-icon-box {
       width: 20px; height: 20px; background: #7c3aed; border-radius: 5px;
-      display: flex; align-items: center; justify-content: center;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .ai-header-text { font-size: 12px; font-weight: 700; color: #a78bfa; }
-    .ai-feedback-body { padding: 1rem 1.25rem; min-height: 80px; }
-    .ai-loading {
-      display: flex; align-items: center; gap: 10px;
-      color: #555; font-size: 13px;
+    .feedback-header-text { font-size: 12px; font-weight: 700; color: #a78bfa; }
+    .feedback-card-body { padding: 1rem 1.25rem; }
+    .feedback-item { margin-bottom: 14px; }
+    .feedback-item:last-child { margin-bottom: 0; }
+    .feedback-label {
+      font-size: 11px; font-weight: 700; color: #a78bfa;
+      margin-bottom: 4px; display: flex; align-items: center; gap: 5px;
     }
-    .spinner {
-      width: 16px; height: 16px; border: 2px solid #2a2a4a;
-      border-top-color: #7c3aed; border-radius: 50%;
-      animation: spin 0.7s linear infinite; flex-shrink: 0;
+    .feedback-label-dot {
+      width: 5px; height: 5px; border-radius: 50%; background: #7c3aed; flex-shrink: 0;
     }
-    .feedback-item { margin-bottom: 12px; }
-    .feedback-label { font-size: 11px; font-weight: 700; color: #a78bfa; margin-bottom: 3px; }
-    .feedback-content { font-size: 13px; color: #bbb; line-height: 1.7; }
+    .feedback-content { font-size: 13px; color: #bbb; line-height: 1.75; }
+
+    /* Good/bad example tabs */
+    .example-tabs { display: flex; gap: 6px; margin-top: 10px; margin-bottom: 6px; }
+    .ex-tab {
+      font-size: 11px; padding: 4px 10px; border-radius: 6px;
+      border: 1px solid #2a2a4a; background: #1a1a2e;
+      color: #666; cursor: pointer; transition: all 0.15s;
+    }
+    .ex-tab.good-active { border-color: #22c55e55; background: #0d2d1a; color: #86efac; }
+    .ex-tab.bad-active  { border-color: #ef444455; background: #2d0d0d; color: #fca5a5; }
+    .ex-content {
+      font-size: 12px; line-height: 1.7; padding: 10px 12px;
+      border-radius: 8px; display: none;
+    }
+    .ex-content.good { background: #0a1f12; border: 1px solid #22c55e22; color: #86efac; }
+    .ex-content.bad  { background: #1f0a0a; border: 1px solid #ef444422; color: #fca5a5; }
+    .ex-content.visible { display: block; }
 
     #next-btn {
       width: 100%; margin-top: 14px; background: #f0f; border: none;
@@ -240,7 +204,7 @@
     #result-screen {
       min-height: 100vh; display: none; flex-direction: column;
       align-items: center; justify-content: center;
-      text-align: center; padding: 2rem;
+      text-align: center; padding: 2rem; max-width: 520px; margin: 0 auto;
     }
     .grade-display {
       font-size: 80px; font-weight: 800; color: #f0f;
@@ -249,13 +213,8 @@
     }
     .score-text { font-size: 22px; font-weight: 700; margin: 16px 0 8px; }
     .grade-msg { font-size: 15px; color: #aaa; margin-bottom: 40px; }
-    .score-grid {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 12px; width: 100%; max-width: 480px; margin-bottom: 32px;
-    }
-    .score-item {
-      border-radius: 12px; padding: 12px 14px; text-align: left;
-    }
+    .score-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; margin-bottom: 32px; }
+    .score-item { border-radius: 12px; padding: 12px 14px; text-align: left; }
     .score-item.correct { background: #0d2d1a; border: 1px solid rgba(34,197,94,.2); }
     .score-item.wrong   { background: #2d0d0d; border: 1px solid rgba(239,68,68,.2); }
     .score-item-label { font-size: 11px; font-weight: 600; margin-bottom: 4px; }
@@ -269,20 +228,17 @@
     }
     #restart-btn:hover { background: #d400d4; }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
-
     @media (max-width: 480px) {
-      .verdict-grid { grid-template-columns: 1fr 1fr; }
       .score-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-<!-- Result screen (shown at end) -->
+<!-- Result screen -->
 <div id="result-screen">
   <div class="grade-display" id="grade-letter">A</div>
-  <div class="score-text" id="score-text">80점 · 4/5 정답</div>
+  <div class="score-text" id="score-text"></div>
   <div class="grade-msg" id="grade-msg"></div>
   <div class="score-grid" id="score-grid"></div>
   <button id="restart-btn" onclick="restart()">다시 도전</button>
@@ -290,8 +246,6 @@
 
 <!-- Main app -->
 <div id="app">
-
-  <!-- Header -->
   <div class="header">
     <div class="header-left">
       <div class="logo-icon">
@@ -304,121 +258,134 @@
     <div class="progress-dots" id="progress-dots"></div>
   </div>
 
-  <!-- API Key Setup -->
-  <div id="api-setup">
-    <h2>Claude API 키 설정</h2>
-    <p>AI 논증 피드백 기능을 사용하려면 Anthropic API 키가 필요합니다.<br>
-    키는 브라우저 로컬스토리지에만 저장되며, 외부로 전송되지 않습니다.</p>
-    <div class="api-row">
-      <input type="password" id="api-key-input" placeholder="sk-ant-..." />
-      <button id="api-save-btn" onclick="saveApiKey()">저장하고 시작</button>
+  <!-- News Card -->
+  <div class="news-card">
+    <div class="source-bar">
+      <div class="source-left">
+        <div class="source-logo" id="news-logo"></div>
+        <div>
+          <div class="source-name" id="news-source"></div>
+          <div class="source-date" id="news-date"></div>
+        </div>
+      </div>
+      <div class="diff-badge" id="diff-badge"></div>
     </div>
-    <p class="api-note">
-      API 키 발급: <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> →
-      API Keys → Create Key<br>
-      키 없이도 앱 이용은 가능하나 AI 피드백 기능은 비활성화됩니다.
-      <br><br>
-      <button onclick="startWithoutKey()" style="font-size:11px;color:#555;background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;">
-        키 없이 시작하기
+    <div class="news-body">
+      <div class="news-headline" id="news-headline"></div>
+      <div class="news-text" id="news-body-text"></div>
+    </div>
+    <div class="clue-section">
+      <button class="clue-toggle" onclick="toggleClues()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+        </svg>
+        <span id="clue-toggle-label">단서 힌트 보기</span>
       </button>
-    </p>
+      <div class="clue-pills" id="clue-pills" style="display:none;"></div>
+    </div>
   </div>
 
-  <!-- Game Area (hidden until key is set) -->
-  <div id="game-area" style="display:none;">
+  <!-- Phase: Verdict -->
+  <div id="phase-verdict">
+    <div class="verdict-label">이 뉴스는 진짜일까요, 가짜일까요?</div>
+    <div class="verdict-grid">
+      <button class="verdict-btn real" onclick="selectVerdict('real')">
+        <div class="verdict-icon">✓</div>
+        <div class="verdict-title">진짜 뉴스</div>
+        <div class="verdict-sub">사실에 근거한 보도</div>
+      </button>
+      <button class="verdict-btn fake" onclick="selectVerdict('fake')">
+        <div class="verdict-icon">✗</div>
+        <div class="verdict-title">가짜 뉴스</div>
+        <div class="verdict-sub">허위·과장된 정보</div>
+      </button>
+    </div>
+  </div>
 
-    <!-- News Card -->
-    <div class="news-card">
-      <div class="source-bar">
-        <div class="source-left">
-          <div class="source-logo" id="news-logo"></div>
-          <div>
-            <div class="source-name" id="news-source"></div>
-            <div class="source-date" id="news-date"></div>
-          </div>
-        </div>
-        <div class="diff-badge" id="diff-badge"></div>
+  <!-- Phase: Reasoning -->
+  <div id="phase-reasoning" style="display:none;" class="phase-box">
+    <div class="verdict-indicator">
+      <div class="verdict-chip" id="verdict-chip"></div>
+      <span class="verdict-label-sm" id="verdict-label-sm"></span>
+    </div>
+    <div class="reasoning-box">
+      <div class="reasoning-header">판별 근거를 작성하세요 (20자 이상)</div>
+      <textarea id="reasoning-input"
+        placeholder="왜 그렇게 생각했나요? 기사의 어떤 부분이 의심스럽거나 신뢰할 수 있다고 느꼈나요?"
+        oninput="onReasoningInput()"></textarea>
+      <div class="reasoning-footer">
+        <span id="char-count">0자</span>
+        <button id="submit-btn" onclick="submitReasoning()" disabled>피드백 확인하기</button>
       </div>
-      <div class="news-body">
-        <div class="news-headline" id="news-headline"></div>
-        <div class="news-text" id="news-body-text"></div>
+    </div>
+  </div>
+
+  <!-- Phase: Feedback -->
+  <div id="phase-feedback" style="display:none;" class="phase-box">
+    <!-- 정답/오답 배너 -->
+    <div class="result-banner" id="result-banner">
+      <div class="result-icon" id="result-icon"></div>
+      <div>
+        <div class="result-title" id="result-title"></div>
+        <div class="result-explanation" id="result-explanation"></div>
       </div>
-      <div class="clue-section">
-        <button class="clue-toggle" onclick="toggleClues()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+    </div>
+
+    <!-- 맞춤 피드백 카드 -->
+    <div class="feedback-card">
+      <div class="feedback-card-header">
+        <div class="feedback-icon-box">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="#fff">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
           </svg>
-          <span id="clue-toggle-label">단서 힌트 보기</span>
-        </button>
-        <div class="clue-pills" id="clue-pills" style="display:none;"></div>
-      </div>
-    </div>
-
-    <!-- Phase: Verdict -->
-    <div id="phase-verdict">
-      <div class="verdict-label">이 뉴스는 진짜일까요, 가짜일까요?</div>
-      <div class="verdict-grid">
-        <button class="verdict-btn real" onclick="selectVerdict('real')">
-          <div class="verdict-icon">✓</div>
-          <div class="verdict-title">진짜 뉴스</div>
-          <div class="verdict-sub">사실에 근거한 보도</div>
-        </button>
-        <button class="verdict-btn fake" onclick="selectVerdict('fake')">
-          <div class="verdict-icon">✗</div>
-          <div class="verdict-title">가짜 뉴스</div>
-          <div class="verdict-sub">허위·과장된 정보</div>
-        </button>
-      </div>
-    </div>
-
-    <!-- Phase: Reasoning -->
-    <div id="phase-reasoning" style="display:none;" class="phase-box">
-      <div class="verdict-indicator">
-        <div class="verdict-chip" id="verdict-chip"></div>
-        <span class="verdict-label-sm" id="verdict-label-sm"></span>
-      </div>
-      <div class="reasoning-box">
-        <div class="reasoning-header">판별 근거를 작성하세요 (20자 이상)</div>
-        <textarea id="reasoning-input"
-          placeholder="왜 그렇게 생각했나요? 기사의 어떤 부분이 의심스럽거나 신뢰할 수 있다고 느꼈나요?"
-          oninput="onReasoningInput()"></textarea>
-        <div class="reasoning-footer">
-          <span id="char-count">0자</span>
-          <button id="submit-btn" onclick="submitReasoning()" disabled>AI 피드백 받기</button>
         </div>
+        <span class="feedback-header-text">논증 피드백 가이드</span>
       </div>
-    </div>
+      <div class="feedback-card-body">
 
-    <!-- Phase: Feedback -->
-    <div id="phase-feedback" style="display:none;" class="phase-box">
-      <div class="result-banner" id="result-banner">
-        <div class="result-icon" id="result-icon"></div>
-        <div>
-          <div class="result-title" id="result-title"></div>
-          <div class="result-explanation" id="result-explanation"></div>
-        </div>
-      </div>
-      <div class="ai-feedback-box">
-        <div class="ai-feedback-header">
-          <div class="ai-icon">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="#fff">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-            </svg>
+        <div class="feedback-item">
+          <div class="feedback-label">
+            <div class="feedback-label-dot"></div>
+            이 기사의 핵심 판별 포인트
           </div>
-          <span class="ai-header-text">Claude AI 논증 피드백</span>
+          <div class="feedback-content" id="fb-point"></div>
         </div>
-        <div class="ai-feedback-body" id="ai-feedback-body">
-          <div class="ai-loading">
-            <div class="spinner"></div>
-            AI가 논증 구조를 분석 중...
+
+        <div class="feedback-item">
+          <div class="feedback-label">
+            <div class="feedback-label-dot"></div>
+            근거 작성 예시 비교
           </div>
+          <div class="example-tabs">
+            <button class="ex-tab" id="tab-good" onclick="showExample('good')">✓ 좋은 근거 예시</button>
+            <button class="ex-tab" id="tab-bad"  onclick="showExample('bad')">✗ 아쉬운 근거 예시</button>
+          </div>
+          <div class="ex-content good" id="ex-good"></div>
+          <div class="ex-content bad"  id="ex-bad"></div>
         </div>
+
+        <div class="feedback-item">
+          <div class="feedback-label">
+            <div class="feedback-label-dot"></div>
+            팩트체크 방법
+          </div>
+          <div class="feedback-content" id="fb-factcheck"></div>
+        </div>
+
+        <div class="feedback-item" style="background:#13132a; border-radius:10px; padding:12px 14px;">
+          <div class="feedback-label" style="margin-bottom:5px;">
+            <div class="feedback-label-dot"></div>
+            미디어 리터러시 한 줄 팁
+          </div>
+          <div class="feedback-content" style="color:#c4b5fd;" id="fb-tip"></div>
+        </div>
+
       </div>
-      <button id="next-btn" onclick="nextNews()">다음 기사</button>
     </div>
 
-  </div><!-- /game-area -->
-</div><!-- /app -->
+    <button id="next-btn" onclick="nextNews()">다음 기사</button>
+  </div>
+</div>
 
 <script>
 const NEWS_DATA = [
@@ -429,7 +396,14 @@ const NEWS_DATA = [
     body: "서울시는 8일 시의회 본회의에서 대중교통 무료화 조례안을 통과시켰다고 발표했다. 오세훈 시장은 \"시민 교통비 부담을 완전히 없애겠다\"고 밝혔으며, 연간 소요 예산은 약 2조 3천억 원으로 추산된다. 해당 정책은 2027년 1월 1일부터 지하철·버스 전 노선에 적용될 예정이다.",
     clues: ["확정", "조례안을 통과", "오세훈 시장은"],
     isReal: false, difficulty: "중",
-    explanation: "실제로 서울시는 이런 정책을 확정·발표한 적이 없습니다. 출처 매체 '서울뉴스타임'은 공식 언론사가 아니며, 구체적인 예산 수치가 신뢰성 있는 출처 없이 제시되어 있습니다."
+    explanation: "실제로 서울시는 이런 정책을 확정·발표한 적이 없습니다. 출처 매체 '서울뉴스타임'은 공식 언론사가 아니며, 구체적인 예산 수치가 신뢰성 있는 출처 없이 제시되어 있습니다.",
+    feedback: {
+      point: "① 출처 '서울뉴스타임'이 공식 언론사인지 확인이 필요합니다. ② '확정'이라는 강한 단어를 사용했지만 서울시 공식 홈페이지나 주요 언론에서 같은 내용을 찾을 수 없습니다. ③ 연간 2조 3천억 원이라는 구체적인 수치가 출처 없이 제시된 점도 의심 신호입니다.",
+      goodExample: "\"'서울뉴스타임'을 검색해봤더니 서울시 공식 보도자료 목록에 없는 매체였습니다. 또한 이 정도 규모의 정책이라면 KBS·MBC·연합뉴스 등에서도 보도됐을 텐데 관련 기사를 찾을 수 없어서 가짜뉴스라고 판단했습니다.\"",
+      badExample: "\"왠지 너무 좋은 내용이라 가짜 같습니다.\" → 느낌만 서술하고 구체적 근거가 없어서 논증으로 인정받기 어렵습니다.",
+      factcheck: "포털에서 '서울시 대중교통 무료화'를 검색해 서울시 공식 홈페이지(seoul.go.kr)와 연합뉴스·KBS 등 주요 언론의 기사가 있는지 확인하세요. 공식 정책 발표는 반드시 복수의 신뢰 언론에 동시 보도됩니다.",
+      tip: "출처 이름이 공식처럼 보여도 실제 등록 언론사인지 확인하세요. 한국언론진흥재단 '빅카인즈(bigkinds.or.kr)'에서 언론사 진위를 검색할 수 있습니다."
+    }
   },
   {
     id: 2,
@@ -438,7 +412,14 @@ const NEWS_DATA = [
     body: "세계보건기구(WHO)가 발표한 최신 보고서에 따르면 하루 2시간 이상 스마트폰을 사용하는 14~18세 청소년은 그렇지 않은 또래보다 수면장애 발생 위험이 약 3배 높은 것으로 나타났다. 연구에는 42개국 12만 명이 참여했으며 블루라이트와 멜라토닌 억제가 주요 원인으로 지목됐다.",
     clues: ["WHO", "42개국 12만 명", "블루라이트"],
     isReal: true, difficulty: "하",
-    explanation: "WHO 및 다수 학술 연구에서 청소년 스마트폰 과사용과 수면 장애의 상관관계가 실제로 보고되고 있습니다. 구체적 수치는 연구마다 다르지만 핵심 주장은 과학적 근거가 있습니다."
+    explanation: "WHO 및 다수 학술 연구에서 청소년 스마트폰 과사용과 수면 장애의 상관관계가 실제로 보고되고 있습니다. 핵심 주장은 과학적 근거가 있으며, 블루라이트와 멜라토닌 억제 메커니즘도 의학적으로 확인된 사실입니다.",
+    feedback: {
+      point: "① WHO·연구 참가자 수·국가 수 등 구체적이고 검증 가능한 수치가 제시되어 있습니다. ② 블루라이트→멜라토닌 억제 메커니즘은 의학계에서 널리 인정된 사실입니다. ③ 이 기사의 핵심 주장은 사실이지만, 정확한 '3배' 수치는 연구마다 다를 수 있으므로 원문 보고서 확인이 좋습니다.",
+      goodExample: "\"WHO 공식 사이트에서 청소년 디지털 건강 관련 보고서를 찾을 수 있었고, 블루라이트와 수면 방해의 연관성은 여러 의학 저널에서도 확인되어 신뢰할 수 있는 기사라고 판단했습니다.\"",
+      badExample: "\"WHO가 발표했다고 하니까 진짜일 것 같습니다.\" → 권위 있는 기관 이름만 믿고 내용을 검증하지 않는 것은 '권위에 의존하는 오류'입니다.",
+      factcheck: "WHO 공식 홈페이지(who.int)에서 해당 보고서를 직접 검색해 보세요. 기사에 '최신 보고서'라고만 되어 있다면 발행 연도와 제목을 확인해야 합니다. 구체적 출처가 없다면 의심이 필요합니다.",
+      tip: "진짜 뉴스도 수치를 과장하거나 맥락을 빠뜨릴 수 있습니다. '대체로 사실'과 '완전한 사실'은 다릅니다. 숫자가 나오면 원출처(논문·보고서)까지 확인하는 습관을 들이세요."
+    }
   },
   {
     id: 3,
@@ -447,7 +428,14 @@ const NEWS_DATA = [
     body: "KAIST 바이오나노연구팀이 개발한 DNA 나노로봇이 3상 임상시험에서 기존 항암제 대비 부작용 없이 암세포 제거율 94%를 달성했다고 발표했다. 연구팀은 이 기술이 2028년 상용화될 수 있다고 밝혔으며, 네이처 메디신 최신호에 게재됐다.",
     clues: ["3상 임상시험", "94%", "네이처 메디신"],
     isReal: false, difficulty: "상",
-    explanation: "DNA 나노로봇 연구는 실제 진행 중이지만, 3상 임상에서 94% 성공률을 거뒀다는 주장은 현 기술 수준을 크게 과장한 것입니다. '네이처 메디신 최신호'에 해당 논문이 실제로 게재됐는지 확인이 필요합니다."
+    explanation: "DNA 나노로봇 연구는 실제 진행 중이지만 3상 임상에서 94% 성공률을 달성했다는 주장은 현 기술 수준을 크게 과장한 것입니다. 3상 임상시험은 수년이 걸리는 과정으로, 2028년 상용화 주장도 비현실적입니다.",
+    feedback: {
+      point: "① '3상 임상시험 성공'은 의학 역사상 획기적인 사건인데 KAIST 공식 보도자료나 주요 언론에 같은 내용이 없습니다. ② '네이처 메디신 최신호 게재'라고 했지만 논문 제목·DOI·저자명이 없어 확인이 불가능합니다. ③ 94%라는 수치와 2028년 상용화는 현 의학 현실과 거리가 멉니다.",
+      goodExample: "\"'네이처 메디신'에 실렸다면 논문 제목과 저자가 있어야 하는데 기사에 없습니다. KAIST 홈페이지 보도자료에도 해당 내용이 없고, 3상 임상이 이 정도 기간 안에 완료되는 것은 의학적으로 불가능에 가깝기 때문에 가짜뉴스라고 판단했습니다.\"",
+      badExample: "\"암 치료는 아직 안 됐으니까 가짜입니다.\" → 선입견에 의존한 판단으로, 실제로 근거를 검토하지 않았습니다.",
+      factcheck: "논문 검색엔진 'PubMed(pubmed.ncbi.nlm.nih.gov)' 또는 '구글 스칼라(scholar.google.com)'에서 저자·기관명으로 검색하면 실제 논문 게재 여부를 확인할 수 있습니다. 저널명을 언급한 기사는 반드시 원문을 찾아보세요.",
+      tip: "과학 기사에서 '획기적 성과'를 주장할 때는 ① 저널명+논문제목 ② 임상시험 단계 ③ 연구기관 공식 확인 세 가지를 반드시 체크하세요. 하나라도 없으면 의심하세요."
+    }
   },
   {
     id: 4,
@@ -456,7 +444,14 @@ const NEWS_DATA = [
     body: "기상청이 발표한 '2025 한반도 기후변화 분석 보고서'에 따르면 최근 10년(2015~2024) 여름철 평균기온이 1980년대 평균보다 1.8°C 상승한 것으로 나타났다. 특히 서울·대구 등 대도시의 열섬 효과가 상승폭을 키운 요인으로 분석됐다.",
     clues: ["기상청 공식", "보고서", "1980년대 평균"],
     isReal: true, difficulty: "하",
-    explanation: "기상청은 매년 기후변화 분석 보고서를 발표하며, 한반도 기온 상승 추세는 공신력 있는 데이터로 꾸준히 확인되고 있습니다. 출처가 명확하고 구체적인 연도와 비교 기준이 제시되어 있습니다."
+    explanation: "기상청은 매년 기후변화 분석 보고서를 발표하며, 한반도 기온 상승 추세는 공신력 있는 데이터로 꾸준히 확인되고 있습니다. 출처가 명확하고 구체적인 연도 범위와 비교 기준이 제시되어 있습니다.",
+    feedback: {
+      point: "① '기상청 공식 보도자료'는 직접 확인이 가능한 일차 출처입니다. ② 보고서 제목('2025 한반도 기후변화 분석 보고서')과 비교 기간(1980년대 vs 2015~2024)이 구체적으로 명시되어 있습니다. ③ 1.8°C라는 수치는 기상청 데이터베이스에서 검증 가능합니다.",
+      goodExample: "\"기상청 홈페이지(kma.go.kr)에서 해당 보고서 제목을 검색했더니 실제로 발간된 문서를 확인할 수 있었습니다. 출처가 명확하고 비교 기준이 구체적이어서 신뢰할 수 있다고 판단했습니다.\"",
+      badExample: "\"기상청 이름이 있으니 진짜입니다.\" → 기관 이름만 보고 판단했습니다. 누군가 기상청 이름을 도용한 가짜 보도자료일 수도 있으니 직접 기상청 홈페이지에서 확인해야 합니다.",
+      factcheck: "기상청 공식 홈페이지(kma.go.kr) → '기후정보포털' → '보도자료'에서 해당 보고서를 직접 검색해 원문과 일치하는지 확인하세요. 정부 기관 보도자료는 항상 공식 홈페이지에 원문이 게시됩니다.",
+      tip: "정부 기관 이름을 사용한 기사도 반드시 공식 홈페이지에서 크로스체크하세요. 진짜 정부 보도자료는 홈페이지에 원문 PDF가 함께 제공됩니다."
+    }
   },
   {
     id: 5,
@@ -465,7 +460,14 @@ const NEWS_DATA = [
     body: "하버드 의과대학 연구팀이 성인 8,000명을 대상으로 6개월간 진행한 연구에서 매일 커피를 4잔 이상 마신 그룹의 IQ 테스트 점수가 평균 7포인트 향상됐다는 결과를 발표했다. 카페인이 신경 시냅스 생성을 촉진한다는 메커니즘도 함께 제시됐다.",
     clues: ["IQ 7포인트", "6개월", "하버드 의과대학"],
     isReal: false, difficulty: "중",
-    explanation: "IQ는 단기간의 음식 섭취로 유의미하게 변하지 않습니다. '하버드 의과대학'이라는 권위 있는 기관명을 사용했지만 실제 논문 링크·저널명이 없습니다. 카페인이 집중력에 일시적 영향을 줄 수 있지만 IQ 상승과는 다른 개념입니다."
+    explanation: "IQ는 단기간의 음식 섭취로 유의미하게 변하지 않습니다. '하버드 의과대학'이라는 권위 있는 기관명을 사용했지만 실제 논문 링크·저널명이 없습니다. 카페인이 집중력에 일시적 영향을 줄 수 있지만 IQ 상승과는 다른 개념입니다.",
+    feedback: {
+      point: "① '하버드 의과대학'이라는 유명 기관명을 근거 없이 사용하는 것은 대표적인 가짜뉴스 패턴입니다. ② 논문 제목·저자·저널명이 전혀 없습니다. ③ IQ는 지능의 종합적 측정값으로 커피 섭취 6개월 만에 7포인트 오른다는 주장은 신경과학적으로 받아들이기 어렵습니다.",
+      goodExample: "\"'하버드 의과대학 연구'라고 했는데 논문 제목이나 저자, 게재 저널이 없습니다. 구글 스칼라에서 'coffee IQ Harvard 2025'로 검색해도 관련 논문이 나오지 않았고, IQ가 식품 섭취로 단기간 변한다는 개념 자체가 의심스러워 가짜뉴스로 판단했습니다.\"",
+      badExample: "\"커피가 IQ를 올린다는 게 말이 안 됩니다.\" → 직관적으로 틀렸다고 느끼는 것과, 왜 틀렸는지 근거를 제시하는 것은 다릅니다.",
+      factcheck: "하버드 의과대학 공식 뉴스레터(health.harvard.edu)에서 커피 관련 연구를 검색해 보세요. 실제 연구라면 반드시 원문 링크가 있습니다. 구글 스칼라(scholar.google.com)에서 키워드로 논문 실재 여부도 확인하세요.",
+      tip: "유명 기관 이름(하버드·서울대·WHO 등)이 나온다고 무조건 신뢰하지 마세요. 가짜뉴스가 가장 자주 쓰는 전략이 바로 권위 있는 이름 도용입니다."
+    }
   }
 ];
 
@@ -475,66 +477,34 @@ let verdict = null;
 let scores = [];
 let showClues = false;
 let activeClue = null;
-let apiKey = localStorage.getItem('anthropic_api_key') || '';
 
-// Init
-(function init() {
-  if (apiKey) {
-    document.getElementById('api-setup').style.display = 'none';
-    document.getElementById('game-area').style.display = 'block';
-    renderNews();
-  }
-  document.getElementById('api-key-input').value = apiKey;
-})();
-
-function saveApiKey() {
-  const val = document.getElementById('api-key-input').value.trim();
-  if (!val) { alert('API 키를 입력해주세요.'); return; }
-  apiKey = val;
-  localStorage.setItem('anthropic_api_key', val);
-  document.getElementById('api-setup').style.display = 'none';
-  document.getElementById('game-area').style.display = 'block';
-  renderNews();
-}
-
-function startWithoutKey() {
-  apiKey = '';
-  document.getElementById('api-setup').style.display = 'none';
-  document.getElementById('game-area').style.display = 'block';
-  renderNews();
-}
+// Boot
+renderNews();
 
 function renderNews() {
   const news = NEWS_DATA[idx];
-  const total = NEWS_DATA.length;
 
   // Progress dots
-  const dotsEl = document.getElementById('progress-dots');
-  dotsEl.innerHTML = NEWS_DATA.map((_, i) =>
+  document.getElementById('progress-dots').innerHTML = NEWS_DATA.map((_, i) =>
     `<div class="dot ${i < idx ? 'done' : i === idx ? 'current' : ''}"></div>`
   ).join('');
 
-  // Source bar
   document.getElementById('news-logo').textContent = news.logo;
   document.getElementById('news-source').textContent = news.source;
   document.getElementById('news-date').textContent = news.date;
 
   const diffEl = document.getElementById('diff-badge');
   diffEl.textContent = '난이도 ' + news.difficulty;
-  diffEl.className = 'diff-badge ' + ({ '하': 'diff-low', '중': 'diff-mid', '상': 'diff-high' }[news.difficulty]);
+  diffEl.className = 'diff-badge ' + ({하:'diff-low',중:'diff-mid',상:'diff-high'}[news.difficulty]);
 
-  // Content
   document.getElementById('news-headline').textContent = news.headline;
   renderBody();
 
-  // Clues
-  showClues = false;
-  activeClue = null;
+  showClues = false; activeClue = null;
   document.getElementById('clue-toggle-label').textContent = '단서 힌트 보기';
   document.getElementById('clue-pills').style.display = 'none';
   renderClues();
 
-  // Phases
   showPhase('verdict');
   document.getElementById('reasoning-input').value = '';
   onReasoningInput();
@@ -542,25 +512,17 @@ function renderNews() {
 
 function renderBody() {
   const news = NEWS_DATA[idx];
-  const bodyEl = document.getElementById('news-body-text');
-  if (activeClue === null) {
-    bodyEl.textContent = news.body;
-    return;
-  }
+  const el = document.getElementById('news-body-text');
+  if (activeClue === null) { el.textContent = news.body; return; }
   const clue = news.clues[activeClue];
-  const parts = news.body.split(clue);
-  bodyEl.innerHTML = parts.map((p, i) =>
-    i < parts.length - 1
-      ? escapeHtml(p) + `<mark>${escapeHtml(clue)}</mark>`
-      : escapeHtml(p)
+  el.innerHTML = news.body.split(clue).map((p, i, arr) =>
+    i < arr.length - 1 ? esc(p) + `<mark>${esc(clue)}</mark>` : esc(p)
   ).join('');
 }
 
 function renderClues() {
-  const news = NEWS_DATA[idx];
-  const pillsEl = document.getElementById('clue-pills');
-  pillsEl.innerHTML = news.clues.map((clue, i) =>
-    `<button class="clue-pill ${activeClue === i ? 'active' : ''}" onclick="toggleClue(${i})">"${clue}"</button>`
+  document.getElementById('clue-pills').innerHTML = NEWS_DATA[idx].clues.map((c, i) =>
+    `<button class="clue-pill ${activeClue===i?'active':''}" onclick="toggleClue(${i})">"${c}"</button>`
   ).join('');
 }
 
@@ -573,14 +535,13 @@ function toggleClues() {
 
 function toggleClue(i) {
   activeClue = activeClue === i ? null : i;
-  renderClues();
-  renderBody();
+  renderClues(); renderBody();
 }
 
 function showPhase(name) {
-  ['verdict','reasoning','feedback'].forEach(p => {
-    document.getElementById('phase-' + p).style.display = p === name ? 'block' : 'none';
-  });
+  ['verdict','reasoning','feedback'].forEach(p =>
+    document.getElementById('phase-'+p).style.display = p===name ? 'block' : 'none'
+  );
 }
 
 function selectVerdict(v) {
@@ -596,24 +557,19 @@ function selectVerdict(v) {
 
 function onReasoningInput() {
   const len = document.getElementById('reasoning-input').value.trim().length;
-  const countEl = document.getElementById('char-count');
-  const btnEl = document.getElementById('submit-btn');
-  countEl.textContent = document.getElementById('reasoning-input').value.length + '자';
-  countEl.className = len >= 20 ? 'ready' : '';
-  btnEl.disabled = len < 20;
-  btnEl.className = len >= 20 ? 'ready' : '';
+  const cc = document.getElementById('char-count');
+  const btn = document.getElementById('submit-btn');
+  cc.textContent = document.getElementById('reasoning-input').value.length + '자';
+  cc.className = len >= 20 ? 'ready' : '';
+  btn.disabled = len < 20;
+  btn.className = len >= 20 ? 'ready' : '';
 }
 
-async function submitReasoning() {
+function submitReasoning() {
+  if (document.getElementById('reasoning-input').value.trim().length < 20) return;
   const news = NEWS_DATA[idx];
-  const reasoning = document.getElementById('reasoning-input').value.trim();
-  if (reasoning.length < 20) return;
-
   const correct = (verdict === 'fake') === !news.isReal;
-  scores.push({ id: news.id, correct, verdict });
-
-  // Show feedback phase
-  showPhase('feedback');
+  scores.push({ id: news.id, correct });
 
   // Result banner
   const banner = document.getElementById('result-banner');
@@ -623,91 +579,52 @@ async function submitReasoning() {
     (correct ? '정답!' : '오답') + ' — 이 기사는 ' + (news.isReal ? '진짜' : '가짜') + ' 뉴스입니다.';
   document.getElementById('result-explanation').textContent = news.explanation;
 
+  // Fill feedback
+  const fb = news.feedback;
+  document.getElementById('fb-point').textContent = fb.point;
+  document.getElementById('ex-good').textContent = fb.goodExample;
+  document.getElementById('ex-bad').textContent  = fb.badExample;
+  document.getElementById('fb-factcheck').textContent = fb.factcheck;
+  document.getElementById('fb-tip').textContent = fb.tip;
+
+  // Reset example tabs
+  document.getElementById('ex-good').classList.remove('visible');
+  document.getElementById('ex-bad').classList.remove('visible');
+  document.getElementById('tab-good').className = 'ex-tab';
+  document.getElementById('tab-bad').className  = 'ex-tab';
+
   // Next button text
-  const nextBtn = document.getElementById('next-btn');
-  nextBtn.textContent = idx + 1 < NEWS_DATA.length
-    ? `다음 기사 (${idx + 2}/${NEWS_DATA.length}) →`
+  document.getElementById('next-btn').textContent = idx + 1 < NEWS_DATA.length
+    ? `다음 기사 (${idx+2}/${NEWS_DATA.length}) →`
     : '결과 보기 →';
 
-  // AI Feedback
-  const fbBody = document.getElementById('ai-feedback-body');
-  fbBody.innerHTML = '<div class="ai-loading"><div class="spinner"></div>AI가 논증 구조를 분석 중...</div>';
-
-  if (!apiKey) {
-    fbBody.innerHTML = '<div class="feedback-content" style="color:#555;">API 키가 없어 AI 피드백을 제공할 수 없습니다.<br>상단에서 API 키를 설정하면 활성화됩니다.</div>';
-    return;
-  }
-
-  try {
-    const prompt = `당신은 미디어 리터러시 교육 전문가입니다. 중학생이 뉴스 기사를 판별하고 작성한 근거를 논증 구조 관점에서 친절하게 피드백해 주세요.
-
-[기사 제목]
-${news.headline}
-
-[학생의 판별]
-${verdict === 'fake' ? '가짜 뉴스라고 판별함' : '진짜 뉴스라고 판별함'}
-
-[학생이 제시한 근거]
-${reasoning}
-
-다음 형식으로 피드백해 주세요 (각 항목은 1~2문장):
-1. **논증 강점**: 잘 짚어낸 부분
-2. **보완할 점**: 더 탄탄한 근거가 될 수 있는 방향
-3. **팩트체크 팁**: 이런 기사를 검증할 때 쓸 수 있는 실용적인 방법 1가지
-4. **한 줄 총평**: 격려의 말`;
-
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error?.message || `HTTP ${res.status}`);
-    }
-
-    const data = await res.json();
-    const text = data.content?.[0]?.text || '피드백을 불러오지 못했습니다.';
-    renderFeedback(text);
-  } catch (e) {
-    fbBody.innerHTML = `<div class="feedback-content" style="color:#f87171;">피드백 오류: ${escapeHtml(e.message)}</div>`;
-  }
+  showPhase('feedback');
+  window.scrollTo({ top: document.getElementById('phase-feedback').offsetTop - 20, behavior: 'smooth' });
 }
 
-function renderFeedback(text) {
-  const fbBody = document.getElementById('ai-feedback-body');
-  const lines = text.split('\n').filter(l => l.trim());
-  let html = '';
-  lines.forEach(line => {
-    const match = line.match(/^\d+\.\s+\*\*(.+?)\*\*[:\s]+(.+)/);
-    if (match) {
-      html += `<div class="feedback-item">
-        <div class="feedback-label">${escapeHtml(match[1])}</div>
-        <div class="feedback-content">${escapeHtml(match[2])}</div>
-      </div>`;
-    } else {
-      const plain = line.replace(/\*\*/g, '').trim();
-      if (plain) html += `<div class="feedback-item"><div class="feedback-content">${escapeHtml(plain)}</div></div>`;
-    }
-  });
-  fbBody.innerHTML = html || '<div class="feedback-content">피드백을 파싱할 수 없습니다.</div>';
+function showExample(type) {
+  const goodEl  = document.getElementById('ex-good');
+  const badEl   = document.getElementById('ex-bad');
+  const tabGood = document.getElementById('tab-good');
+  const tabBad  = document.getElementById('tab-bad');
+
+  if (type === 'good') {
+    const open = goodEl.classList.contains('visible');
+    goodEl.classList.toggle('visible', !open);
+    badEl.classList.remove('visible');
+    tabGood.className = 'ex-tab ' + (!open ? 'good-active' : '');
+    tabBad.className  = 'ex-tab';
+  } else {
+    const open = badEl.classList.contains('visible');
+    badEl.classList.toggle('visible', !open);
+    goodEl.classList.remove('visible');
+    tabBad.className  = 'ex-tab ' + (!open ? 'bad-active' : '');
+    tabGood.className = 'ex-tab';
+  }
 }
 
 function nextNews() {
-  if (idx + 1 >= NEWS_DATA.length) {
-    showResult();
-    return;
-  }
+  if (idx + 1 >= NEWS_DATA.length) { showResult(); return; }
   idx++;
   renderNews();
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -715,12 +632,11 @@ function nextNews() {
 
 function showResult() {
   document.getElementById('app').style.display = 'none';
-  const resultScreen = document.getElementById('result-screen');
-  resultScreen.style.display = 'flex';
+  document.getElementById('result-screen').style.display = 'flex';
 
   const total = NEWS_DATA.length;
   const correct = scores.filter(s => s.correct).length;
-  const pct = Math.round((correct / total) * 100);
+  const pct = Math.round(correct / total * 100);
   const grade = pct >= 90 ? 'S' : pct >= 70 ? 'A' : pct >= 50 ? 'B' : 'C';
   const msgs = {
     S: '완벽한 탐정! 가짜뉴스를 꿰뚫는 눈이 있네요.',
@@ -728,17 +644,14 @@ function showResult() {
     B: '좋은 시작이에요. 단서를 더 꼼꼼히 살펴봐요.',
     C: '미디어 리터러시, 함께 키워나가요!'
   };
-
   document.getElementById('grade-letter').textContent = grade;
   document.getElementById('score-text').textContent = `${pct}점 · ${correct}/${total} 정답`;
   document.getElementById('grade-msg').textContent = msgs[grade];
-
-  const grid = document.getElementById('score-grid');
-  grid.innerHTML = scores.map(s => {
+  document.getElementById('score-grid').innerHTML = scores.map(s => {
     const n = NEWS_DATA.find(x => x.id === s.id);
-    return `<div class="score-item ${s.correct ? 'correct' : 'wrong'}">
-      <div class="score-item-label">${s.correct ? '정답' : '오답'}</div>
-      <div class="score-item-headline">${escapeHtml(n.headline.slice(0, 28))}...</div>
+    return `<div class="score-item ${s.correct?'correct':'wrong'}">
+      <div class="score-item-label">${s.correct?'정답':'오답'}</div>
+      <div class="score-item-headline">${esc(n.headline.slice(0,30))}...</div>
     </div>`;
   }).join('');
 }
@@ -751,12 +664,8 @@ function restart() {
   window.scrollTo({ top: 0 });
 }
 
-function escapeHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 </script>
 </body>
