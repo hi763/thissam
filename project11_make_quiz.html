@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>커스텀 퀴즈 메이커 & 챌린지</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg: #f9fafb;
+            --card: #ffffff;
+            --text: #1f2937;
+            --border: #e5e7eb;
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--card);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        h1, h2 { text-align: center; color: var(--primary); }
+        .hidden { display: none !important; }
+        .form-group { margin-bottom: 20px; padding: 15px; border: 1px solid var(--border); border-radius: 8px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; }
+        input[type="text"], select {
+            width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; box-sizing: border-box;
+        }
+        .options-group input { margin-bottom: 5px; }
+        button {
+            width: 100%; padding: 12px; background-color: var(--primary); color: white; border: none;
+            border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s;
+        }
+        button:hover { background-color: var(--primary-hover); }
+        .quiz-option {
+            display: block; margin: 10px 0; padding: 12px; border: 1px solid var(--border);
+            border-radius: 8px; cursor: pointer; background: var(--bg);
+        }
+        .quiz-option:hover { border-color: var(--primary); }
+        .selected { background-color: #e0e7ff; border-color: var(--primary); }
+        .result-box { text-align: center; padding: 20px; background: #eef2ff; border-radius: 12px; }
+        .rank-tag { font-size: 24px; font-weight: bold; color: var(--primary); margin-top: 10px; }
+        .share-url { background: #f3f4f6; padding: 10px; border-radius: 6px; word-break: break-all; font-size: 14px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="home-screen">
+        <h1>나만의 퀴즈 메이커 📝</h1>
+        <p style="text-align:center;">직접 10문제를 출제하고 친구들에게 도전장을 내미세요!</p>
+        <button onclick="startQuizCreation()">퀴즈 출제하러 가기</button>
+    </div>
+
+    <div id="create-screen" class="hidden">
+        <h2>퀴즈 출제하기 (총 10문항)</h2>
+        <div id="question-forms"></div>
+        <button onclick="generateQuizLink()">퀴즈 완성 및 링크 생성</button>
+    </div>
+
+    <div id="share-screen" class="hidden">
+        <h2>퀴즈가 완성되었습니다! 🎉</h2>
+        <p>아래 링크를 복사하여 다른 사람에게 공유하세요.</p>
+        <div class="share-url" id="quiz-link-output"></div>
+        <button onclick="copyLink()">링크 복사하기</button>
+    </div>
+
+    <div id="solve-screen" class="hidden">
+        <h2 id="solve-title">퀴즈 도전!</h2>
+        <div id="quiz-progress" style="text-align: right; font-weight: bold; color: var(--primary);"></div>
+        <div id="quiz-display" style="margin: 20px 0;"></div>
+        <button id="next-btn" onclick="nextQuestion()">다음 문제</button>
+    </div>
+
+    <div id="result-screen" class="hidden">
+        <h2>퀴즈 종료! 🏁</h2>
+        <div class="result-box">
+            <p style="font-size: 18px;">당신의 점수는?</p>
+            <div id="final-score" style="font-size: 36px; font-weight: bold; color: #10b981;">0점</div>
+            <div class="rank-tag" id="final-rank">현재 등수: 계산 중...</div>
+        </div>
+        <button onclick="location.href=location.pathname" style="margin-top: 20px; background:#6b7280;">메인으로 돌아가기</button>
+    </div>
+</div>
+
+<script>
+    const TOTAL_QUESTIONS = 10;
+    let quizData = [];
+    let currentSolveIndex = 0;
+    let userAnswers = [];
+    let currentQuizId = "";
+
+    window.onload = function() {
+        // URL에 퀴즈 데이터가 있는지 확인 (공유된 링크인지 확인)
+        const urlParams = new URLSearchParams(window.location.search);
+        const encodedData = urlParams.get('quiz');
+        currentQuizId = urlParams.get('id') || "default_quiz";
+
+        if (encodedData) {
+            try {
+                quizData = JSON.parse(decodeURIComponent(atob(encodedData)));
+                if(quizData.length === TOTAL_QUESTIONS) {
+                    showScreen('solve-screen');
+                    startSolving();
+                }
+            } catch (e) {
+                alert("올바르지 않은 퀴즈 링크입니다.");
+                showScreen('home-screen');
+            }
+        }
+    };
+
+    function showScreen(screenId) {
+        ['home-screen', 'create-screen', 'share-screen', 'solve-screen', 'result-screen'].forEach(id => {
+            document.getElementById(id).classList.add('hidden');
+        });
+        document.getElementById(screenId).classList.remove('hidden');
+    }
+
+    // --- 퀴즈 출제 로직 ---
+    function startQuizCreation() {
+        showScreen('create-screen');
+        const container = document.getElementById('question-forms');
+        container.innerHTML = '';
+
+        for (let i = 1; i <= TOTAL_QUESTIONS; i++) {
+            const formHtml = `
+                <div class="form-group" id="q-box-${i}">
+                    <label>문항 ${i}. 문제 내용</label>
+                    <input type="text" id="q-text-${i}" placeholder="문제를 입력하세요" required style="margin-bottom:10px;">
+                    
+                    <label>문제 유형</label>
+                    <select id="q-type-${i}" onchange="toggleType(${i})">
+                        <option value="OX">OX 퀴즈</option>
+                        <option value="CHOICE">사지선다형</option>
+                        <option value="SHORT">단답형</option>
+                    </select>
+                    
+                    <div id="q-options-${i}" style="margin-top:10px;">
+                        <label><input type="radio" name="ans-${i}" value="O" checked> O</label>
+                        <label><input type="radio" name="ans-${i}" value="X"> X</label>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', formHtml);
+        }
+    }
+
+    function toggleType(num) {
+        const type = document.getElementById(`q-type-${num}`).value;
+        const optionsDiv = document.getElementById(`q-options-${num}`);
+        
+        if (type === 'OX') {
+            optionsDiv.innerHTML = `
+                <label><input type="radio" name="ans-${num}" value="O" checked> O</label>
+                <label><input type="radio" name="ans-${num}" value="X"> X</label>
+            `;
+        } else if (type === 'CHOICE') {
+            optionsDiv.innerHTML = `
+                <div class="options-group">
+                    <input type="text" id="opt-${num}-1" placeholder="1번 보기" required>
+                    <input type="text" id="opt-${num}-2" placeholder="2번 보기" required>
+                    <input type="text" id="opt-${num}-3" placeholder="3번 보기" required>
+                    <input type="text" id="opt-${num}-4" placeholder="4번 보기" required>
+                </div>
+                <label style="margin-top:5px;">정답 번호: 
+                    <select id="ans-choice-${num}">
+                        <option value="1">1번</option><option value="2">2번</option>
+                        <option value="3">3번</option><option value="4">4번</option>
+                    </select>
+                </label>
+            `;
+        } else if (type === 'SHORT') {
+            optionsDiv.innerHTML = `
+                <input type="text" id="ans-short-${num}" placeholder="정답 단어를 입력하세요 (공백없이)" required>
+            `;
+        }
+    }
+
+    function generateQuizLink() {
+        const tempQuizData = [];
+        for (let i = 1; i <= TOTAL_QUESTIONS; i++) {
+            const questionText = document.getElementById(`q-text-${i}`).value.trim();
+            if (!questionText) return alert(`${i}번 문제를 입력해주세요.`);
+
+            const type = document.getElementById(`q-type-${i}`).value;
+            let answer = "";
+            let options = [];
+
+            if (type === 'OX') {
+                answer = document.querySelector(`input[name="ans-${i}"]:checked`).value;
+            } else if (type === 'CHOICE') {
+                for(let j=1; j<=4; j++) {
+                    const optVal = document.getElementById(`opt-${i}-${j}`).value.trim();
+                    if(!optVal) return alert(`${i}번 문제의 ${j}번 보기를 입력해주세요.`);
+                    options.push(optVal);
+                }
+                answer = document.getElementById(`ans-choice-${i}`).value;
+            } else if (type === 'SHORT') {
+                answer = document.getElementById(`ans-short-${i}`).value.trim().replace(/\s+/g, '');
+                if(!answer) return alert(`${i}번 문제의 정답을 입력해주세요.`);
+            }
+
+            tempQuizData.push({ type, question: questionText, options, answer });
+        }
+
+        // 데이터를 Base64로 압축 인코딩하여 고유 URL 생성
+        const quizId = 'q_' + Date.now();
+        const jsonStr = JSON.stringify(tempQuizData);
+        const encoded = btoa(encodeURIComponent(jsonStr));
+        const shareUrl = `${window.location.origin}${window.location.pathname}?id=${quizId}&quiz=${encoded}`;
+
+        document.getElementById('quiz-link-output').innerText = shareUrl;
+        showScreen('share-screen');
+    }
+
+    function copyLink() {
+        const linkText = document.getElementById('quiz-link-output').innerText;
+        navigator.clipboard.writeText(linkText).then(() => {
+            alert("링크가 클립보드에 복사되었습니다! 친구들에게 공유해보세요.");
+        });
+    }
+
+    // --- 퀴즈 풀이 로직 ---
+    function startSolving() {
+        currentSolveIndex = 0;
+        userAnswers = [];
+        displayQuestion();
+    }
+
+    function displayQuestion() {
+        const q = quizData[currentSolveIndex];
+        document.getElementById('quiz-progress').innerText = `${currentSolveIndex + 1} / ${TOTAL_QUESTIONS}`;
+        
+        let html = `<p style="font-size:18px; font-weight:bold;">${q.question}</p>`;
+        
+        if (q.type === 'OX') {
+            html += `
+                <div class="quiz-option" onclick="selectAnswer('O')">O</div>
+                <div class="quiz-option" onclick="selectAnswer('X')">X</div>
+            `;
+        } else if (q.type === 'CHOICE') {
+            q.options.forEach((opt, idx) => {
+                html += `<div class="quiz-option" onclick="selectAnswer('${idx + 1}')">${idx + 1}. ${opt}</div>`;
+            });
+        } else if (q.type === 'SHORT') {
+            html += `<input type="text" id="short-user-ans" placeholder="정답을 입력하세요" style="margin-top:10px;">`;
+        }
+
+        document.getElementById('quiz-display').innerHTML = html;
+        
+        if(currentSolveIndex === TOTAL_QUESTIONS - 1) {
+            document.getElementById('next-btn').innerText = "제출 및 결과 보기";
+        } else {
+            document.getElementById('next-btn').innerText = "다음 문제";
+        }
+    }
+
+    let tempSelectedAnswer = "";
+    function selectAnswer(ans) {
+        tempSelectedAnswer = ans;
+        const options = document.querySelectorAll('.quiz-option');
+        options.forEach(opt => opt.classList.remove('selected'));
+        // 선택된 시각 효과
+        event.target.classList.add('selected');
+    }
+
+    function nextQuestion() {
+        const q = quizData[currentSolveIndex];
+        let finalAns = "";
+
+        if (q.type === 'SHORT') {
+            finalAns = document.getElementById('short-user-ans').value.trim().replace(/\s+/g, '');
+            if(!finalAns) return alert("정답을 입력해주세요.");
+        } else {
+            if(!tempSelectedAnswer) return alert("보기를 선택해주세요.");
+            finalAns = tempSelectedAnswer;
+        }
+
+        userAnswers.push(finalAns);
+        tempSelectedAnswer = ""; // 초기화
+
+        if (currentSolveIndex < TOTAL_QUESTIONS - 1) {
+            currentSolveIndex++;
+            displayQuestion();
+        } else {
+            calculateResult();
+        }
+    }
+
+    // --- 결과 및 등수 계산 (LocalStorage 기반 로컬 랭킹 시스템) ---
+    function calculateResult() {
+        let score = 0;
+        quizData.forEach((q, idx) => {
+            if (q.answer === userAnswers[idx]) {
+                score += 10; // 문항당 10점
+            }
+        });
+
+        document.getElementById('final-score').innerText = `${score}점`;
+
+        // 로컬 스토리지를 활용한 등수 저장 및 계산
+        // (동일한 PC/브라우저 혹은 같은 도메인 내에서 푼 사람들의 랭킹 기록)
+        const storageKey = `rankings_${currentQuizId}`;
+        let rankings = JSON.parse(localStorage.getItem(storageKey)) || [];
+        
+        // 내 점수 추가
+        rankings.push(score);
+        // 내림차순 정렬
+        rankings.sort((a, b) => b - a);
+        localStorage.setItem(storageKey, JSON.stringify(rankings));
+
+        // 내 등수 찾기 (동점자는 공동 등수 처리)
+        const myRank = rankings.indexOf(score) + 1;
+        const totalParticipants = rankings.length;
+
+        document.getElementById('final-rank').innerText = `현재 등수: ${totalParticipants}명 중 ${myRank}등`;
+        showScreen('result-screen');
+    }
+</script>
+
+</body>
+</html>
