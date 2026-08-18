@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>정답 동영상</title>
+<title>정답</title>
 <style>
   html, body{
     margin:0;
@@ -30,7 +30,25 @@
     동영상 파일은 이 html 파일과 같은 폴더(또는 GitHub 저장소)에 함께 올려야 합니다.
     예) src="my-video.mp4"
   -->
-  <video src="correct.mp4" autoplay playsinline></video>
+  <video id="video" src="correct.mp4" autoplay playsinline></video>
+
+  <script>
+    const video = document.getElementById('video');
+
+    // 소리 포함 자동재생 시도
+    video.play().catch(() => {
+      // 브라우저가 소리 있는 자동재생을 막은 경우,
+      // 화면을 처음 클릭/터치하는 순간 소리와 함께 재생 시작
+      const startWithSound = () => {
+        video.muted = false;
+        video.play();
+        document.removeEventListener('click', startWithSound);
+        document.removeEventListener('touchstart', startWithSound);
+      };
+      document.addEventListener('click', startWithSound);
+      document.addEventListener('touchstart', startWithSound);
+    });
+  </script>
 
 </body>
 </html>
