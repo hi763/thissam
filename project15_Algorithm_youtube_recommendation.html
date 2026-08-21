@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>내가 만드는 미니 유튜브 추천 알고리즘 🎬</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF0000;
+            --primary-dark: #CC0000;
+            --primary-light: #FFECEC;
+            --secondary: #4F46E5;
+            --accent: #F59E0B;
+            --success: #10B981;
+            --bg-grad-start: #0F172A;
+            --bg-grad-end: #1E1B4B;
+            --card-bg: rgba(255, 255, 255, 0.98);
+            --text-main: #1E293B;
+            --text-muted: #64748B;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            background: linear-gradient(135deg, var(--bg-grad-start), var(--bg-grad-end));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 12px;
+            color: var(--text-main);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 760px;
+            min-height: 90vh;
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.45);
+            padding: 24px 18px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        /* Top Progress */
+        .progress-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .progress-track {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            height: 4px;
+            background: #E2E8F0;
+            width: 100%;
+            z-index: 0;
+            transform: translateY(-50%);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.35s ease;
+        }
+
+        .steps-wrapper {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #CBD5E1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 13px;
+            color: #94A3B8;
+            transition: all 0.25s ease;
+        }
+
+        .step-circle.active {
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .step-circle.done {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* Screens */
+        .screen {
+            display: none;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .tag-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #FEE2E2;
+            color: #DC2626;
+            font-weight: 800;
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 14px;
+            margin-bottom: 8px;
+            width: fit-content;
+        }
+
+        h2 {
+            font-size: 21px;
+            font-weight: 900;
+            color: #0F172A;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+            line-height: 1.35;
+        }
+
+        p.guide-text {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            line-height: 1.45;
+            word-break: keep-all;
+        }
+
+        /* Form / Cards Style */
+        .card-box {
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .field-label {
+            font-size: 13.5px;
+            font-weight: 800;
+            color: #334155;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .input-text {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #CBD5E1;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            outline: none;
+            transition: border-color 0.2s;
+            background: white;
+        }
+
+        .input-text:focus {
+            border-color: var(--primary);
+        }
+
+        /* Grid layouts */
+        .choice-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .choice-grid.three-col {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .choice-btn {
+            background: white;
+            border: 2px solid #E2E8F0;
+            border-radius: 14px;
+            padding: 12px 8px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #475569;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .choice-btn .emoji-icon {
+            font-size: 24px;
+            margin-bottom: 2px;
+        }
+
+        .choice-btn .point-tag {
+            font-size: 11px;
+            font-weight: 800;
+            background: #EFF6FF;
+            color: #2563EB;
+            padding: 2px 6px;
+            border-radius: 6px;
+            margin-top: 2px;
+        }
+
+        /* Step 2 Static Rule Cards */
+        .static-rule-card {
+            border-radius: 14px;
+            padding: 12px 8px;
+            font-size: 13px;
+            font-weight: 700;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            user-select: none;
+        }
+
+        .static-rule-card.active-rule {
+            border: 2px solid var(--primary);
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 800;
+            box-shadow: 0 2px 8px rgba(255, 0, 0, 0.15);
+        }
+
+        .static-rule-card.active-rule .point-tag {
+            background: #DC2626;
+            color: white;
+        }
+
+        .static-rule-card.inactive-rule {
+            background: #F8FAFC;
+            border: 2px solid #E2E8F0;
+            color: #94A3B8;
+            opacity: 0.65;
+        }
+
+        .static-rule-card.inactive-rule .point-tag {
+            background: #E2E8F0;
+            color: #64748B;
+        }
+
+        .choice-btn.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 800;
+            box-shadow: 0 2px 8px rgba(255, 0, 0, 0.15);
+        }
+
+        .choice-btn.selected .point-tag {
+            background: #DC2626;
+            color: white;
+        }
+
+        /* Step 3: Interactive Calculation Cards */
+        .step3-tip {
+            background: #EFF6FF;
+            border: 1px solid #BFDBFE;
+            border-radius: 12px;
+            padding: 10px 12px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: #1E40AF;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .video-item {
+            background: white;
+            border: 2px dashed #CBD5E1;
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+        }
+
+        .video-item:active {
+            transform: scale(0.99);
+        }
+
+        .video-item.uncalculated:hover {
+            border-color: #94A3B8;
+            background: #F8FAFC;
+        }
+
+        .video-item.calculated {
+            border-style: solid;
+            border-color: #CBD5E1;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+            cursor: default;
+        }
+
+        .video-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .video-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: #1E293B;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .video-tag-group {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .v-tag {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: #F1F5F9;
+            color: #475569;
+        }
+
+        .calc-uncalculated-banner {
+            background: #F1F5F9;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #64748B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .calc-breakdown-box {
+            display: none;
+            background: #F8FAFC;
+            border-radius: 10px;
+            padding: 10px 12px;
+            border: 1px solid #E2E8F0;
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .calc-line {
+            font-size: 12px;
+            color: #475569;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .calc-line.match {
+            color: #059669;
+            font-weight: 700;
+        }
+
+        .calc-total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px dashed #CBD5E1;
+            padding-top: 6px;
+            margin-top: 6px;
+            font-size: 13.5px;
+            font-weight: 900;
+            color: var(--primary);
+        }
+
+        /* Filter Bubble Box */
+        .filter-bubble-box {
+            background: #EFF6FF;
+            border: 2px solid #BFDBFE;
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 12px;
+        }
+
+        .bubble-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            font-weight: 800;
+            color: #1E40AF;
+            margin-bottom: 8px;
+        }
+
+        .bubble-comic {
+            background: white;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #DBEAFE;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #1E3A8A;
+        }
+
+        /* Star Feedback */
+        .star-box {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 12px 0;
+        }
+
+        .star-btn {
+            font-size: 28px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            filter: grayscale(100%);
+            transition: transform 0.2s;
+        }
+
+        .star-btn.active {
+            filter: grayscale(0%);
+            transform: scale(1.15);
+        }
+
+        /* Navigation Buttons */
+        .footer-actions {
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 8px;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid #F1F5F9;
+        }
+
+        .btn-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .btn {
+            padding: 13px 16px;
+            border-radius: 14px;
+            font-size: 14.5px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+        }
+
+        .btn-secondary {
+            background: #F1F5F9;
+            color: #475569;
+        }
+        .btn-secondary:active {
+            background: #E2E8F0;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.25);
+        }
+        .btn-primary:active:not(:disabled) {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            background: #CBD5E1;
+            color: #94A3B8;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Desktop Adjustments */
+        @media (min-width: 641px) {
+            body { padding: 24px; }
+            .container { padding: 32px 28px; }
+            h2 { font-size: 24px; }
+            .choice-grid.three-col { grid-template-columns: repeat(3, 1fr); }
+            .footer-actions {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .btn-row { width: auto; display: flex; }
+            .btn { width: auto; padding: 12px 22px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 상단 진행도 -->
+        <div class="progress-header">
+            <div class="progress-track">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="steps-wrapper">
+                <div class="step-circle active" id="step1">1</div>
+                <div class="step-circle" id="step2">2</div>
+                <div class="step-circle" id="step3">3</div>
+                <div class="step-circle" id="step4">4</div>
+            </div>
+        </div>
+
+        <!-- ================= 1단계: 순차 구조로 데이터 수집 ================= -->
+        <div class="screen active" id="screen1">
+            <div>
+                <span class="tag-badge">1단계 • 순차 구조 (데이터 수집)</span>
+                <h2>친구의 취향 데이터 모으기 🕵️‍♂️</h2>
+                <p class="guide-text">유튜브 알고리즘이 순서대로 정보를 모으듯, 짝꿍에게 물어보고 취향을 체크해 주세요!</p>
+            </div>
+
+            <div class="card-box">
+                <div class="field-label">👤 추천해 줄 친구(짝꿍) 이름</div>
+                <input type="text" class="input-text" id="partnerName" placeholder="예: 김코딩" oninput="checkScreen1Valid()">
+            </div>
+
+            <div class="card-box">
+                <div class="field-label">1. 가장 좋아하는 영상 종류는? (1개 선택)</div>
+                <div class="choice-grid three-col" id="catGroup">
+                    <button class="choice-btn" onclick="selectSingle('catGroup', this, '게임')">
+                        <span class="emoji-icon">🎮</span><span>게임/마인크래프트</span>
+                    </button>
+                    <button class="choice-btn" onclick="selectSingle('catGroup', this, '쇼츠/예능')">
+                        <span class="emoji-icon">🤣</span><span>웃긴 예능/챌린지</span>
+                    </button>
+                    <button class="choice-btn" onclick="selectSingle('catGroup', this, '만들기/미술')">
+                        <span class="emoji-icon">✂️</span><span>만들기/종이접기</span>
+                    </button>
+                    <button class="choice-btn" onclick="selectSingle('catGroup', this, '음악/댄스')">
+                        <span class="emoji-icon">🎵</span><span>아이돌 댄스/음악</span>
+                    </button>
+                    <button class="choice-btn" onclick="selectSingle('catGroup', this, '동물/자연')">
+                        <span class="emoji-icon">🐱</span><span>귀여운 동물/반려견</span>
+                    </button>
+                    <button class="choice-btn" onclick="selectSingle('catGroup', this, '과학/호기심')">
+                        <span class="emoji-icon">🧪</span><span>신기한 과학 실험</span>
+                    </button>
+                </div>
+
+                <div class="field-label" style="margin-top: 10px;">2. 좋아하는 영상 길이는?</div>
+                <div class="choice-grid" id="lenGroup">
+                    <button class="choice-btn" onclick="selectSingle('lenGroup', this, '쇼츠')">
+                        <span class="emoji-icon">⚡</span><span>1분 이내 짧은 쇼츠</span>
+                    </button>
+                    <button class="choice-btn" onclick="selectSingle('lenGroup', this, '롱폼')">
+                        <span class="emoji-icon">🕒</span><span>10분 이상 긴 영상</span>
+                    </button>
+                </div>
+            </div>
+            <div></div>
+        </div>
+
+        <!-- ================= 2단계: 선택 구조로 추천 규칙(IF-THEN) 설계 ================= -->
+        <div class="screen" id="screen2">
+            <div>
+                <span class="tag-badge">2단계 • 선택 구조 (조건문 설계)</span>
+                <h2>점수를 주는 'IF 조건문' 만들기 ⚖️</h2>
+                <p class="guide-text">상황(조건)에 따라 점수를 주는 추천 규칙 카드들을 확인하고 선택해 보세요.</p>
+            </div>
+
+            <!-- 규칙 A 카드 -->
+            <div class="card-box">
+                <div class="field-label">🔹 규칙 A: 영상 주제 일치 조건 (자동 실행)</div>
+                <div class="choice-grid">
+                    <div class="static-rule-card active-rule">
+                        <span class="emoji-icon">🎯</span>
+                        <span>친구 취향과 주제가 같으면</span>
+                        <span class="point-tag">+5점 지급!</span>
+                    </div>
+                    <div class="static-rule-card inactive-rule">
+                        <span class="emoji-icon">❌</span>
+                        <span>주제가 다르면</span>
+                        <span class="point-tag">0점</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 규칙 B 카드 -->
+            <div class="card-box">
+                <div class="field-label">🔹 규칙 B: 영상 길이 일치 조건 (자동 실행)</div>
+                <div class="choice-grid">
+                    <div class="static-rule-card active-rule">
+                        <span class="emoji-icon">⏱️</span>
+                        <span>선호하는 영상 길이와 같으면</span>
+                        <span class="point-tag">+3점 지급!</span>
+                    </div>
+                    <div class="static-rule-card inactive-rule">
+                        <span class="emoji-icon">❌</span>
+                        <span>길이가 다르면</span>
+                        <span class="point-tag">0점</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 규칙 C 선택 카드 -->
+            <div class="card-box">
+                <div class="field-label">✨ 나만의 보너스 규칙 C (1개 선택)</div>
+                <p style="font-size:12px; color:#64748B; margin-bottom:8px;">어떤 특별한 영상에 보너스 점수(+2점)를 더 줄까요?</p>
+                <div class="choice-grid" id="ruleCGroup">
+                    <button class="choice-btn" onclick="selectSingle('ruleCGroup', this, '인기')">
+                        <span class="emoji-icon">🔥</span>
+                        <span>조회수 100만 이상 인기영상</span>
+                        <span class="point-tag">+2점 보너스</span>
+                    </button>
+                    <button class="choice-btn" onclick="selectSingle('ruleCGroup', this, '최신')">
+                        <span class="emoji-icon">🌱</span>
+                        <span>오늘 올라온 따끈따끈 신작</span>
+                        <span class="point-tag">+2점 보너스</span>
+                    </button>
+                    <button class="choice-btn" onclick="selectSingle('ruleCGroup', this, '좋아요')">
+                        <span class="emoji-icon">👍</span>
+                        <span>좋아요 95% 이상 꿀잼 영상</span>
+                        <span class="point-tag">+2점 보너스</span>
+                    </button>
+                    <button class="choice-btn" onclick="selectSingle('ruleCGroup', this, '자막')">
+                        <span class="emoji-icon">💬</span>
+                        <span>자막/해설이 잘 달린 영상</span>
+                        <span class="point-tag">+2점 보너스</span>
+                    </button>
+                </div>
+            </div>
+            <div></div>
+        </div>
+
+        <!-- ================= 3단계: 인터랙티브 반복 계산 (영상 하나씩 클릭) ================= -->
+        <div class="screen" id="screen3">
+            <div>
+                <span class="tag-badge">3단계 • 반복 구조 (하나씩 검사하기)</span>
+                <h2>후보 영상 카드를 터치해 점수를 계산해요! 🔄</h2>
+                <p class="guide-text">포켓몬 카드를 한 장씩 확인하듯, 6개의 영상 카드를 차례대로 눌러 점수 계산 규칙을 실행해 보세요.</p>
+            </div>
+
+            <div class="step3-tip" id="step3Status">
+                <span>👉</span> <span id="step3StatusText">아직 검사하지 않은 영상 카드를 터치해 보세요! (0/6 완료)</span>
+            </div>
+
+            <div id="videoListContainer">
+                <!-- JS Dynamic Clickable Calculation Items -->
+            </div>
+            <div></div>
+        </div>
+
+        <!-- ================= 4단계: 최종 추천 결과 및 필터버블 리터러시 ================= -->
+        <div class="screen" id="screen4">
+            <div>
+                <span class="tag-badge">4단계 • 최종 결과 & 생각 넓히기</span>
+                <h2>추천 완료! 1등 영상과 필터 버블 🌟</h2>
+                <p class="guide-text">계산 결과 가장 높은 점수를 받은 1등 영상을 확인하고 만족도를 평가해 보세요.</p>
+            </div>
+
+            <!-- 1등 영상 결과 -->
+            <div class="card-box" style="border: 2px solid #F59E0B; background: #FFFDF5;">
+                <div style="font-size:12px; font-weight:800; color:#D97706; margin-bottom:4px;">🏆 알고리즘이 뽑은 1등 추천 영상</div>
+                <div style="font-size:16px; font-weight:900; color:#0F172A;" id="finalVideoTitle">영상 제목 로딩 중...</div>
+                <div style="font-size:13px; color:#475569; margin-top:6px;" id="finalReason">추천 사유...</div>
+            </div>
+
+            <!-- 별점 평가 -->
+            <div class="card-box">
+                <div class="field-label" style="justify-content:center;">친구의 추천 만족도 별점</div>
+                <div class="star-box" id="starBox">
+                    <button class="star-btn active" onclick="setStar(1)">⭐</button>
+                    <button class="star-btn active" onclick="setStar(2)">⭐</button>
+                    <button class="star-btn active" onclick="setStar(3)">⭐</button>
+                    <button class="star-btn active" onclick="setStar(4)">⭐</button>
+                    <button class="star-btn active" onclick="setStar(5)">⭐</button>
+                </div>
+            </div>
+
+            <!-- 필터버블 개념 설명 및 생각하기 -->
+            <div class="filter-bubble-box">
+                <div class="bubble-header">
+                    <span>🧼</span> <span>잠깐! '필터 버블(Filter Bubble)'을 아나요?</span>
+                </div>
+                <div class="bubble-comic">
+                    알고리즘이 내가 좋아하는 것만 똑똑하게 골라주다 보면, <strong>나만의 투명한 비누방울(버블) 갇히게 돼요.</strong><br>
+                    비누방울 밖의 새로운 세상, 다른 사람들의 생각, 유익한 과학이나 지식을 보지 못하고 <strong>똑같은 영상만 계속 보게 되는 현상</strong>을 <strong>'필터 버블'</strong>이라고 불러요!
+                </div>
+                <div class="field-label" style="color:#1E40AF; margin-top:8px;">💡 필터 버블에서 탈출하려면 어떻게 해야 할까요?</div>
+                <input type="text" class="input-text" id="thinkInput" placeholder="예: 평소 안 보던 새로운 주제 검색하기, 추천 끄기 등">
+            </div>
+            <div></div>
+        </div>
+
+        <!-- 하단 네비게이션 액션 -->
+        <div class="footer-actions">
+            <div class="btn-row">
+                <button class="btn btn-secondary" onclick="resetAll()">처음으로</button>
+                <button class="btn btn-secondary" onclick="restartScreen()">다시 하기</button>
+            </div>
+            <button class="btn btn-primary" id="btnNext" disabled onclick="goNext()">
+                다음 단계로 ➔
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // App State
+        let currentStep = 1;
+        const userData = {
+            partnerName: '',
+            category: '',
+            length: '',
+            ruleC: '',
+            rating: 5
+        };
+
+        // Base candidate videos pool
+        const baseCandidateVideos = [
+            { id: 1, title: "다이아몬드 검 만들기 대모험", cat: "게임", len: "롱폼", hits: true, recent: false, likes: true, sub: true, emoji: "🎮" },
+            { id: 2, title: "1분 순삭! 엉뚱한 강아지 챌린지", cat: "쇼츠/예능", len: "쇼츠", hits: true, recent: true, likes: true, sub: false, emoji: "🐶" },
+            { id: 3, title: "색종이 한 장으로 드래곤 접기", cat: "만들기/미술", len: "롱폼", hits: false, recent: false, likes: true, sub: true, emoji: "🐉" },
+            { id: 4, title: "요즘 유행하는 아이돌 포인트 안무", cat: "음악/댄스", len: "쇼츠", hits: true, recent: true, likes: false, sub: false, emoji: "🕺" },
+            { id: 5, title: "식초와 베이킹소다 화산 폭발 실험", cat: "과학/호기심", len: "롱폼", hits: false, recent: true, likes: true, sub: true, emoji: "🌋" },
+            { id: 6, title: "새끼 고양이의 하루 브이로그", cat: "동물/자연", len: "쇼츠", hits: false, recent: true, likes: true, sub: false, emoji: "🐱" }
+        ];
+
+        let calculatedVideoIds = new Set();
+        let computedVideoData = [];
+
+        // Fisher-Yates shuffle algorithm
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function selectSingle(groupId, btn, value) {
+            const container = document.getElementById(groupId);
+            container.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+
+            if (groupId === 'catGroup') userData.category = value;
+            if (groupId === 'lenGroup') userData.length = value;
+            if (groupId === 'ruleCGroup') userData.ruleC = value;
+
+            if (currentStep === 1) checkScreen1Valid();
+            if (currentStep === 2) checkScreen2Valid();
+        }
+
+        function checkScreen1Valid() {
+            userData.partnerName = document.getElementById('partnerName').value.trim();
+            const isValid = userData.partnerName !== '' && userData.category !== '' && userData.length !== '';
+            document.getElementById('btnNext').disabled = !isValid;
+        }
+
+        function checkScreen2Valid() {
+            document.getElementById('btnNext').disabled = userData.ruleC === '';
+        }
+
+        // Step 3 Pre-compute Logic with Random Shuffle
+        function prepareStep3Data() {
+            const shuffledVideos = shuffleArray(baseCandidateVideos);
+
+            computedVideoData = shuffledVideos.map(video => {
+                let score = 0;
+                let catMatch = (video.cat === userData.category);
+                let lenMatch = (video.len === userData.length);
+                
+                let bonusMatch = false;
+                if (userData.ruleC === '인기' && video.hits) bonusMatch = true;
+                if (userData.ruleC === '최신' && video.recent) bonusMatch = true;
+                if (userData.ruleC === '좋아요' && video.likes) bonusMatch = true;
+                if (userData.ruleC === '자막' && video.sub) bonusMatch = true;
+
+                if (catMatch) score += 5;
+                if (lenMatch) score += 3;
+                if (bonusMatch) score += 2;
+
+                return {
+                    ...video,
+                    score,
+                    catMatch,
+                    lenMatch,
+                    bonusMatch
+                };
+            });
+        }
+
+        function initStep3Cards() {
+            prepareStep3Data();
+            calculatedVideoIds.clear();
+            const container = document.getElementById('videoListContainer');
+            container.innerHTML = '';
+
+            const ruleCNameMap = {
+                '인기': '조회수 100만 인기영상',
+                '최신': '오늘 올라온 최신영상',
+                '좋아요': '좋아요 95% 이상 꿀잼',
+                '자막': '자막/해설 완비'
+            };
+
+            computedVideoData.forEach(video => {
+                const item = document.createElement('div');
+                item.className = 'video-item uncalculated';
+                item.id = `videoCard_${video.id}`;
+                item.onclick = () => calculateSingleVideo(video.id);
+
+                item.innerHTML = `
+                    <div class="video-top-row">
+                        <div class="video-title">${video.emoji} ${video.title}</div>
+                        <span id="badge_${video.id}" style="font-size:11px; font-weight:800; background:#E2E8F0; color:#64748B; padding:2px 8px; border-radius:10px;">계산 대기중</span>
+                    </div>
+                    <div class="video-tag-group">
+                        <span class="v-tag">#${video.cat}</span>
+                        <span class="v-tag">#${video.len}</span>
+                        ${video.hits ? '<span class="v-tag">#인기🔥</span>' : ''}
+                        ${video.recent ? '<span class="v-tag">#최신🌱</span>' : ''}
+                        ${video.likes ? '<span class="v-tag">#좋아요👍</span>' : ''}
+                        ${video.sub ? '<span class="v-tag">#자막💬</span>' : ''}
+                    </div>
+                    
+                    <div class="calc-uncalculated-banner" id="banner_${video.id}">
+                        <span>👆 카드를 콕 눌러 점수를 계산해 보세요!</span>
+                    </div>
+
+                    <div class="calc-breakdown-box" id="calcBox_${video.id}">
+                        <div class="calc-line ${video.catMatch ? 'match' : ''}">
+                            <span>규칙 A (주제 일치 여부):</span>
+                            <span>${video.catMatch ? '일치 (+5점)' : '불일치 (+0점)'}</span>
+                        </div>
+                        <div class="calc-line ${video.lenMatch ? 'match' : ''}">
+                            <span>규칙 B (길이 일치 여부):</span>
+                            <span>${video.lenMatch ? '일치 (+3점)' : '불일치 (+0점)'}</span>
+                        </div>
+                        <div class="calc-line ${video.bonusMatch ? 'match' : ''}">
+                            <span>규칙 C (${ruleCNameMap[userData.ruleC] || '보너스'}):</span>
+                            <span>${video.bonusMatch ? '해당 (+2점)' : '해당없음 (+0점)'}</span>
+                        </div>
+                        <div class="calc-total-row">
+                            <span>계산된 총 점수:</span>
+                            <span style="font-size:15px;">${video.score}점</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+
+            updateStep3Status();
+        }
+
+        function calculateSingleVideo(videoId) {
+            if (calculatedVideoIds.has(videoId)) return;
+
+            calculatedVideoIds.add(videoId);
+
+            const card = document.getElementById(`videoCard_${videoId}`);
+            const banner = document.getElementById(`banner_${videoId}`);
+            const calcBox = document.getElementById(`calcBox_${videoId}`);
+            const badge = document.getElementById(`badge_${videoId}`);
+
+            card.classList.remove('uncalculated');
+            card.classList.add('calculated');
+            banner.style.display = 'none';
+            calcBox.style.display = 'block';
+
+            badge.innerText = '계산 완료! ✓';
+            badge.style.background = '#DCFCE7';
+            badge.style.color = '#15803D';
+
+            updateStep3Status();
+        }
+
+        function updateStep3Status() {
+            const count = calculatedVideoIds.size;
+            const total = baseCandidateVideos.length;
+            const statusText = document.getElementById('step3StatusText');
+            const nextBtn = document.getElementById('btnNext');
+
+            if (count < total) {
+                statusText.innerHTML = `아직 검사하지 않은 영상 카드를 터치해 보세요! (<strong>${count}/${total}</strong> 완료)`;
+                nextBtn.disabled = true;
+            } else {
+                statusText.innerHTML = `🎉 <strong>${total}개 영상 모두 계산 완료!</strong> 아래 버튼을 눌러 1등 영상을 확인하세요.`;
+                document.getElementById('step3Status').style.background = '#DCFCE7';
+                document.getElementById('step3Status').style.borderColor = '#86EFAC';
+                document.getElementById('step3Status').style.color = '#166534';
+                nextBtn.disabled = false;
+            }
+        }
+
+        function renderScreen4() {
+            const sorted = [...computedVideoData].sort((a, b) => b.score - a.score);
+            const best = sorted[0];
+
+            document.getElementById('finalVideoTitle').innerText = `${best.emoji} ${best.title}`;
+            document.getElementById('finalReason').innerText = 
+                `💡 추천 이유: ${userData.partnerName} 친구가 좋아하는 [${userData.category}] 분야와 [${userData.length}] 조건에 딱 맞아 총 ${best.score}점으로 1등을 차지했어요!`;
+        }
+
+        function setStar(starCount) {
+            userData.rating = starCount;
+            const starBtns = document.querySelectorAll('.star-btn');
+            starBtns.forEach((btn, idx) => {
+                if (idx < starCount) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        function updateProgress() {
+            document.querySelectorAll('.step-circle').forEach((circle, idx) => {
+                circle.classList.remove('active', 'done');
+                if (idx + 1 < currentStep) {
+                    circle.classList.add('done');
+                } else if (idx + 1 === currentStep) {
+                    circle.classList.add('active');
+                }
+            });
+
+            const pct = ((currentStep - 1) / 3) * 100;
+            document.getElementById('progressBar').style.width = pct + '%';
+        }
+
+        function switchScreen(step) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('screen' + step).classList.add('active');
+            currentStep = step;
+            updateProgress();
+
+            const nextBtn = document.getElementById('btnNext');
+            if (currentStep === 1) {
+                checkScreen1Valid();
+                nextBtn.innerText = "다음 단계로 ➔";
+            } else if (currentStep === 2) {
+                checkScreen2Valid();
+                nextBtn.innerText = "영상 하나씩 검사하러 가기 ➔";
+            } else if (currentStep === 3) {
+                initStep3Cards();
+                nextBtn.innerText = "최종 1등 추천 결과 보기 ➔";
+            } else if (currentStep === 4) {
+                renderScreen4();
+                nextBtn.disabled = false;
+                nextBtn.innerText = "활동지 완성! 🎉";
+            }
+        }
+
+        function goNext() {
+            if (currentStep < 4) {
+                switchScreen(currentStep + 1);
+            } else {
+                alert(`멋져요! ${userData.partnerName} 친구를 위한 유튜브 추천 알고리즘을 성공적으로 완성했습니다! 👏`);
+            }
+        }
+
+        function resetAll() {
+            userData.partnerName = '';
+            userData.category = '';
+            userData.length = '';
+            userData.ruleC = '';
+            calculatedVideoIds.clear();
+            document.getElementById('partnerName').value = '';
+            document.getElementById('thinkInput').value = '';
+            
+            // Step 1 & Step 2 select button reset
+            document.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+            
+            setStar(5);
+            switchScreen(1);
+        }
+
+        function restartScreen() {
+            if (currentStep === 1) {
+                document.getElementById('partnerName').value = '';
+                userData.category = '';
+                userData.length = '';
+                document.querySelectorAll('#catGroup .choice-btn, #lenGroup .choice-btn').forEach(b => b.classList.remove('selected'));
+                checkScreen1Valid();
+            } else if (currentStep === 2) {
+                userData.ruleC = '';
+                document.querySelectorAll('#ruleCGroup .choice-btn').forEach(b => b.classList.remove('selected'));
+                checkScreen2Valid();
+            } else if (currentStep === 3) {
+                initStep3Cards();
+            } else if (currentStep === 4) {
+                setStar(5);
+                document.getElementById('thinkInput').value = '';
+            }
+        }
+
+        window.onload = function() {
+            updateProgress();
+        };
+    </script>
+</body>
+</html>
