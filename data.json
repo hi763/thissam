@@ -214,7 +214,7 @@
     "accentFrom": "#7864ff",
     "accentTo": "#9b8aff",
     "accentBg": "rgba(120,100,255,0.08)",
-    "link": "https://hi763.github.io/thissam/project07_carbon footprint.html",
+    "link": "https://hi763.github.io/thissam/project07_carbon_footprint.html",
 
     "overview": "사용자가 하루 동안 소비한 전기, 교통수단 이용 거리를 입력하면 탄소 배출량을 계산하고 2022 개정 교육과정의 실천 메시지를 보여줍니다.",
     "aiTech": "Gemini 바이브코딩, 차트(Chart.js)",
@@ -398,7 +398,7 @@
     "accentFrom": "#63dcd2",
     "accentTo": "#80ffe8",
     "accentBg": "rgba(99,220,210,0.08)",
-    "link": "https://hi763.github.io/thissam/project13_Student picker.html",
+    "link": "https://hi763.github.io/thissam/project13_Student_picker.html",
 
     "overview": "학생의 이름과 숫자를 입력하고, 그 중에서 발표할 학생을 뽑을 수 있다.",
     "aiTech": "발표 도우미",
@@ -526,7 +526,7 @@
     "accentFrom": "#7864ff",
     "accentTo": "#9b8aff",
     "accentBg": "rgba(99,220,210,0.08)",
-    "link": "https://hi763.github.io/thissam/project17_Image generation AI.html",
+    "link": "https://hi763.github.io/thissam/project17_Image_generation_AI.html",
 
     "overview": "요소를 선택하여 프롬프트를 생성할 수 있다.",
     "aiTech": "프롬프트 생성",
