@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>AI 이미지 생성 프롬프트 스튜디오 Pro</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-sub: #475569;
+      --text-muted: #94a3b8;
+      --border: #e2e8f0;
+      --chip-bg: #f1f5f9;
+      --chip-hover: #e2e8f0;
+      --chip-active-bg: #eef2ff;
+      --chip-active-border: #6366f1;
+      --chip-active-text: #4338ca;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 720px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding-bottom: 60px;
+    }
+
+    /* 헤더 */
+    header {
+      text-align: center;
+      padding: 12px 0 6px 0;
+    }
+
+    header h1 {
+      font-size: 1.55rem;
+      font-weight: 800;
+      /* background: var(--primary-gradient); */
+      /* -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent; */
+      -webkit-text-fill-color: #4f46e5;
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      margin-top: 4px;
+    }
+
+    /* 탭 메뉴 (가운데 정렬) */
+    .tab-wrapper {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding: 4px 0;
+    }
+    .tab-wrapper::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tab-container {
+      display: inline-flex;
+      background: #e2e8f0;
+      padding: 4px;
+      border-radius: 14px;
+      gap: 4px;
+    }
+
+    .tab-btn {
+      padding: 9px 15px;
+      border: none;
+      background: transparent;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-sub);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .tab-btn.active {
+      background: #ffffff;
+      color: var(--primary);
+      font-weight: 700;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    /* 카드 스타일 */
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 18px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-title {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ? 설명 버튼 */
+    .help-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: #6366f1;
+      background: #eef2ff;
+      border: 1px solid #c7d2fe;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .help-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* 입력창 */
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus {
+      border-color: var(--primary);
+    }
+
+    /* 칩 목록 */
+    .chips-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      padding: 8px 12px;
+      background: var(--chip-bg);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      font-size: 0.85rem;
+      color: var(--text-main);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s;
+    }
+
+    .chip:hover {
+      background: var(--chip-hover);
+    }
+
+    .chip.active {
+      background: var(--chip-active-bg);
+      color: var(--chip-active-text);
+      border-color: var(--chip-active-border);
+      font-weight: 700;
+    }
+
+    /* 하단 액션 */
+    .result-section {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .btn-main-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-complete {
+      flex: 3;
+      padding: 14px;
+      background: var(--primary-gradient);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+      transition: transform 0.1s, opacity 0.2s;
+    }
+    .btn-complete:active {
+      transform: scale(0.99);
+    }
+
+    .btn-reset {
+      flex: 1;
+      padding: 14px;
+      background: #f1f5f9;
+      color: #64748b;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-reset:active {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    .prompt-box {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .prompt-textarea {
+      width: 100%;
+      height: 160px;
+      padding: 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-size: 0.92rem;
+      line-height: 1.55;
+      resize: vertical;
+      outline: none;
+      background: #f8fafc;
+      color: var(--text-main);
+    }
+    .prompt-textarea:focus {
+      border-color: var(--primary);
+      background: #ffffff;
+    }
+
+    .action-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .action-btn {
+      flex: 1;
+      padding: 13px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: 1.5px solid var(--border);
+      background: #ffffff;
+      transition: all 0.15s;
+    }
+
+    .btn-translate {
+      color: var(--primary);
+      border-color: #c7d2fe;
+      background: #f5f7ff;
+    }
+    .btn-copy {
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #0f172a;
+    }
+    .btn-copy:active {
+      background: #1e293b;
+    }
+
+    /* 토스트 알림 */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: rgba(15, 23, 42, 0.95);
+      color: #ffffff;
+      padding: 11px 22px;
+      border-radius: 9999px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      pointer-events: none;
+      z-index: 1000;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* 설명 모달 */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(3px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 2000;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #ffffff;
+      width: 100%;
+      max-width: 540px;
+      max-height: 82vh;
+      border-radius: 18px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .modal-body {
+      overflow-y: auto;
+      padding: 14px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .help-item {
+      padding: 11px 13px;
+      background: #f8fafc;
+      border-radius: 10px;
+      border-left: 3.5px solid var(--primary);
+    }
+    .help-item-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .help-item-desc {
+      font-size: 0.83rem;
+      color: var(--text-sub);
+      margin-top: 3px;
+      line-height: 1.45;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <header>
+      <h1>AI 이미지 생성 프롬프트 스튜디오 Pro</h1>
+      <p>Gemini · Midjourney · DALL-E 3 글로벌 프롬프트 빌더</p>
+    </header>
+
+    <!-- 1. 상단 탭 (가운데 정렬) -->
+    <div class="tab-wrapper">
+      <div class="tab-container" id="tabContainer">
+        <button class="tab-btn active" data-tab="image">🖼️ 이미지</button>
+        <button class="tab-btn" data-tab="poster">📜 포스터</button>
+        <button class="tab-btn" data-tab="sticker">✨ 스티커</button>
+        <button class="tab-btn" data-tab="travel_map">🗺️ 여행지도</button>
+        <button class="tab-btn" data-tab="popup_book">📖 팝업북</button>
+      </div>
+    </div>
+
+    <!-- 2. 주제 입력 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">💡 1. 주제 (Subject)</span>
+      </div>
+      <input type="text" id="subjectInput" placeholder="예: 구름 위를 달리는 황금 기차" />
+    </div>
+
+    <!-- 3. 스타일 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">🎨 2. 스타일 (Style)</span>
+        <button class="help-btn" onclick="openHelp('style')">? 설명</button>
+      </div>
+      <div class="chips-group" id="styleChips"></div>
+    </div>
+
+    <!-- 4. 구도 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">📐 3. 구도 (Composition)</span>
+        <button class="help-btn" onclick="openHelp('composition')">? 설명</button>
+      </div>
+      <div class="chips-group" id="compositionChips"></div>
+    </div>
+
+    <!-- 5. 조명 및 색상 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">💡 4. 조명 및 색상 (Lighting & Color)</span>
+        <button class="help-btn" onclick="openHelp('lighting')">? 설명</button>
+      </div>
+      <div class="chips-group" id="lightingChips"></div>
+    </div>
+
+    <!-- 6. 화질 및 파라미터 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">💎 5. 화질 및 글로벌 AI 파라미터 (Quality & Engine)</span>
+        <button class="help-btn" onclick="openHelp('quality')">? 설명</button>
+      </div>
+      <div class="chips-group" id="qualityChips"></div>
+    </div>
+
+    <!-- 7. 하단 버튼 및 결과 영역 -->
+    <div class="result-section">
+      <div class="btn-main-group">
+        <button class="btn-complete" id="completeBtn">✨ 프롬프트 완성하기</button>
+        <button class="btn-reset" id="resetBtn">🔄 전체 다시 하기</button>
+      </div>
+
+      <div class="prompt-box" id="promptBox">
+        <textarea class="prompt-textarea" id="promptOutput" spellcheck="false" placeholder="완성된 프롬프트가 여기에 표시됩니다."></textarea>
+        <div class="action-group">
+          <button class="action-btn btn-translate" id="translateBtn">🌐 영어로 변환 (KO ➔ EN)</button>
+          <button class="action-btn btn-copy" id="copyBtn">📋 전체 복사</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 쉬운 용어 설명 모달 -->
+  <div class="modal-overlay" id="helpModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitle">옵션 설명</div>
+        <button class="modal-close" onclick="closeHelp()">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- 토스트 -->
+  <div class="toast" id="toast">복사되었습니다!</div>
+
+  <script>
+    // 탭별 글로벌 AI 프롬프트 데이터 사전 (Gemini, Midjourney v6, DALL-E 3, SDXL 확장)
+    const DATA_BY_TAB = {
+      image: {
+        template: {
+          ko: "16:9 와이드 비율의 고해상도 이미지, 단일 피사체 중심, 디테일한 배경 표현",
+          en: "--ar 16:9, master visual composition, high-end photography, cinematic realism"
+        },
+        style: [
+          { ko: "실사 사진 (Photorealistic)", en: "photorealistic, shot on 35mm lens, f/1.8, award-winning photography", desc: "📷 진짜 카메라로 정밀하게 찍은 실제 사진처럼 만들어줘요." },
+          { ko: "지브리/신카이 애니풍", en: "Studio Ghibli aesthetic, Makoto Shinkai vibrant sky art style", desc: "🍃 감성적인 하늘과 따뜻한 색감의 극장판 애니메이션 스타일이에요." },
+          { ko: "디지털 일러스트 (ArtStation)", en: "trending on ArtStation, polished digital illustration, concept art", desc: "💻 게임 원화가들이 그리는 트렌디하고 세련된 컴퓨터 그래픽이에요." },
+          { ko: "3D 디즈니/픽사 (Pixar 3D)", en: "Disney Pixar 3D animation style, cute character render, soft shading", desc: "🎬 토이스토리나 엘리멘탈처럼 통통 튀고 귀여운 3D 애니메이션 스타일이에요." },
+          { ko: "수채화 (Watercolor)", en: "delicate watercolor painting, wet-on-wet technique, soft ink bleeding", desc: "🎨 물감이 맑고 투명하게 번지는 촉촉한 손그림 느낌이에요." },
+          { ko: "사이버펑크 SF (Cyberpunk)", en: "cyberpunk futuristic neon concept art, high-tech dystopian cityscape", desc: "🏙️ 네온사인과 홀로그램이 번쩍이는 미래 SF 도시 분위기예요." },
+          { ko: "클레이메이션 (Claymation)", en: "Aardman claymation stop-motion style, hand-sculpted plasticine texture", desc: "🧸 점토(클레이) 인형을 손으로 직접 빚어 만든 클레이 애니메이션 느낌이에요." },
+          { ko: "다크 판타지 (Dark Fantasy)", en: "dark fantasy aesthetic, mystical gothic atmosphere, Elden Ring vibe", desc: "🏰 고대 마법과 신비롭고 웅장한 판타지 세계 분위기예요." }
+        ],
+        composition: [
+          { ko: "피사계 심도/보케 (Depth of Field)", en: "shallow depth of field, sharp foreground focus, creamy bokeh background", desc: "✨ 주인공은 선명하고 뒷배경은 몽환적으로 흐릿하게 뭉개져요." },
+          { ko: "클로즈업 (Close-up)", en: "extreme detailed close-up portrait shot", desc: "🔍 주인공의 표정이나 세밀한 부분을 가까이서 돋보이게 해요." },
+          { ko: "광각 랜드스케이프 (Wide-Angle)", en: "ultra wide-angle landscape view, breathtaking vast perspective", desc: "🏞️ 넓고 웅장한 자연이나 건물 전체를 시원하게 담아요." },
+          { ko: "삼등분 법칙 구도 (Rule of Thirds)", en: "rule of thirds composition, harmoniously balanced framing", desc: "⚖️ 사진 구도의 황금 비율로 주인공을 가장 보기 편한 위치에 둬요." },
+          { ko: "로우 앵글 (Low Angle)", en: "dramatic low-angle worm's-eye view looking up", desc: "📐 아래에서 위로 치켜올려다보아 주인공이 영웅처럼 거대해 보여요." },
+          { ko: "시점샷 (POV / First-Person)", en: "first-person POV view, immersive perspective", desc: "👀 내 눈으로 직접 보고 있는 것 같은 생생한 1인칭 시점이에요." },
+          { ko: "드치 앵글 (Dutch Angle/비틀기)", en: "dutch angle tilted frame, tension and dynamism", desc: "⚡ 카메라를 비스듬히 기울여 스릴 넘치고 긴장감 있는 느낌을 줘요." }
+        ],
+        lighting: [
+          { ko: "빛내림/볼류메트릭 (Volumetric God Rays)", en: "volumetric lighting, dramatic god rays piercing through atmosphere, Tyndall effect", desc: "✨ 구름이나 나무 틈새로 신비로운 햇빛 줄기가 쏟아져 내려요." },
+          { ko: "골든아워 (노을빛)", en: "golden hour magic light, warm amber sunlight", desc: "🌅 해 질 무렵 따스하고 부드러운 주황빛 햇살이에요." },
+          { ko: "생체발광 (Bioluminescent Glow)", en: "bioluminescent glowing flora and fauna, ethereal night neon illumination", desc: "🍄 영화 아바타처럼 숲속 생명체들이 은은한 에메랄드빛으로 빛나요." },
+          { ko: "스튜디오 림라이트 (Rim Light)", en: "dramatic studio rim lighting, silhouette edge glow", desc: "💡 피사체 테두리를 따라 빛나는 하이라이트가 입체감을 살려줘요." },
+          { ko: "시네마틱 듀얼 톤 (Teal & Orange)", en: "cinematic teal and orange color grading, movie color palette", desc: "🎬 영화에서 가장 많이 쓰는 청록색과 주황색의 고급스러운 대비예요." }
+        ],
+        quality: [
+          { ko: "8K UHD 마스터피스 (8K Masterpiece)", en: "8K UHD, masterpiece, award-winning clarity, hyper-detailed", desc: "🏆 세계적인 사진 공모전 수상작처럼 극도로 선명한 최고 화질이에요." },
+          { ko: "언리얼 5 & 레이트레이싱 (UE5)", en: "Unreal Engine 5, Lumen global illumination, hardware ray-tracing", desc: "🎮 최신 고사양 3D 게임처럼 빛 반사와 질감이 사실적이에요." },
+          { ko: "미드저니 스타일라이즈 (--stylize 250)", en: "--stylize 250, artistic finesse, high aesthetics", desc: "🎨 AI가 더 화려하고 예술적인 감각을 발휘하게 만드는 마법 파라미터예요." },
+          { ko: "옥탄 렌더 (Octane Render)", en: "Octane Render 3D, buttery smooth textures, photorealistic render", desc: "💎 3D 전문가들이 쓰는 가장 매끄럽고 고급스러운 그래픽 렌더러예요." }
+        ]
+      },
+
+      poster: {
+        template: {
+          ko: "세로형 그래픽 디자인 포스터, 2:3 비율, 텍스트 배치가 용이한 여백, 높은 시각적 임팩트",
+          en: "--ar 2:3, vertical modern graphic design poster, clean negative copy space, high visual hierarchy"
+        },
+        style: [
+          { ko: "미니멀리즘 벡터 (Minimalist)", en: "minimalist flat vector poster, bold geometry, Bauhaus inspiration", desc: "📐 단순한 선과 면으로 직관적이고 깔끔하게 표현하는 현대적 포스터예요." },
+          { ko: "스위스 인터내셔널 그리드", en: "Swiss graphic design, international typographic style, strict grid layout", desc: "🏛️ 잡지나 전시회 포스터처럼 정돈된 정통 디자인 스타일이에요." },
+          { ko: "빈티지 레트로 트래블 1970", en: "vintage 1970s screen-printed travel poster, nostalgic lithograph", desc: "📻 옛날 관광지나 영화 홍보 판화 같은 복고풍 스타일이에요." },
+          { ko: "80s 레트로 신스웨이브 (Synthwave)", en: "80s synthwave neon grid poster, outrun retrofuturism aesthetic", desc: "🕹️ 80년대 레트로 게임과 보랏빛 네온 그리드가 어우러진 신스웨이브예요." },
+          { ko: "팝아트 (Pop Art & Halftone)", en: "bold Pop Art style, Roy Lichtenstein inspired halftone screen dots", desc: "💥 만화 인쇄 도트와 강렬한 원색이 어우러진 앤디 워홀 스타일이에요." }
+        ],
+        composition: [
+          { ko: "상단 여백 확보 (헤드라인용)", en: "vast negative space at the top for headline text, clean breathing room", desc: "📝 큰 제목 글자를 넣을 수 있도록 상단을 시원하게 비워둬요." },
+          { ko: "중앙 엠블럼형 (Hero Center)", en: "centered hero subject emblem, commanding focal point", desc: "🏆 한가운데 심볼이나 대표 그림이 웅장하게 시선을 압도해요." },
+          { ko: "역동적 대각선 구도 (Dynamic Diagonal)", en: "dynamic diagonal layout, high kinetic visual flow", desc: "⚡ 사선 구도로 배치되어 활기차고 속도감 넘치는 느낌을 줘요." },
+          { ko: "기하학적 보더 프레임", en: "framed composition with elegant geometric borders and margin rules", desc: "🖼️ 가장자리에 모던한 테두리 선이 들어가 단정하고 완성도 높아요." }
+        ],
+        lighting: [
+          { ko: "듀오톤 고대비 (Duotone)", en: "high contrast bold duotone color scheme (electric indigo and warm amber)", desc: "🎭 두 가지 강렬한 색상만 대비시켜 눈에 확 띄게 만들어요." },
+          { ko: "선명한 CMYK 비비드", en: "vivid punchy CMYK primary colors, vibrant print contrast", desc: "🎨 인쇄물 전용 원색처럼 쨍하고 화사한 컬러 팔레트예요." },
+          { ko: "네온 다크모드 (Dark Glow)", en: "moody matte dark backdrop with glowing fluorescent linework", desc: "🖤 시크한 검정 배경 위에 형광 라인이 빛나는 세련된 포스터예요." }
+        ],
+        quality: [
+          { ko: "실크스크린 하프톤 텍스처", en: "authentic silkscreen print texture, subtle halftone pattern grain", desc: "📄 판화 공방에서 잉크로 직접 찍어낸 듯한 아날로그 인쇄 질감이에요." },
+          { ko: "무광 매트 마감 (Matte Finish)", en: "premium heavyweight matte cardstock texture, clean edges", desc: "📜 빛 반사 없이 차분하고 고급스러운 미술관 도화지 질감이에요." },
+          { ko: "칼선 벡터 선명도 (Crisp Scalable)", en: "razor-sharp vector precision, zero blur artifacts, infinite crispness", desc: "✨ 아무리 크게 확대해도 선이 칼처럼 선명해요." }
+        ]
+      },
+
+      sticker: {
+        template: {
+          ko: "다이컷 스티커, 흰색 도톰한 외곽선 테두리, 단순한 벡터 형태, 단색 흰색 배경 (배경 분리 용이)",
+          en: "die-cut sticker graphic, crisp thick white border contour, vector illustration, isolated on pure white solid background, --no shadows background"
+        },
+        style: [
+          { ko: "귀여운 SD/카와이 (Chibi)", en: "cute kawaii chibi style sticker, expressive eyes, adorable proportions", desc: "🧸 머리가 크고 눈이 반짝이는 귀여운 캐릭터 스티커예요." },
+          { ko: "다이어리 꾸미기 손그림 (Doodle)", en: "hand-drawn aesthetic journal doodle sticker, cozy pastel felt pen lines", desc: "📔 다이어리나 플래너에 붙이기 좋은 아기자기한 손낙서 스타일이에요." },
+          { ko: "3D 에폭시 젤리 (Puffy 3D)", en: "3D puffed epoxy sticker, rounded glossy clay finish, tactile feel", desc: "🍬 손으로 만지면 말랑말랑 튀어나올 것 같은 입체 젤리 스티커예요." },
+          { ko: "픽셀 도트 (Pixel Sprite)", en: "retro 16-bit pixel art character sprite sticker, crisp grid outline", desc: "👾 네모난 도트가 콕콕 박힌 레트로 게임 캐릭터 스티커예요." },
+          { ko: "색연필/크레용 (Crayon Texture)", en: "textured colored pencil and crayon drawing sticker, warm wax grain", desc: "🖍️ 크레파스로 쓱쓱 색칠한 듯 따스하고 순수한 질감이에요." }
+        ],
+        composition: [
+          { ko: "정면 단독 피사체 (Isolated)", en: "single isolated character, centered front view, easy cutout", desc: "🎯 주인공 하나만 깔끔하게 정면에 있어 오려 쓰기 가장 편해요." },
+          { ko: "스티커 팩 시트 (Multi Pack)", en: "sticker pack sheet collection, assorted themed mini icon stickers set", desc: "📦 여러 개의 아기자기한 스티커들이 한 장에 모여 있는 종합 세트예요." },
+          { ko: "역동적인 동작 (Action Pose)", en: "lively dynamic action pose, jumping and waving happily", desc: "🏃 인사하거나 방방 뛰는 활기찬 캐릭터 포즈예요." }
+        ],
+        lighting: [
+          { ko: "플랫 라이팅 (그림자 없음)", en: "flat uniform illumination, shadowless clean graphic lighting", desc: "☀️ 그림자가 없어 모양대로 칼선 따기 가장 좋은 밝은 조명이에요." },
+          { ko: "캔디 팝 컬러 (Candy Palette)", en: "cheerful candy-colored vibrant palette, bright pastels", desc: "🍭 사탕처럼 알록달록하고 기분 좋아지는 발랄한 색상이에요." }
+        ],
+        quality: [
+          { ko: "도톰한 흰색 다이컷 테두리", en: "thick solid white vinyl die-cut border contour around edges", desc: "✂️ 스티커 둘레에 하얗고 깔끔한 외곽선 칼선이 선명하게 생겨요." },
+          { ko: "홀로그램 프리즘박 (Holographic)", en: "iridescent rainbow holographic foil overlay, shimmering metallic reflection", desc: "🌈 각도에 따라 무지개색으로 영롱하게 반짝이는 스페셜 스티커예요." },
+          { ko: "유광 비닐 코팅 (Glossy Vinyl)", en: "glossy vinyl waterproof texture, smooth glossy protective coat", desc: "✨ 매끈하고 물에 젖지 않을 것 같은 반짝이는 비닐 스티커 코팅이에요." }
+        ]
+      },
+
+      travel_map: {
+        template: {
+          ko: "일러스트 여행 지도, 3D 아이소메트릭 입체 조감도, 주요 랜드마크 아이콘, 점선 여행 경로, 장식 요소",
+          en: "illustrated 3D isometric tourist travel map, landmark icons, dotted path route, whimsical detailed terrain, decorative compass"
+        },
+        style: [
+          { ko: "3D 아이소메트릭 미니어처 맵", en: "3D isometric miniature city map, low-poly cute landmarks, tilt-shift model world", desc: "🏙️ 장난감 미니어처 세상을 대각선 위에서 내려다보는 입체 지도예요." },
+          { ko: "동화책 수채화 맵 (Whimsical)", en: "hand-painted watercolor exploration map, storybook illustration, organic ink contours", desc: "🎨 손으로 직접 칠한 동화책 속 모험 지도 같은 따뜻한 스타일이에요." },
+          { ko: "탐험가 양피지 고지도 (Antique)", en: "vintage pirate antique parchment map, aged sepia textures, decorative compass rose and sea monsters", desc: "🧭 보물섬을 찾아 떠나는 옛날 탐험가의 낡은 양피지 지도 스타일이에요." },
+          { ko: "클린 인포그래픽 노선도 맵", en: "clean modern vector infographic map, stylized metro tourist guide", desc: "🚇 지하철 노선도나 가이드북처럼 깔끔하고 보기 편한 지도예요." }
+        ],
+        composition: [
+          { ko: "파노라마 조감도 (Bird's Eye)", en: "panoramic bird's-eye isometric view of the entire island/region", desc: "🦅 하늘을 나는 새처럼 도시나 섬 전체를 한눈에 굽어보는 구도예요." },
+          { ko: "빨간 점선 여행 경로 (Dotted Trail)", en: "prominent red dashed travel path with waypoint location pins", desc: "📍 주요 명소들을 콕콕 연결하는 점선 발자국 경로가 표시돼요." },
+          { ko: "랜드마크 과장 확대 (Hero Icons)", en: "exaggerated giant landmark architecture icons on miniature landscape", desc: "🗼 에펠탑, 성, 타워 같은 명소를 큼직하게 강조해서 배치해요." },
+          { ko: "틸트 시프트 미니어처 효과 (Tilt-Shift)", en: "miniature tilt-shift effect, macro lens perspective, tiny town look", desc: "🔍 실제 도시가 아기자기한 장난감 디오라마처럼 보이게 만드는 특수 효과예요." }
+        ],
+        lighting: [
+          { ko: "맑은 한낮 햇살 (Sunny Day)", en: "bright crisp daytime sunlight, clear blue sky reflections", desc: "☀️ 여행하기 가장 좋은 맑고 화창한 날의 밝은 조명이에요." },
+          { ko: "빈티지 세피아 웜톤 (Warm Sepia)", en: "warm antique parchment tones, sepia aged paper glow", desc: "🍂 고풍스러운 갈색과 베이지색으로 아늑함을 더해줘요." },
+          { ko: "에메랄드 오션 & 포레스트", en: "tropical emerald green and deep azure ocean color palette", desc: "🏝️ 시원한 바다 파랑과 푸른 자연 초록이 어우러진 산뜻한 색감이에요." }
+        ],
+        quality: [
+          { ko: "크래프트 마분지 종이 질감", en: "fibrous kraft paper texture, authentic rough paper grain", desc: "📜 오돌토돌한 친환경 마분지 종이의 촉감이 느껴져요." },
+          { ko: "정교한 3D 클레이 텍스처", en: "smooth matte polymer clay material, tactile diorama feel", desc: "🧸 찰흙(클레이)으로 정성스레 빚어 만든 것 같은 따스한 촉감이에요." },
+          { ko: "핀포인트 마이크로 디테일", en: "ultra-high precision micro icon illustrations, crisp lines", desc: "🔎 돋보기로 들여다봐도 작은 나무 한 그루까지 선명해요." }
+        ]
+      },
+
+      popup_book: {
+        template: {
+          ko: "입체 팝업북 아트, 펼쳐진 책 위에 솟아오른 정교한 종이 공예 구조, 사실적인 깊이감과 그림자, 레이어드 페이퍼",
+          en: "3D layered pop-up book scene, intricate paper engineering erected on an open storybook, realistic ambient occlusion shadows, dimensional papercraft"
+        },
+        style: [
+          { ko: "클래식 정밀 페이퍼 커팅", en: "intricate laser paper-cutting art, layered paper silhouette sculpture", desc: "✂️ 종이를 정교하게 오려 층층이 세운 예술적인 페이퍼 아트예요." },
+          { ko: "동화책 일러스트 팝업", en: "storybook illustration 3D pop-up, whimsical fairytale fantasy pop-up structure", desc: "📚 책장을 펼치면 마법 성과 숲이 쑥 튀어나오는 동화책 느낌이에요." },
+          { ko: "오리가미 기하학 종이접기", en: "geometric architectural origami pop-up, clean white card folds", desc: "🤍 반듯하게 접힌 기하학적 건축물 형태의 세련된 종이접기예요." },
+          { ko: "엔틱 골드박 마법서", en: "antique grimoire pop-up book, illuminated gold foil stamping along paper edges", desc: "✨ 마법 고서처럼 종이 테두리마다 금박이 반짝이는 팝업북이에요." }
+        ],
+        composition: [
+          { ko: "펼쳐진 책 정면 구도 (Open Book Spread)", en: "front angle view showing wide open book pages and rising centerpiece", desc: "📖 책장이 양옆으로 펼쳐지고 가운데서 웅장하게 솟아오르는 정석 구도예요." },
+          { ko: "다층 레이어 원근감 (Multi-layered)", en: "deep perspective layered pop-up with distinct foreground and background tabs", desc: "🏞️ 앞단, 중간단, 뒷단 종이가 겹쳐서 입체적인 깊이감이 극대화돼요." },
+          { ko: "접힘 관절 매크로 샷 (Macro Hinge)", en: "close-up angle showing delicate paper hinges and folding crease mechanics", desc: "🔎 종이가 접히는 이음새와 관절 구조를 실감나게 보여줘요." }
+        ],
+        lighting: [
+          { ko: "종이 그림자 앰비언트 오클루전", en: "soft directional light casting authentic paper layer drop shadows and ambient occlusion", desc: "🕯️ 종이 틈새마다 진짜 그림자가 드리워져서 튀어나온 입체감이 확실해요." },
+          { ko: "책 속 신비로운 요정빛 (Magical Glow)", en: "ethereal magical luminescence rising from the book gutter, glowing floating motes", desc: "✨ 책 속 깊은 곳에서 은은한 마법의 빛이 피어오르는 환상적인 연출이에요." },
+          { ko: "아늑한 촛불 무드 (Candlelight)", en: "warm cozy fireplace and candlelit ambience, deep amber glow", desc: "🔥 밤에 스탠드나 촛불 아래서 책을 읽는 아늑하고 포근한 빛이에요." }
+        ],
+        quality: [
+          { ko: "두꺼운 고급 판지/펠트 질감", en: "heavy 300gsm textured watercolor cardstock, visible fibrous paper tooth", desc: "📄 만지면 도톰함이 느껴지는 고급 수채화 판지의 종이 결이에요." },
+          { ko: "초정밀 레이저 컷 칼선 (Laser Cut)", en: "flawless laser-cut edge precision, intricate paper filigree", desc: "✂️ 레이저로 정밀하게 자른 듯 한 치의 오차도 없이 섬세해요." },
+          { ko: "자연스러운 종이 접힘 주름 (Crease)", en: "authentic scoring crease marks and soft folded paper edges", desc: "📐 종이가 접혔다 펴질 때 생기는 자연스러운 주름이 들어가요." }
+        ]
+      }
+    };
+
+    // 상태 관리
+    let currentTab = "image";
+    let isEnglish = false;
+    let selectedOptions = {
+      style: new Set(),
+      composition: new Set(),
+      lighting: new Set(),
+      quality: new Set()
+    };
+
+    // 칩 렌더링 함수
+    function renderCategoryChips(category, containerId) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+      const items = DATA_BY_TAB[currentTab][category] || [];
+
+      items.forEach((item) => {
+        const chip = document.createElement("div");
+        chip.className = "chip";
+        chip.textContent = item.ko;
+
+        if (selectedOptions[category].has(item)) {
+          chip.classList.add("active");
+        }
+
+        chip.addEventListener("click", () => {
+          if (selectedOptions[category].has(item)) {
+            selectedOptions[category].delete(item);
+            chip.classList.remove("active");
+          } else {
+            selectedOptions[category].add(item);
+            chip.classList.add("active");
+          }
+        });
+
+        container.appendChild(chip);
+      });
+    }
+
+    // 모든 칩 갱신
+    function updateAllChips() {
+      renderCategoryChips("style", "styleChips");
+      renderCategoryChips("composition", "compositionChips");
+      renderCategoryChips("lighting", "lightingChips");
+      renderCategoryChips("quality", "qualityChips");
+    }
+
+    // 탭 전환 이벤트 리스너
+    const tabBtns = document.querySelectorAll(".tab-btn");
+    tabBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        tabBtns.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentTab = btn.getAttribute("data-tab");
+
+        clearSelections();
+        updateAllChips();
+
+        if (document.getElementById("promptBox").style.display === "flex") {
+          document.getElementById("promptOutput").value = buildPrompt(isEnglish);
+        }
+      });
+    });
+
+    // 선택 초기화 함수
+    function clearSelections() {
+      selectedOptions.style.clear();
+      selectedOptions.composition.clear();
+      selectedOptions.lighting.clear();
+      selectedOptions.quality.clear();
+    }
+
+    // 프롬프트 생성 빌더
+    function buildPrompt(toEnglish = false) {
+      const subject = document.getElementById("subjectInput").value.trim();
+      const lang = toEnglish ? "en" : "ko";
+      const parts = [];
+
+      // 1. 기본 탭 템플릿
+      parts.push(DATA_BY_TAB[currentTab].template[lang]);
+
+      // 2. 주제
+      if (subject) {
+        if (toEnglish) {
+          parts.push(`Subject: ${subject}`);
+        } else {
+          parts.push(`주제: ${subject}`);
+        }
+      }
+
+      // 3. 각 카테고리별 선택 옵션
+      const styleList = Array.from(selectedOptions.style).map((i) => i[lang]);
+      const compList = Array.from(selectedOptions.composition).map((i) => i[lang]);
+      const lightList = Array.from(selectedOptions.lighting).map((i) => i[lang]);
+      const qualList = Array.from(selectedOptions.quality).map((i) => i[lang]);
+
+      if (styleList.length > 0) parts.push(toEnglish ? `Style: ${styleList.join(", ")}` : `스타일: ${styleList.join(", ")}`);
+      if (compList.length > 0) parts.push(toEnglish ? `Composition: ${compList.join(", ")}` : `구도: ${compList.join(", ")}`);
+      if (lightList.length > 0) parts.push(toEnglish ? `Lighting & Color: ${lightList.join(", ")}` : `조명 및 색상: ${lightList.join(", ")}`);
+      if (qualList.length > 0) parts.push(toEnglish ? `Quality & Parameters: ${qualList.join(", ")}` : `화질 및 파라미터: ${qualList.join(", ")}`);
+
+      return parts.join(toEnglish ? ", " : ",\n");
+    }
+
+    // [프롬프트 완성하기] 버튼
+    const completeBtn = document.getElementById("completeBtn");
+    const promptBox = document.getElementById("promptBox");
+    const promptOutput = document.getElementById("promptOutput");
+    const translateBtn = document.getElementById("translateBtn");
+
+    completeBtn.addEventListener("click", () => {
+      isEnglish = false;
+      translateBtn.textContent = "🌐 영어로 변환 (KO ➔ EN)";
+      promptOutput.value = buildPrompt(false);
+      promptBox.style.display = "flex";
+      promptBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
+
+    // [전체 다시 하기] 버튼
+    const resetBtn = document.getElementById("resetBtn");
+    resetBtn.addEventListener("click", () => {
+      document.getElementById("subjectInput").value = "";
+      clearSelections();
+      updateAllChips();
+      promptOutput.value = "";
+      promptBox.style.display = "none";
+      isEnglish = false;
+      showToast("모든 설정이 초기화되었습니다.");
+    });
+
+    // [한/영 변환] 버튼
+    translateBtn.addEventListener("click", () => {
+      isEnglish = !isEnglish;
+      promptOutput.value = buildPrompt(isEnglish);
+      translateBtn.textContent = isEnglish
+        ? "🌐 한글로 변환 (EN ➔ KO)"
+        : "🌐 영어로 변환 (KO ➔ EN)";
+    });
+
+    // [전체 복사] 버튼
+    const copyBtn = document.getElementById("copyBtn");
+    const toast = document.getElementById("toast");
+
+    copyBtn.addEventListener("click", async () => {
+      const text = promptOutput.value;
+      if (!text) return;
+
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast("프롬프트가 클립보드에 복사되었습니다! 🎉");
+      } catch (err) {
+        promptOutput.select();
+        document.execCommand("copy");
+        showToast("프롬프트가 복사되었습니다! 🎉");
+      }
+    });
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2200);
+    }
+
+    // [? 설명 모달]
+    const helpModal = document.getElementById("helpModal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalBody = document.getElementById("modalBody");
+
+    const categoryNames = {
+      style: "스타일 (Style)",
+      composition: "구도 (Composition)",
+      lighting: "조명 및 색상 (Lighting & Color)",
+      quality: "화질 및 글로벌 AI 파라미터 (Quality & Engine)"
+    };
+
+    function openHelp(category) {
+      modalTitle.textContent = `💡 ${categoryNames[category]} 쉬운 설명`;
+      modalBody.innerHTML = "";
+
+      const items = DATA_BY_TAB[currentTab][category] || [];
+      items.forEach((item) => {
+        const div = document.createElement("div");
+        div.className = "help-item";
+        div.innerHTML = `
+          <div class="help-item-title">${item.ko}</div>
+          <div class="help-item-desc">${item.desc}</div>
+        `;
+        modalBody.appendChild(div);
+      });
+
+      helpModal.classList.add("active");
+    }
+
+    function closeHelp() {
+      helpModal.classList.remove("active");
+    }
+
+    helpModal.addEventListener("click", (e) => {
+      if (e.target === helpModal) closeHelp();
+    });
+
+    // 초기 실행
+    updateAllChips();
+  </script>
+</body>
+</html>
