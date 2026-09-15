@@ -1,346 +1,1049 @@
-<!doctype html>
-<html lang="ko" class="h-full">
- <head>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI 융합 교육 포트폴리오</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&amp;family=Outfit:wght@400;600;700;900&amp;display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
-  <script src="/_sdk/element_sdk.js"></script>
-  <link rel="stylesheet" href="./style.css" />
-  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
- </head>
- <body class="h-full">
-  <div id="app" class="app-wrapper" style="background: #0a0e27;"><!-- HEADER -->
-   <header class="header-bar">
-    <div class="header-title-wrapper">
-     <div class="header-logo">
-      <svg width="18" height="18" viewbox="0 0 32 32" fill="none"><path d="M16 4L4 10v12l12 6 12-6V10L16 4z" stroke="white" stroke-width="2" fill="none" /> <circle cx="16" cy="16" r="4" fill="white" opacity="0.9" /> <path d="M16 12v-4M16 24v-4M20 16h4M8 16h4" stroke="white" stroke-width="1.5" opacity="0.6" />
-      </svg>
-     </div>
-     <div>
-      <h1 id="portfolioTitle">AI × Education<br><span style="color: #63dcd2;">그쌤 &nbsp; Project</span></h1>
-     </div>
-    </div>
-   </header><!-- MAIN CONTENT -->
-   <div class="main-content"><!-- PROJECTS SECTION -->
-    <section id="projects" class="hero-bg">
-     <div class="responsive-container">
-      <div>
-       <div class="section-label">
-        PROJECTS
-       </div>
-       <div class="section-desc">
-        학교급별 교육과정에 맞춘 인터랙티브 콘텐츠
-       </div>
-      </div><!-- FILTER TABS -->
-      <div class="filter-tabs-wrapper" id="filterTabs"><button class="filter-tab active" data-filter="all">전체</button> <button class="filter-tab" data-filter="elementary">🌱 초등</button> <button class="filter-tab" data-filter="middle">🔬 중등</button> <button class="filter-tab" data-filter="high">🚀 고등</button> <button class="filter-tab" data-filter="special">💛 특수</button> <button class="filter-tab" data-filter="tool">📝 수업도구</button>
-      </div><!-- PROJECT GRID -->
-      <div id="projectGrid" class="project-grid-responsive"></div>
-     </div>
-    </section><!-- CONTACT SECTION -->
-    <section id="contact" class="contact-section">
-     <div class="responsive-container" style="text-align: center;">
-      <div style="margin-bottom: 24px;">
-       <div class="section-label" style="text-align: center; margin-bottom: 12px;">
-        CONTACT
-       </div>
-       <h2 id="contactTitle">함께 만들어요</h2>
-       <p class="contact-text">AI 융합 교육 콘텐츠에 관심이 있으시다면<br>
-         언제든 연락해 주세요.</p>
-      </div>
-      <div style="max-width: 500px; margin: 0 auto; text-align: left;">
-       <div class="contact-item">
-        <div class="contact-icon mint">
-         <i data-lucide="mail" style="width: 16px; height: 16px; color: #63dcd2;"></i>
-        </div>
-        <div>
-         <div class="contact-label">
-          Email
-         </div>
-         <div class="contact-value">
-          work.jungah@gmail.com
-         </div>
-        </div>
-       </div><!-- GitHub item commented out
-       <div class="contact-item">
-        <div class="contact-icon iris">
-         <i data-lucide="github" style="width: 16px; height: 16px; color: #7864ff;"></i>
-        </div>
-        <div>
-         <div class="contact-label">
-          GitHub
-         </div>
-         <div class="contact-value">
-          github.com/ai-edu-lab
-         </div>
-        </div>
-       </div>
-       -->
-      </div>
-      <div class="footer-text">
-       © 2026 AI × Education 그쌤 Project
-      </div>
-     </div>
-    </section>
-   </div><!-- MODAL OVERLAY -->
-   <div id="modalOverlay" class="modal-overlay">
-    <div class="modal-content" id="modalContent">
-     <div class="modal-header">
-      <h2 id="modalTitle" style="margin: 0; font-size: 20px; color: white; flex: 1;"></h2><button class="modal-close" onclick="closeModal()"><i data-lucide="x" style="width: 20px; height: 20px;"></i></button>
-     </div>
-     <div id="modalBody" style="color: #aaa;"></div>
-    </div>
-   </div><!-- BOTTOM NAV -->
-   <nav class="bottom-nav"><a href="#projects" class="nav-item active" data-section="projects"> <i data-lucide="layers" style="width: 18px; height: 18px;"></i> <span>프로젝트</span>
-     <div class="nav-dot"></div></a> <a href="#contact" class="nav-item" data-section="contact"> <i data-lucide="send" style="width: 18px; height: 18px;"></i> <span>연락</span>
-     <div class="nav-dot"></div></a>
-   </nav>
-  </div>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Thissam Studio - 웹앱 개발 포트폴리오</title>
+  
+  <!-- Fonts & CDN -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
   <script>
-
-        // 1. 데이터를 담을 빈 그릇을 먼저 만듭니다.
-        let projects = []; 
-
-        // 2. 데이터를 불러오고 화면을 그리는 함수를 만듭니다.
-        async function loadData() {
-            try {
-          // projects.json 파일을 가져옵니다.
-                const response = await fetch('./data.json'); 
-                
-                if (!response.ok) {
-                    throw new Error("파일을 찾을 수 없습니다.");
-                }
-
-          // 가져온 데이터를 projects 변수에 넣습니다.
-                projects = await response.json(); 
-                
-          // 데이터가 성공적으로 로드된 '후'에 화면을 그립니다.
-                renderProjects('all'); 
-                lucide.createIcons();
-                
-                console.log("데이터 로드 완료!", projects);
-            } catch (error) {
-                console.error("에러 발생:", error);
-                document.getElementById('projectGrid').innerHTML = "데이터를 불러오는 중 오류가 발생했습니다.";
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#F5F7FF',
+              100: '#EBF0FE',
+              200: '#CEDCFD',
+              500: '#6366F1',
+              600: '#4F46E5',
             }
+          },
+          fontFamily: {
+            sans: ['Pretendard', 'Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+          }
         }
+      }
+    }
+  </script>
 
-        // 3. 페이지가 로드되면 함수를 실행합니다.
-        window.onload = loadData;
+  <style>
+    body {
+      font-family: 'Pretendard', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      background-color: #F8FAFC;
+    }
 
-    // Render projects
-    function renderProjects(filter = 'all') {
-      const grid = document.getElementById('projectGrid');
-      const filtered = filter === 'all' ? projects : projects.filter(p => p.level.includes(filter));
-      grid.innerHTML = '';
+    /* 산뜻하고 밝은 글래스모피즘 & 배경 그라디언트 */
+    .hero-glow {
+      background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.12) 0%, rgba(240, 247, 255, 0.6) 45%, transparent 70%);
+    }
 
-      filtered.forEach((p) => {
-        const card = document.createElement('div');
-        card.className = 'project-card';
-        const badgeHtml = p.badge.map(b => `<span class="tag-pill">${b}</span>`).join('');
-        const subjectText = p.subject.join('<br>');
-        card.innerHTML = `
-          <div class="card-inner" style="background: ${p.accentBg};">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; gap: 8px;">
-              <div style="display: flex; gap: 6px; flex-wrap: wrap;">${badgeHtml}</div>
-              <i data-lucide="arrow-up-right" style="width: 14px; height: 14px; color: #666; flex-shrink: 0;"></i>
+    .card-glass {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .card-glass:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 30px -10px rgba(99, 102, 241, 0.12), 0 6px 12px -4px rgba(0, 0, 0, 0.04);
+      border-color: rgba(199, 210, 254, 1);
+    }
+
+    /* 가로 스크롤바 숨김 */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col antialiased selection:bg-indigo-100 selection:text-indigo-900">
+
+  <!-- Top Navigation Header -->
+  <header class="sticky top-0 z-40 bg-white/85 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <a href="#" class="flex items-center gap-2.5 group">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-sky-400 flex items-center justify-center shadow-md shadow-indigo-100 text-white font-bold text-lg group-hover:scale-105 transition-transform">
+          ⚡
+        </div>
+        <div>
+          <span class="font-extrabold text-xl tracking-tight bg-gradient-to-r from-slate-900 via-indigo-950 to-indigo-600 bg-clip-text text-transparent">
+            그쌤(Thissam)
+          </span>
+          <span class="ml-1.5 px-2 py-0.5 text-xs font-semibold rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100">
+            Portfolio
+          </span>
+        </div>
+      </a>
+
+      <!-- Quick Action Buttons -->
+      <div class="flex items-center gap-2">
+        <!-- 이모지 팔레트 버튼 -->
+         <!-- <button 
+          onclick="openEmojiModal()" 
+          class="px-3 py-2 text-xs sm:text-sm font-medium rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors flex items-center gap-1.5 text-slate-700 bg-white"
+          title="카드용 이모지 모음 보기 및 복사"
+        >
+          <span class="text-base">🎨</span>
+          <span class="hidden sm:inline">이모지 팔레트</span>
+        </button>-->
+
+        <!-- 북마크 필터 -->
+        <button 
+          id="bookmarkFilterBtn" 
+          onclick="toggleBookmarkOnly()" 
+          class="px-3 py-2 text-xs sm:text-sm font-medium rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors flex items-center gap-1.5 text-slate-600"
+          title="저장한 프로젝트만 보기"
+        >
+          <i data-lucide="bookmark" class="w-4 h-4 text-amber-500"></i>
+          <span class="hidden sm:inline">북마크</span>
+          <span id="bookmarkCount" class="text-xs bg-slate-100 px-1.5 py-0.5 rounded-full font-bold">0</span>
+        </button>
+
+        <!-- 문의하기 버튼 -->
+        <button 
+          onclick="openContactModal()" 
+          class="px-3.5 py-2 text-xs sm:text-sm font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white transition-all shadow-sm shadow-indigo-200 flex items-center gap-1.5 active:scale-95"
+        >
+          <i data-lucide="mail" class="w-4 h-4"></i>
+          <span>문의하기</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-glow pt-8 pb-6 px-4 sm:px-6 lg:px-8 text-center relative overflow-hidden">
+    <div class="max-w-3xl mx-auto space-y-3.5">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white shadow-xs border border-slate-200/80 text-xs font-semibold text-slate-700">
+        <span class="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        AI 바이브 코딩으로 제작된 교육용 웹앱 & 프로젝트 컬렉션
+      </div>
+      
+      <h1 class="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 leading-[1.25]">
+        아이디어를 현실로 만드는<br>
+        <span class="bg-gradient-to-r from-indigo-600 via-sky-500 to-indigo-500 bg-clip-text text-transparent">
+          웹앱 개발 포트폴리오
+        </span>
+      </h1>
+
+      <!-- <p class="text-slate-600 text-xs sm:text-base max-w-xl mx-auto font-normal leading-relaxed">
+        초등·중등·고등 교육 현장과 실무에서 직접 활용 가능한 가볍고 직관적인 웹 애플리케이션을 기획 및 개발합니다.
+      </p> -->
+
+      <!-- Search and Filter Bar -->
+      <div class="pt-2 max-w-lg mx-auto">
+        <div class="relative flex items-center">
+          <i data-lucide="search" class="w-4 h-4 sm:w-5 sm:h-5 absolute left-3.5 text-slate-400"></i>
+          <input 
+            type="text" 
+            id="searchInput" 
+            oninput="handleSearch()"
+            placeholder="웹앱 이름, 대상 학년, 키워드로 검색..."
+            class="w-full pl-10 pr-10 py-2.5 sm:py-3 bg-white rounded-2xl border border-slate-200 shadow-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 text-xs sm:text-sm placeholder:text-slate-400 transition-all"
+          >
+          <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 p-1.5 text-slate-400 hover:text-slate-600">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Category Navigation Pills -->
+  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 w-full flex justify-center">
+    <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1.5 sm:pb-0 justify-start sm:justify-center w-full" id="categoryContainer">
+      <!-- Injected via JavaScript -->
+    </div>
+  </nav>
+
+  <!-- Main Grid Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex-1 w-full">
+    <!-- Counter & Hint -->
+    <div class="flex items-center justify-between mb-4 text-xs text-slate-500 font-medium">
+      <div>
+        총 <span id="filteredCount" class="font-bold text-indigo-600">0</span>개의 프로젝트
+      </div>
+      <div class="flex items-center gap-1.5 text-xs text-slate-400">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-indigo-500"></i>
+        <span>웹앱 방문하기 버튼을 누르면 해당 웹앱으로 이동합니다.</span>
+      </div>
+    </div>
+
+    <!-- Cards Grid (Fully Responsive: 1col mobile -> 2col tablet -> max 3col desktop) -->
+    <div id="cardGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+      <!-- Cards injected via JS -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden py-16 text-center">
+      <div class="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-3 text-slate-400">
+        <i data-lucide="search-x" class="w-7 h-7"></i>
+      </div>
+      <h3 class="text-sm sm:text-base font-semibold text-slate-800 mb-1">일치하는 프로젝트가 없습니다</h3>
+      <p class="text-xs sm:text-sm text-slate-500">다른 검색어를 입력하거나 다른 카테고리를 선택해보세요.</p>
+    </div>
+  </main>
+
+  <!-- 프로젝트 상세 설명 모달 (Detail Modal) -->
+  <div id="detailModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden border border-slate-100 transform transition-all scale-95 opacity-0 duration-200" id="modalContent">
+      <div class="p-6">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div id="modalIconBox" class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-xs">
+              ✨
             </div>
-            <h3 style="color: white; font-weight: 600; font-size: 14px; margin: 0 0 4px; margin-bottom: 12px;">${p.title}</h3>
-            <p style="color: ${p.accentFrom}; opacity: 0.8; font-size: 11px; margin: 0 0 12px; line-height: 1.4;">${subjectText}</p>
-            <p style="color: #999; font-size: 11px; line-height: 1.5; margin: 0 0 12px;">${p.desc}</p>
-            <div style="display: flex; align-items: center; gap: 6px; padding: 8px; border-radius: 8px; background: rgba(0,0,0,0.2); margin-bottom: 12px;">
-              <i data-lucide="cpu" style="width: 12px; height: 12px; color: ${p.accentFrom};"></i>
-              <span style="font-size: 9px; color: #999;">${p.ai}</span>
+            <div>
+              <div class="flex items-center gap-2 flex-wrap" id="modalBadgeContainer">
+                <h3 id="modalTitle" class="text-lg sm:text-xl font-bold text-slate-900">앱 이름</h3>
+              </div>
+              <!-- 타겟(대상) 뱃지 또는 텍스트 컨테이너 -->
+              <div id="modalTargetContainer" class="flex items-center gap-1.5 flex-wrap mt-1 text-xs text-slate-500">
+                <span class="text-slate-400 font-medium">대상:</span>
+                <span id="modalTargetText" class="text-slate-600 font-medium"></span>
+              </div>
             </div>
-            <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px;">
-              ${p.tags.map(t => `<span class="tag-pill" style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.08); color: #999; font-size: 9px;">#${t}</span>`).join('')}
+          </div>
+          <button onclick="closeModal('detailModal')" class="p-2 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition-colors">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <div class="space-y-4 text-xs sm:text-sm text-slate-600">
+          <div>
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">프로젝트 상세 소개</h4>
+            <p id="modalDesc" class="text-slate-800 font-medium leading-relaxed"></p>
+          </div>
+
+          <div id="modalFeaturesWrapper">
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">핵심 기능 및 기대 효과</h4>
+            <ul id="modalFeatures" class="list-disc list-inside space-y-1.5 text-slate-700 bg-slate-50 p-3.5 rounded-2xl border border-slate-100 leading-relaxed">
+            </ul>
+          </div>
+
+          <div id="promptSection" class="hidden">
+            <div class="flex items-center justify-between mb-1.5">
+              <h4 class="text-xs font-bold text-indigo-600 uppercase tracking-wider flex items-center gap-1">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> 활용된 AI 바이브 프롬프트
+              </h4>
+              <button onclick="copyDetailPrompt()" class="text-xs text-slate-500 hover:text-indigo-600 font-medium flex items-center gap-1">
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i> 복사
+              </button>
             </div>
-            <div class="button-group">
-              <button class="btn-primary" onclick="openProjectLink(${p.id})"><i data-lucide="external-link" style="width: 14px; height: 14px;"></i>방문</button>
-              
+            <!-- 줄바꿈 유지를 위한 style 속성 지정 및 monospace 폰트 -->
+            <div 
+              id="modalPrompt" 
+              style="white-space: pre-wrap; word-break: break-word;" 
+              class="bg-indigo-50/70 border border-indigo-100/80 rounded-xl p-3.5 text-xs text-indigo-950 font-mono select-all leading-relaxed max-h-52 overflow-y-auto"
+            >
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between gap-2">
+          <button id="modalBookmarkBtn" onclick="toggleModalBookmark()" class="px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-1.5 transition-colors shrink-0">
+            <i data-lucide="bookmark" class="w-4 h-4"></i>
+            <span>북마크</span>
+          </button>
+          <a id="modalVisitLink" href="#" target="_blank" rel="noopener noreferrer" class="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-xs shadow-indigo-200">
+            <span>웹앱 바로 실행하기</span>
+            <i data-lucide="external-link" class="w-4 h-4"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact Modal (문의하기 모달) -->
+  <div id="contactModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl overflow-hidden border border-slate-100 transform transition-all scale-95 opacity-0 duration-200" id="contactModalContent">
+      <div class="p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
+              <i data-lucide="mail" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-slate-900">개발 및 협업 문의</h3>
+              <p class="text-xs text-slate-500">궁금한 점이나 피드백을 편하게 보내주세요.</p>
+            </div>
+          </div>
+          <button onclick="closeModal('contactModal')" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <div class="space-y-4 my-2">
+          <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 flex items-center justify-between gap-2">
+            <div>
+              <span class="text-[11px] font-semibold text-slate-400 block uppercase">이메일 주소</span>
+              <span id="contactEmail" class="text-sm font-bold text-slate-800 select-all font-mono">work.jungah@gmail.com</span>
+            </div>
+            <button onclick="copyContactEmail()" class="px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-xs font-semibold flex items-center gap-1 transition-colors">
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+              <span>복사</span>
+            </button>
+          </div>
+
+          <div class="p-3.5 bg-indigo-50/50 rounded-2xl text-xs text-slate-600 space-y-1.5 leading-relaxed">
+            <p>💡 <strong>교육용 웹앱 제안 / 기능 피드백 환영</strong></p>
+            <p class="text-slate-500">수업이나 교육 현장에서 필요한 웹앱 아이디어가 있으시다면 언제든 이메일로 연락주세요.</p>
+          </div>
+        </div>
+
+        <div class="mt-5 pt-3 border-t border-slate-100 flex justify-end">
+          <button onclick="closeModal('contactModal')" class="w-full py-2.5 text-xs font-semibold rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors">
+            닫기
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 이모지 팔레트 모달 (Emoji Palette Modal) -->
+  <div id="emojiModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-xl w-full max-h-[85vh] shadow-2xl flex flex-col overflow-hidden border border-slate-100 transform transition-all scale-95 opacity-0 duration-200" id="emojiModalContent">
+      <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl">
+            ✨
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-slate-900">iconEmoji 추천 모음</h3>
+            <p class="text-xs text-slate-500">클릭하면 즉시 클립보드에 복사되어 JSON 카드에 붙여넣을 수 있습니다.</p>
+          </div>
+        </div>
+        <button onclick="closeModal('emojiModal')" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-5 overflow-y-auto space-y-5 text-xs sm:text-sm" id="emojiListContainer">
+      </div>
+
+      <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+        <span class="text-[11px] text-slate-500">💡 팁: 원하는 이모지를 탭/클릭하면 복사 완료!</span>
+        <button onclick="closeModal('emojiModal')" class="px-4 py-2 text-xs font-semibold rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 transition-colors">
+          닫기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Alert -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl border border-slate-800 text-xs font-medium flex items-center gap-2.5 translate-y-20 opacity-0 pointer-events-none transition-all duration-300">
+    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+    <span id="toastMessage">완료되었습니다.</span>
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-auto border-t border-slate-200/80 bg-white py-8 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 space-y-2.5">
+      <div class="flex items-center justify-center gap-2 font-bold text-slate-800 text-sm">
+        <span>Thissam WebApp Studio</span>
+        <!-- <span class="text-slate-300">•</span> -->
+        <!-- <span class="text-indigo-600">Vibe Coding Lab</span> -->
+      </div>
+      <p class="text-slate-500 max-w-md mx-auto">
+        자연어와 AI를 도구 삼아 누구나 직관적으로 사용할 수 있는 가치 있는 웹앱을 만듭니다.
+      </p>
+      <div class="text-[11px] text-slate-400 pt-1">
+        © 2026 그쌤. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const BADGE_THEMES = {
+      blue: {
+        badge: 'bg-blue-50 text-blue-700 border-blue-200',
+        iconBg: 'bg-blue-100 text-blue-600'
+      },
+      green: {
+        badge: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+        iconBg: 'bg-emerald-100 text-emerald-600'
+      },
+      purple: {
+        badge: 'bg-purple-50 text-purple-700 border-purple-200',
+        iconBg: 'bg-purple-100 text-purple-600'
+      },
+      amber: {
+        badge: 'bg-amber-50 text-amber-700 border-amber-200',
+        iconBg: 'bg-amber-100 text-amber-700'
+      },
+      rose: {
+        badge: 'bg-rose-50 text-rose-700 border-rose-200',
+        iconBg: 'bg-rose-100 text-rose-600'
+      },
+      sky: {
+        badge: 'bg-sky-50 text-sky-700 border-sky-200',
+        iconBg: 'bg-sky-100 text-sky-600'
+      },
+      indigo: {
+        badge: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+        iconBg: 'bg-indigo-100 text-indigo-600'
+      },
+      emerald: {
+        badge: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+        iconBg: 'bg-emerald-100 text-emerald-600'
+      }
+    };
+
+    // 카테고리별 고유 색상 매핑 (뱃지 및 상단 네비게이션 활성화 색상)
+    const CATEGORY_COLORS = {
+      '전체': {
+        activeNav: 'bg-blue-600 text-white shadow-xs shadow-blue-200',
+        badge: 'bg-blue-50 text-blue-700 border-blue-200'
+      },
+      '초등': {
+        activeNav: 'bg-amber-500 text-white shadow-xs shadow-amber-200',
+        badge: 'bg-amber-50 text-amber-800 border-amber-200'
+      },
+      '중등': {
+        activeNav: 'bg-emerald-600 text-white shadow-xs shadow-emerald-200', // green
+        badge: 'bg-emerald-50 text-emerald-700 border-emerald-200'
+      },
+      '고등': {
+        activeNav: 'bg-sky-500 text-white shadow-xs shadow-sky-200',
+        badge: 'bg-sky-50 text-sky-700 border-sky-200'
+      },
+      '이음': {
+        activeNav: 'bg-purple-600 text-white shadow-xs shadow-purple-200',
+        badge: 'bg-purple-50 text-purple-700 border-purple-200'
+      },
+      '수업도구': {
+        activeNav: 'bg-rose-500 text-white shadow-xs shadow-rose-200',
+        badge: 'bg-rose-50 text-rose-700 border-rose-200'
+      }
+    };
+
+    function getCategoryBadgeClass(cat) {
+      return CATEGORY_COLORS[cat]?.badge || 'bg-slate-50 text-slate-700 border-slate-200';
+    }
+
+    let PORTFOLIO_JSON = [];
+    const CATEGORIES = ['전체', '초등', '중등', '고등', '이음', '수업도구'];
+
+    const EMOJI_PALETTE = [
+      {
+        category: "초등 교육 & 아동",
+        items: [
+          { char: "⏰", desc: "시계/시간" },
+          { char: "✏️", desc: "연필/글쓰기" },
+          { char: "🎨", desc: "미술/그림" },
+          { char: "🎒", desc: "가방/등교" },
+          { char: "🧩", desc: "퍼즐/사고력" },
+          { char: "🔤", desc: "한글/알파벳" },
+          { char: "🔢", desc: "숫자/기초수학" },
+          { char: "🖍️", desc: "크레용/색칠" },
+          { char: "🎈", desc: "풍선/놀이" },
+          { char: "🧸", desc: "장난감/활동" },
+          { char: "🐱", desc: "고양이" },
+          { char: "🐶", desc: "강아지" },
+          { char: "🌟", desc: "별/칭찬" },
+          { char: "🍭", desc: "사탕/보상" },
+          { char: "🌱", desc: "새싹/기초" },
+          { char: "📗📖📕", desc: "책" }
+        ]
+      },
+      {
+        category: "중등 & 탐구/과학/사회",
+        items: [
+          { char: "🧪", desc: "실험/화학" },
+          { char: "🔬", desc: "현미경/생물" },
+          { char: "📜", desc: "역사/두루마리" },
+          { char: "🗺️", desc: "지도/지리" },
+          { char: "📐", desc: "삼각자/도형" },
+          { char: "⚖️", desc: "저울/물리법칙" },
+          { char: "🌋", desc: "화산/지구과학" },
+          { char: "🏛️", desc: "사회/정치/역사" },
+          { char: "🌿", desc: "식물/자연" },
+          { char: "🧭", desc: "나침반/탐구" },
+          { char: "🔭", desc: "망원경/우주" },
+          { char: "🧬", desc: "DNA/유전" },
+          { char: "⚡", desc: "전기/에너지" }
+        ]
+      },
+      {
+        category: "고등 & 심화/수능/프로그래밍",
+        items: [
+          { char: "📈", desc: "함수/상승그래프" },
+          { char: "📉", desc: "하강그래프/통계" },
+          { char: "📚", desc: "도서/수능영단어" },
+          { char: "🎓", desc: "학사모/진학" },
+          { char: "💻", desc: "컴퓨터/코딩" },
+          { char: "📊", desc: "막대차트/분석" },
+          { char: "🧠", desc: "뇌/인지과학" },
+          { char: "🪐", desc: "행성/천문" },
+          { char: "📖", desc: "독해/문학" },
+          { char: "🖋️", desc: "만년필/논술" },
+          { char: "🌐", desc: "웹/글로벌" }
+        ]
+      },
+      {
+        category: "이음 & 스마트 수업보드",
+        items: [
+          { char: "💡", desc: "아이디어/수업보드" },
+          { char: "📋", desc: "클립보드/과제" },
+          { char: "🖥️", desc: "전자칠판/화면" },
+          { char: "🧑‍🏫", desc: "선생님/강의" },
+          { char: "💬", desc: "의견/피드백" },
+          { char: "📌", desc: "핀/고정메모" },
+          { char: "🪄", desc: "요술봉/자동화" },
+          { char: "🔔", desc: "알림/시작종" },
+          { char: "📢", desc: "공지/안내" },
+          { char: "🗓️", desc: "학사일정/달력" }
+        ]
+      },
+      {
+        category: "수업도구 & 교실 유틸리티",
+        items: [
+          { char: "🎯", desc: "추첨/과녁" },
+          { char: "🎲", desc: "주사위/랜덤" },
+          { char: "⏱️", desc: "스톱워치" },
+          { char: "⏳", desc: "모래시계/타이머" },
+          { char: "🎰", desc: "슬롯머신/뽑기" },
+          { char: "👥", desc: "모둠/그룹편성" },
+          { char: "🤝", desc: "협력/팀워크" },
+          { char: "🔊", desc: "발표/마이크" },
+          { char: "🏆", desc: "우승컵/트로피" },
+          { char: "🥇", desc: "1등 메달" },
+          { char: "🥈", desc: "2등 메달" },
+          { char: "🥉", desc: "3등 메달" }
+        ]
+      },
+      {
+        category: "AI & 바이브 코딩 상징",
+        items: [
+          { char: "⚡", desc: "번개/스피드" },
+          { char: "🚀", desc: "로켓/출시" },
+          { char: "🤖", desc: "로봇/AI" },
+          { char: "🔮", desc: "수정구/예측" },
+          { char: "🛠️", desc: "도구/빌드" },
+          { char: "📱", desc: "모바일/앱" },
+          { char: "📦", desc: "패키지/배포" },
+          { char: "⚙️", desc: "설정/알고리즘" },
+          { char: "✨", desc: "스파클/매직" }
+        ]
+      }
+    ];
+
+    let currentCategory = '전체';
+    let searchQuery = '';
+    let isBookmarkOnly = false;
+    let bookmarks = JSON.parse(localStorage.getItem('thissam_portfolio_bookmarks') || '[]');
+    let currentModalItem = null;
+
+    // target 헬퍼: 배열이나 문자열 모두 배열 형태로 변환
+    function getTargetList(target) {
+      if (!target) return [];
+      if (Array.isArray(target)) return target;
+      return [String(target)];
+    }
+
+    // target 문자열 포맷 헬퍼 (카드 겉면용)
+    function formatTargetString(target) {
+      const list = getTargetList(target);
+      return list.join(' · ');
+    }
+
+    // 프롬프트 텍스트 정규화: \n 이스케이프 문자 및 배열 형태를 실제 줄바꿈 문자열로 변환
+    function getPromptString(prompt) {
+      if (!prompt) return '';
+      let text = '';
+      if (Array.isArray(prompt)) {
+        text = prompt.join('\n');
+      } else {
+        text = String(prompt);
+      }
+      // JSON에 역슬래시+n('\\n' 또는 '\\r\\n') 형태로 저장되어 있을 경우 실제 줄바꿈('\n')으로 확실하게 변환
+      return text.replace(/\\r\\n/g, '\n').replace(/\\n/g, '\n');
+    }
+
+    async function init() {
+      renderCategories();
+      renderEmojiPalette();
+      updateBookmarkBadge();
+      lucide.createIcons();
+      await loadPortfolioData();
+    }
+
+    async function loadPortfolioData() {
+      const grid = document.getElementById('cardGrid');
+      grid.innerHTML = `
+        <div class="col-span-full py-12 text-center text-slate-400 text-xs flex items-center justify-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-indigo-500 animate-ping"></span>
+          <span>프로젝트 데이터를 불러오는 중입니다...</span>
+        </div>
+      `;
+
+      try {
+        const response = await fetch('./data.json');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        PORTFOLIO_JSON = data.sort((a, b) => (Number(a.no) || 0) - (Number(b.no) || 0));
+      } catch (error) {
+        console.warn('data.json 불러오기 실패: 기본 템플릿 데이터를 사용합니다.', error);
+        PORTFOLIO_JSON = [
+          {
+            "no": 1,
+            "id": "elem-math-clock",
+            "title": "초등 시계 보기 & 시간 계산기",
+            "category": ["초등", "수업도구"],
+            "color": "amber",
+            "emoji": "⏰",
+            "target": ["초등 1~3학년", "수학 기초"],
+            "tagline": "시계 바늘을 돌려가며 익히는 직관적인 시간 학습 웹앱",
+            "description": "초등학교 저학년 학생들이 가장 어려워하는 아날로그 시계 읽기와 경과 시간 계산을 인터랙티브하게 조작하며 체득할 수 있도록 설계된 교육용 웹앱입니다.",
+            "tags": ["인터랙티브", "초등수학", "시간계산"],
+            "url": "https://hi763.github.io/thissam/",
+            "features": [
+              "직접 시침과 분침을 터치 및 드래그하여 시각 맞추기 실습",
+              "5분 단위, 1분 단위 단계별 퀴즈 모드 및 즉각 피드백 제공",
+              "시각과 경과 시간 계산 시각화 지원 (수직선 타임라인)"
+            ],
+            "prompt": "[역할 부여]\n당신은 초등 수학교육 전문 프론트엔드 개발자입니다.\n\n[요구 사항]\n1. SVG 캔버스 기반으로 아날로그 시계 바늘을 터치/마우스로 부드럽게 회전시킵니다.\n2. 현재 가리키는 시각을 한글(예: '3시 25분')로 즉시 읽어줍니다.\n3. 단일 HTML 파일로 동작하도록 작성해줘."
+          }
+        ];
+      }
+
+      renderCards();
+    }
+
+    function renderEmojiPalette() {
+      const container = document.getElementById('emojiListContainer');
+      if (!container) return;
+      container.innerHTML = EMOJI_PALETTE.map(group => `
+        <div class="space-y-2">
+          <div class="font-bold text-xs text-slate-600 flex items-center gap-1.5 pb-1 border-b border-slate-100">
+            <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+            <span>${group.category}</span>
+          </div>
+          <div class="grid grid-cols-5 sm:grid-cols-7 gap-2 pt-1">
+            ${group.items.map(item => `
+              <button 
+                onclick="copyEmoji('${item.char}', '${item.desc}')"
+                class="flex flex-col items-center justify-center p-2 rounded-2xl bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 border border-slate-200/70 transition-all hover:scale-105 active:scale-95 group"
+                title="${item.desc} (클릭하여 복사)"
+              >
+                <span class="text-2xl mb-1">${item.char}</span>
+                <span class="text-[10px] text-slate-500 group-hover:text-indigo-600 font-medium truncate w-full text-center">${item.desc}</span>
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function copyEmoji(emojiChar, desc) {
+      copyText(emojiChar, `'${emojiChar}' (${desc}) 이모지가 복사되었습니다.`);
+    }
+
+    function openEmojiModal() {
+      openModalAnimation('emojiModal', 'emojiModalContent');
+      lucide.createIcons();
+    }
+
+    function renderCategories() {
+      const container = document.getElementById('categoryContainer');
+      container.innerHTML = CATEGORIES.map(cat => {
+        const isActive = cat === currentCategory;
+        const colorConfig = CATEGORY_COLORS[cat] || CATEGORY_COLORS['전체'];
+        const activeClass = isActive 
+          ? `${colorConfig.activeNav} font-semibold scale-105` 
+          : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 font-medium';
+        return `
+          <button 
+            onclick="setCategory('${cat}')"
+            class="px-3.5 py-1.5 rounded-full whitespace-nowrap transition-all duration-150 text-xs sm:text-sm shrink-0 active:scale-95 ${activeClass}"
+          >
+            ${cat}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function setCategory(cat) {
+      currentCategory = cat;
+      renderCategories();
+      renderCards();
+    }
+
+    function getThemeStyles(colorKey) {
+      return BADGE_THEMES[colorKey] || BADGE_THEMES.blue;
+    }
+
+    function renderCards() {
+      const grid = document.getElementById('cardGrid');
+      const emptyState = document.getElementById('emptyState');
+
+      const filtered = PORTFOLIO_JSON.filter(item => {
+        const itemCategories = Array.isArray(item.category) ? item.category : [item.category];
+        const matchCategory = currentCategory === '전체' || itemCategories.includes(currentCategory);
+        
+        const targetList = getTargetList(item.target);
+        const matchSearch = searchQuery === '' || 
+          item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.tagline.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          targetList.some(t => t.toLowerCase().includes(searchQuery.toLowerCase())) ||
+          itemCategories.some(c => c.toLowerCase().includes(searchQuery.toLowerCase())) ||
+          item.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()));
+        const matchBookmark = !isBookmarkOnly || bookmarks.includes(item.id);
+
+        return matchCategory && matchSearch && matchBookmark;
+      });
+
+      document.getElementById('filteredCount').innerText = filtered.length;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      grid.innerHTML = filtered.map(item => {
+        const isSaved = bookmarks.includes(item.id);
+        const theme = getThemeStyles(item.color);
+        const categories = Array.isArray(item.category) ? item.category : [item.category];
+        const targetString = formatTargetString(item.target);
+
+        return `
+          <div class="card-glass rounded-2xl p-4 sm:p-5 flex flex-col justify-between relative group">
+            <div>
+              <!-- Header row: Multiple Category Badges & Bookmark Button -->
+              <div class="flex items-center justify-between mb-3 gap-2">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  ${categories.map(cat => `
+                    <span class="text-[11px] px-2 py-0.5 rounded-full font-semibold border ${getCategoryBadgeClass(cat)}">
+                      ${cat}
+                    </span>
+                  `).join('')}
+                </div>
+                <button 
+                  onclick="toggleBookmark('${item.id}', event)" 
+                  class="p-1.5 text-slate-300 hover:text-amber-500 rounded-lg hover:bg-slate-50 transition-colors shrink-0"
+                  title="북마크 토글"
+                >
+                  <i data-lucide="bookmark" class="w-4 h-4 ${isSaved ? 'text-amber-500 fill-amber-500' : ''}"></i>
+                </button>
+              </div>
+
+              <!-- Icon, Title & Target -->
+              <div class="flex items-center gap-3 mb-2.5">
+                <div class="w-10 h-10 rounded-xl ${theme.iconBg} flex items-center justify-center text-lg font-bold shrink-0 shadow-xs">
+                  ${item.emoji}
+                </div>
+                <div class="overflow-hidden">
+                  <h3 class="font-bold text-slate-900 text-sm sm:text-base truncate group-hover:text-indigo-600 transition-colors">
+                    ${item.title}
+                  </h3>
+                  <p class="text-xs text-slate-500 truncate" title="${targetString}">
+                    ${targetString}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Simplified 1-2 line description -->
+              <p class="text-slate-600 text-xs sm:text-sm font-normal line-clamp-2 leading-relaxed mb-3">
+                ${item.tagline}
+              </p>
+
+              <!-- Tags -->
+              <div class="flex flex-wrap gap-1.5 mb-4">
+                ${item.tags.map(tag => `
+                  <span class="text-[11px] px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-medium">
+                    #${tag}
+                  </span>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- Card Bottom Action Row: Long Visit Button + Small Modal Button -->
+            <div class="pt-3 border-t border-slate-100 flex items-center gap-2">
+              <a 
+                href="${item.url}" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="flex-1 py-2.5 px-3 text-center text-xs font-semibold rounded-xl bg-indigo-50 hover:bg-indigo-600 text-indigo-600 hover:text-white border border-indigo-100/90 hover:border-indigo-600 transition-all duration-200 flex items-center justify-center gap-1.5 shadow-2xs active:scale-95 group/btn"
+              >
+                <span>웹앱 방문하기</span>
+                <i data-lucide="external-link" class="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform"></i>
+              </a>
+
+              <button 
+                onclick="openDetailModal('${item.id}')"
+                class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-indigo-600 transition-all shrink-0 active:scale-95 border border-slate-200/60"
+                title="프로젝트 상세 설명 및 프롬프트 보기"
+              >
+                <i data-lucide="info" class="w-4 h-4"></i>
+              </button>
             </div>
           </div>
         `;
-        grid.appendChild(card);
-      });
+      }).join('');
 
       lucide.createIcons();
     }
 
-    
+    function handleSearch() {
+      searchQuery = document.getElementById('searchInput').value.trim();
+      const clearBtn = document.getElementById('clearSearchBtn');
+      if (searchQuery.length > 0) {
+        clearBtn.classList.remove('hidden');
+      } else {
+        clearBtn.classList.add('hidden');
+      }
+      renderCards();
+    }
 
-    // Open project link in new window
-    function openProjectLink(projectId) {
-      const project = projects.find(p => p.id === projectId);
-      if (project && project.link) {
-        window.open(project.link, '_blank', 'noopener,noreferrer');
+    function clearSearch() {
+      document.getElementById('searchInput').value = '';
+      searchQuery = '';
+      document.getElementById('clearSearchBtn').classList.add('hidden');
+      renderCards();
+    }
+
+    function toggleBookmark(id, e) {
+      if (e) e.stopPropagation();
+      if (bookmarks.includes(id)) {
+        bookmarks = bookmarks.filter(item => item !== id);
+        showToast('북마크가 해제되었습니다.');
+      } else {
+        bookmarks.push(id);
+        showToast('북마크에 저장되었습니다.');
+      }
+      localStorage.setItem('thissam_portfolio_bookmarks', JSON.stringify(bookmarks));
+      updateBookmarkBadge();
+      renderCards();
+      if (currentModalItem && currentModalItem.id === id) {
+        updateModalBookmarkButton();
       }
     }
 
-      function openProjectModal(projectId) {
-      const project = projects.find(p => p.id === projectId);
-      if (project) {
-        document.getElementById('modalTitle').textContent = project.title;
-        
-        // 이 부분이 핵심입니다! HTML 템플릿 함수를 호출하여 결과물을 넣습니다.
-        document.getElementById('modalBody').innerHTML = generateModalHTML(project);
-        
-        document.getElementById('modalOverlay').classList.add('active');
-        
-        // 아이콘 생성 실행
-        if (window.lucide) {
-          lucide.createIcons();
-        }
+    function toggleBookmarkOnly() {
+      isBookmarkOnly = !isBookmarkOnly;
+      const btn = document.getElementById('bookmarkFilterBtn');
+      if (isBookmarkOnly) {
+        btn.classList.add('bg-amber-50', 'border-amber-300', 'text-amber-800');
+        showToast('북마크한 프로젝트만 표시합니다.');
+      } else {
+        btn.classList.remove('bg-amber-50', 'border-amber-300', 'text-amber-800');
+        showToast('전체 프로젝트를 표시합니다.');
+      }
+      renderCards();
+    }
+
+    function updateBookmarkBadge() {
+      document.getElementById('bookmarkCount').innerText = bookmarks.length;
+    }
+
+    function openDetailModal(id) {
+      const item = PORTFOLIO_JSON.find(t => t.id === id);
+      if (!item) return;
+      currentModalItem = item;
+      const theme = getThemeStyles(item.color);
+      const categories = Array.isArray(item.category) ? item.category : [item.category];
+      const targetList = getTargetList(item.target);
+
+      document.getElementById('modalTitle').innerText = item.title;
+      document.getElementById('modalDesc').innerText = item.description || item.tagline;
+      
+      // 모달 복수 카테고리 뱃지 렌더링 (각 카테고리별 고유 색상 적용)
+      const badgeContainer = document.getElementById('modalBadgeContainer');
+      badgeContainer.innerHTML = `
+        <h3 id="modalTitle" class="text-lg sm:text-xl font-bold text-slate-900">${item.title}</h3>
+        ${categories.map(cat => `
+          <span class="text-xs px-2.5 py-0.5 rounded-full font-semibold border ${getCategoryBadgeClass(cat)}">${cat}</span>
+        `).join('')}
+      `;
+
+      // 모달 대상(target) 복수 태그 렌더링
+      const targetTextEl = document.getElementById('modalTargetText');
+      targetTextEl.innerHTML = targetList.map(tgt => `
+        <span class="inline-block bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md text-[11px] font-medium border border-slate-200/70 mr-1 mb-0.5">
+          ${tgt}
+        </span>
+      `).join('');
+
+      document.getElementById('modalIconBox').className = `w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-xs ${theme.iconBg}`;
+      document.getElementById('modalIconBox').innerText = item.emoji;
+
+      // 기능 목록
+      const featList = document.getElementById('modalFeatures');
+      const featWrapper = document.getElementById('modalFeaturesWrapper');
+      if (item.features && Array.isArray(item.features) && item.features.length > 0) {
+        featWrapper.classList.remove('hidden');
+        featList.innerHTML = item.features.map(f => `<li>${f}</li>`).join('');
+      } else {
+        featWrapper.classList.add('hidden');
+      }
+
+      // 프롬프트 정보 렌더링 (줄바꿈 안전 처리)
+      const promptSec = document.getElementById('promptSection');
+      const promptEl = document.getElementById('modalPrompt');
+      const promptText = getPromptString(item.prompt);
+      
+      if (promptText.trim().length > 0) {
+        promptSec.classList.remove('hidden');
+        // textContent에 실제 줄바꿈 문자를 그대로 주입하고 CSS pre-wrap으로 줄바꿈 표시
+        promptEl.textContent = promptText;
+      } else {
+        promptSec.classList.add('hidden');
+      }
+
+      document.getElementById('modalVisitLink').href = item.url;
+      updateModalBookmarkButton();
+
+      openModalAnimation('detailModal', 'modalContent');
+      lucide.createIcons();
+    }
+
+    function updateModalBookmarkButton() {
+      if (!currentModalItem) return;
+      const isSaved = bookmarks.includes(currentModalItem.id);
+      const btn = document.getElementById('modalBookmarkBtn');
+      if (isSaved) {
+        btn.innerHTML = `<i data-lucide="bookmark" class="w-4 h-4 text-amber-500 fill-amber-500"></i><span class="text-amber-700">저장됨</span>`;
+      } else {
+        btn.innerHTML = `<i data-lucide="bookmark" class="w-4 h-4"></i><span>북마크</span>`;
+      }
+      lucide.createIcons();
+    }
+
+    function toggleModalBookmark() {
+      if (currentModalItem) {
+        toggleBookmark(currentModalItem.id);
       }
     }
 
-
-  // 여러 줄의 데이터를 처리하는 보조 함수
-function renderList(data) {
-  if (!data) return "";
-  // 데이터가 배열이면 줄바꿈(br)으로 합치고, 아니면 그대로 반환
-  if (Array.isArray(data)) {
-    return data.join('<br>');
-  }
-  return data;
-}
-
-  function generateModalHTML(project) {
-  return `
-    <div style="display: flex; flex-direction: column; gap: 24px;">
-      <div>
-        <span class="tag-pill" style="margin-bottom: 16px; display: inline-block;">${project.badge}</span>
-        <h2 style="font-size: 28px; font-weight: 700; color: white; margin: 16px 0 8px;">${project.title}</h2>
-        <p style="color: #999; font-size: 12px;">${project.subject}</p>
-      </div>
-
-      <div>
-        <h3 style="color: white; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-          <i data-lucide="target" style="width: 16px; height: 16px; color: #63dcd2;"></i> 프로젝트 개요
-        </h3>
-        <p style="color: #aaa; font-size: 13px; line-height: 1.6;">
-          ${renderList(project.overview)}
-        </p>
-      </div>
-
-      <div>
-        <h3 style="color: white; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-          <i data-lucide="cpu" style="width: 16px; height: 16px; color: #7864ff;"></i> AI 기술
-        </h3>
-        <p style="color: #aaa; font-size: 13px;">${project.aiTech}</p>
-      </div>
-
-       <div>
-        <h3 style="color: white; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-          <i data-lucide="round" style="width: 16px; height: 16px; color: #7864ff;"></i> 사용한 에듀테크 도구
-        </h3>
-        <p style="color: #aaa; font-size: 13px;">${project.tools}</p>
-      </div>
-
-
-     <div>
-        <h3 style="color: white; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-          <i data-lucide="message-square" style="width: 16px; height: 16px; color: #ffc832;"></i> 프롬프트 (Prompt)
-        </h3>
-        <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 8px; color: #aaa; font-size: 13px; line-height: 1.8; border-left: 4px solid #ffc832; ">
-          ${renderList(project.prompt)}
-        </div>
-      </div>
-
-     <div>
-        <h3 style="color: white; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-          <i data-lucide="sparkles" style="width: 16px; height: 16px; color: #ff8a80;"></i> 학습 효과
-        </h3>
-        <ul style="color: #aaa; font-size: 13px; padding-left: 20px; margin: 0;">
-          ${Array.isArray(project.effects) 
-            ? project.effects.map(effect => `<li style="margin-bottom: 8px;">✓ ${effect}</li>`).join('')
-            : `<li>✓ ${project.effects}</li>`}
-        </ul>
-      </div>
-    </div>
-  `;
-}
-
-    // Close modal
-    function closeModal() {
-      document.getElementById('modalOverlay').classList.remove('active');
+    function copyDetailPrompt() {
+      if (!currentModalItem || !currentModalItem.prompt) return;
+      const promptText = getPromptString(currentModalItem.prompt);
+      copyText(promptText, '프롬프트가 클립보드에 복사되었습니다.');
     }
 
-    // Close modal when clicking outside
-    document.getElementById('modalOverlay').addEventListener('click', function(e) {
-      if (e.target === this) {
-        closeModal();
+    function openContactModal() {
+      openModalAnimation('contactModal', 'contactModalContent');
+      lucide.createIcons();
+    }
+
+    function openModalAnimation(modalId, contentId) {
+      const modal = document.getElementById(modalId);
+      const content = document.getElementById(contentId);
+      if (!modal || !content) return;
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      setTimeout(() => {
+        content.classList.remove('scale-95', 'opacity-0');
+        content.classList.add('scale-100', 'opacity-100');
+      }, 15);
+    }
+
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (!modal) return;
+
+      const content = modal.querySelector('div[id$="Content"]');
+      if (content) {
+        content.classList.remove('scale-100', 'opacity-100');
+        content.classList.add('scale-95', 'opacity-0');
+      }
+      setTimeout(() => {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+        if (modalId === 'detailModal') currentModalItem = null;
+      }, 180);
+    }
+
+    function copyContactEmail() {
+      const email = document.getElementById('contactEmail').innerText.trim();
+      copyText(email, '이메일 주소가 클립보드에 복사되었습니다.');
+    }
+
+    // 최신 Clipboard API 우선 사용 및 Fallback 지원
+    function copyText(text, successMsg) {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast(successMsg || '복사되었습니다.');
+        }).catch(() => {
+          fallbackCopyText(text, successMsg);
+        });
+      } else {
+        fallbackCopyText(text, successMsg);
+      }
+    }
+
+    function fallbackCopyText(text, successMsg) {
+      const tempTextArea = document.createElement('textarea');
+      tempTextArea.value = text;
+      tempTextArea.style.position = 'fixed';
+      tempTextArea.style.left = '-999999px';
+      tempTextArea.style.top = '-999999px';
+      document.body.appendChild(tempTextArea);
+      tempTextArea.select();
+      try {
+        document.execCommand('copy');
+        showToast(successMsg || '복사되었습니다.');
+      } catch (err) {
+        showToast('복사에 실패했습니다.');
+      }
+      document.body.removeChild(tempTextArea);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMessage');
+      toastMsg.innerText = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      if (window.toastTimeout) clearTimeout(window.toastTimeout);
+      window.toastTimeout = setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2400);
+    }
+
+    ['detailModal', 'contactModal', 'emojiModal'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('click', function(e) {
+          if (e.target === this) {
+            closeModal(id);
+          }
+        });
       }
     });
 
-    // Filter tabs
-    document.getElementById('filterTabs').addEventListener('click', (e) => {
-      const btn = e.target.closest('.filter-tab');
-      if (!btn) return;
-
-      document.querySelectorAll('.filter-tab').forEach(b => {
-        b.classList.remove('active');
-      });
-      btn.classList.add('active');
-      renderProjects(btn.dataset.filter);
-    });
-
-    // Bottom nav
-    document.querySelectorAll('.nav-item').forEach(item => {
-      item.addEventListener('click', (e) => {
-        e.preventDefault();
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-        item.classList.add('active');
-
-        // Scroll to section
-        const section = item.dataset.section;
-        const element = document.getElementById(section);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }
-      });
-    });
-
-    // Element SDK
-    const defaultConfig = {
-      portfolio_title: 'AI × Education Lab',
-      portfolio_subtitle: 'AI와 교육의 만남',
-      contact_title: '함께 만들어요'
-    };
-
-    function applyConfig(config) {
-      const c = { ...defaultConfig, ...config };
-      const titleEl = document.getElementById('portfolioTitle');
-      if (titleEl) {
-        titleEl.innerHTML = 'AI × Education<br><span style="color: #63dcd2;">그쌤 Project</span>';
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeModal('detailModal');
+        closeModal('contactModal');
+        closeModal('emojiModal');
       }
-      const contactTitleEl = document.getElementById('contactTitle');
-      if (contactTitleEl) contactTitleEl.textContent = c.contact_title;
-    }
+    });
 
-    if (window.elementSdk) {
-      window.elementSdk.init({
-        defaultConfig,
-        onConfigChange: applyConfig,
-        mapToCapabilities: (config) => ({
-          recolorables: [],
-          borderables: [],
-          fontEditable: undefined,
-          fontSizeable: undefined
-        }),
-        mapToEditPanelValues: (config) => new Map([
-          ['portfolio_title', config.portfolio_title || defaultConfig.portfolio_title],
-          ['portfolio_subtitle', config.portfolio_subtitle || defaultConfig.portfolio_subtitle],
-          ['contact_title', config.contact_title || defaultConfig.contact_title]
-        ])
-      });
-    }
-
-    // Initial render
-    renderProjects();
-    lucide.createIcons();
+    window.addEventListener('DOMContentLoaded', init);
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e789da6a1473092',t:'MTc3NTM5Mjc2OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
