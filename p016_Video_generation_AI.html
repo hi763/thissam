@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>AI 영상 생성 프롬프트 스튜디오 Pro</title>
+  <style>
+    :root {
+      --primary: #ec4899;
+      --primary-gradient: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --border: #334155;
+      --chip-bg: #334155;
+      --chip-hover: #475569;
+      --chip-active-bg: #fdf2f8;
+      --chip-active-border: #ec4899;
+      --chip-active-text: #db2777;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 720px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding-bottom: 60px;
+    }
+
+    /* 헤더 */
+    header {
+      text-align: center;
+      padding: 12px 0 6px 0;
+    }
+
+    header h1 {
+  font-size: 1.55rem;
+  font-weight: 800;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent; /* 구형 브라우저 대비 fallback */
+  letter-spacing: -0.5px;
+  }
+    header p {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      margin-top: 4px;
+    }
+
+    /* 탭 메뉴 (가운데 정렬) */
+    .tab-wrapper {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding: 4px 0;
+    }
+    .tab-wrapper::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tab-container {
+      display: inline-flex;
+      background: #1e293b;
+      padding: 4px;
+      border-radius: 14px;
+      gap: 4px;
+      border: 1px solid var(--border);
+    }
+
+    .tab-btn {
+      padding: 9px 15px;
+      border: none;
+      background: transparent;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-sub);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .tab-btn.active {
+      background: var(--primary-gradient);
+      color: #ffffff;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(236, 72, 153, 0.3);
+    }
+
+    /* 카드 스타일 */
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 18px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-title {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ? 설명 버튼 */
+    .help-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: #f472b6;
+      background: rgba(236, 72, 153, 0.15);
+      border: 1px solid rgba(236, 72, 153, 0.3);
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .help-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* 입력창 */
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 14px;
+      background: #0f172a;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      color: var(--text-main);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus {
+      border-color: var(--primary);
+    }
+
+    /* 칩 목록 */
+    .chips-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      padding: 8px 12px;
+      background: var(--chip-bg);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      font-size: 0.85rem;
+      color: var(--text-main);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s;
+    }
+
+    .chip:hover {
+      background: var(--chip-hover);
+    }
+
+    .chip.active {
+      background: var(--chip-active-bg);
+      color: var(--chip-active-text);
+      border-color: var(--chip-active-border);
+      font-weight: 700;
+    }
+
+    /* 하단 액션 */
+    .result-section {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .btn-main-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-complete {
+      flex: 3;
+      padding: 14px;
+      background: var(--primary-gradient);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(236, 72, 153, 0.35);
+      transition: transform 0.1s, opacity 0.2s;
+    }
+    .btn-complete:active {
+      transform: scale(0.99);
+    }
+
+    .btn-reset {
+      flex: 1;
+      padding: 14px;
+      background: #334155;
+      color: #cbd5e1;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-reset:active {
+      background: #475569;
+      color: #ffffff;
+    }
+
+    .prompt-box {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .prompt-textarea {
+      width: 100%;
+      height: 160px;
+      padding: 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-size: 0.92rem;
+      line-height: 1.55;
+      resize: vertical;
+      outline: none;
+      background: #0f172a;
+      color: var(--text-main);
+    }
+    .prompt-textarea:focus {
+      border-color: var(--primary);
+    }
+
+    .action-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .action-btn {
+      flex: 1;
+      padding: 13px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: 1.5px solid var(--border);
+      background: #1e293b;
+      color: var(--text-main);
+      transition: all 0.15s;
+    }
+
+    .btn-translate {
+      color: #f472b6;
+      border-color: rgba(236, 72, 153, 0.5);
+      background: rgba(236, 72, 153, 0.1);
+    }
+    .btn-copy {
+      background: #f8fafc;
+      color: #0f172a;
+      border-color: #f8fafc;
+    }
+    .btn-copy:active {
+      background: #e2e8f0;
+    }
+
+    /* 토스트 알림 */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: rgba(248, 250, 252, 0.95);
+      color: #0f172a;
+      padding: 11px 22px;
+      border-radius: 9999px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      pointer-events: none;
+      z-index: 1000;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* 설명 모달 */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 2000;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #1e293b;
+      width: 100%;
+      max-width: 540px;
+      max-height: 82vh;
+      border-radius: 18px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      color: var(--text-sub);
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .modal-body {
+      overflow-y: auto;
+      padding: 14px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .help-item {
+      padding: 11px 13px;
+      background: #0f172a;
+      border-radius: 10px;
+      border-left: 3.5px solid var(--primary);
+    }
+    .help-item-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .help-item-desc {
+      font-size: 0.83rem;
+      color: var(--text-sub);
+      margin-top: 3px;
+      line-height: 1.45;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <header>
+      <h1>AI 비디오 프롬프트 스튜디오 Pro</h1>
+      <p>Sora · Runway Gen-3 · Luma · Kling 영상 생성 프롬프트 빌더</p>
+    </header>
+
+    <!-- 1. 비디오 장르/용도 탭 -->
+    <div class="tab-wrapper">
+      <div class="tab-container" id="tabContainer">
+        <button class="tab-btn active" data-tab="cinematic">🎬 영화/시네마틱</button>
+        <button class="tab-btn" data-tab="shortform">📱 숏폼/릴스</button>
+        <button class="tab-btn" data-tab="animation">🧚 3D 애니메이션</button>
+        <button class="tab-btn" data-tab="drone_nature">🦅 드론/자연 다큐</button>
+        <button class="tab-btn" data-tab="motion_vfx">⚡ SF/판타지 VFX</button>
+      </div>
+    </div>
+
+    <!-- 2. 장면 및 주체 행동 입력 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">💡 1. 핵심 동작 및 장면 (Action & Scene)</span>
+      </div>
+      <input type="text" id="subjectInput" placeholder="예: 밤거리를 질주하던 사이버 전사가 공중제비를 돌며 착지함" />
+    </div>
+
+    <!-- 3. 카메라 무빙 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">🎥 2. 카메라 무빙 (Camera Movement)</span>
+        <button class="help-btn" onclick="openHelp('camera')">? 설명</button>
+      </div>
+      <div class="chips-group" id="cameraChips"></div>
+    </div>
+
+    <!-- 4. 속도 및 모션 연출 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">⏱️ 3. 모션 속도감 (Speed & Motion)</span>
+        <button class="help-btn" onclick="openHelp('motion')">? 설명</button>
+      </div>
+      <div class="chips-group" id="motionChips"></div>
+    </div>
+
+    <!-- 5. 분위기 및 조명 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">💡 4. 분위기 및 조명 (Lighting & Atmosphere)</span>
+        <button class="help-btn" onclick="openHelp('lighting')">? 설명</button>
+      </div>
+      <div class="chips-group" id="lightingChips"></div>
+    </div>
+
+    <!-- 6. 영상 품질 및 AI 렌더링 파라미터 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">💎 5. 비디오 화질 & 엔진 (Quality & Engine)</span>
+        <button class="help-btn" onclick="openHelp('quality')">? 설명</button>
+      </div>
+      <div class="chips-group" id="qualityChips"></div>
+    </div>
+
+    <!-- 7. 하단 버튼 및 결과 영역 -->
+    <div class="result-section">
+      <div class="btn-main-group">
+        <button class="btn-complete" id="completeBtn">🎬 영상 프롬프트 완성하기</button>
+        <button class="btn-reset" id="resetBtn">🔄 전체 다시 하기</button>
+      </div>
+
+      <div class="prompt-box" id="promptBox">
+        <textarea class="prompt-textarea" id="promptOutput" spellcheck="false" placeholder="완성된 영상 프롬프트가 여기에 표시됩니다."></textarea>
+        <div class="action-group">
+          <button class="action-btn btn-translate" id="translateBtn">🌐 영어로 변환 (KO ➔ EN)</button>
+          <button class="action-btn btn-copy" id="copyBtn">📋 전체 복사</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 쉬운 용어 설명 모달 -->
+  <div class="modal-overlay" id="helpModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitle">옵션 설명</div>
+        <button class="modal-close" onclick="closeHelp()">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- 토스트 -->
+  <div class="toast" id="toast">복사되었습니다!</div>
+
+  <script>
+    // 영상 생성형 AI 전용 데이터 사전
+    const DATA_BY_TAB = {
+      cinematic: {
+        template: {
+          ko: "16:9 시네마틱 와이드스크린 영화 샷, 24fps 필름 룩, 사실적인 인물 모션과 깊이감 있는 배경 포커스",
+          en: "--ar 16:9, 24fps cinematic film look, anamorphic lens flare, motion blur, hyper-realistic character movement"
+        },
+        camera: [
+          { ko: "돌리 인 (Dolly In/서서히 줌)", en: "smooth dolly-in camera push towards the subject", desc: "🎥 카메라가 주인공 쪽으로 부드럽게 다가가며 몰입감을 높여요." },
+          { ko: "트래킹 샷 (Tracking Shot)", en: "smooth tracking shot following the subject from the side", desc: "🏃 달리는 주인공을 카메라가 옆에서 나란히 따라가며 촬영해요." },
+          { ko: "360도 오빗 회전 (Orbit 360)", en: "dramatic 360-degree orbit pan around the character", desc: "🔄 주인공 주위를 카메라가 360도 빙글 돌며 입체적으로 보여줘요." },
+          { ko: "핸드헬드 쉐이크 (Handheld)", en: "subtle realistic handheld camera motion, action movie feel", desc: "📹 사람이 직접 카메라를 들고 찍은 듯 자연스럽게 흔들려 생생해요." }
+        ],
+        motion: [
+          { ko: "영화적 슬로우 모션 (120fps)", en: "ultra slow motion 120fps, highly detailed fluid particle motion", desc: "⏳ 영화 클라이맥스처럼 시간이 아주 천천히 흘러가 디테일이 보여요." },
+          { ko: "자연스러운 움직임 (Real-time)", en: "smooth natural human pacing, fluid organic gestures", desc: "🚶 실제 사람처럼 부드럽고 끊김 없는 일반 속도예요." },
+          { ko: "스피드 램프 (Speed Ramp)", en: "dynamic speed ramp from slow motion to rapid acceleration", desc: "⚡ 느려졌다가 순식간에 빨라지는 액션 영화 연출 기법이에요." }
+        ],
+        lighting: [
+          { ko: "시네마틱 틸&오렌지 조명", en: "cinematic teal and orange lighting, high dynamic contrast", desc: "🎬 할리우드 영화에서 가장 사랑받는 푸른빛과 주황빛의 대비예요." },
+          { ko: "드라마틱 볼류메트릭 빛내림", en: "volumetric god rays piercing through dust particles, moody atmosphere", desc: "✨ 안개나 먼지 사이로 신비로운 햇빛 줄기가 내리쬐어요." },
+          { ko: "골든아워 노을 역광", en: "golden hour warm sunlight silhouette, natural backlight flare", desc: "🌅 노을빛이 등 뒤에서 비쳐 인물 테두리가 따스하게 빛나요." }
+        ],
+        quality: [
+          { ko: "8K 시네마틱 렌더 (Sora Master)", en: "8K UHD, photorealistic cinematic masterpiece, ProRes 422 HQ", desc: "🏆 영화관 대형 스크린에서 틀어도 깨끗한 최고급 영화 화질이에요." },
+          { ko: "35mm 필름 그레인 텍스처", en: "authentic 35mm film grain, analog Kodak color grading", desc: "🎞️ 아날로그 필름 카메라의 따뜻하고 고급스러운 질감이에요." }
+        ]
+      },
+
+      shortform: {
+        template: {
+          ko: "9:16 세로형 릴스/쇼츠/틱톡 포맷, 첫 3초 시선 강탈 역동적인 카메라 무빙, 선명한 색감",
+          en: "--ar 9:16, vertical viral shorts format, dynamic eye-catching opening motion, vibrant colors"
+        },
+        camera: [
+          { ko: "패스트 줌인 펀치 (Crash Zoom)", en: "rapid crash zoom into the subject face, snappy transition", desc: "💥 눈 깜짝할 사이에 얼굴로 확 줌인하여 시선을 사로잡아요." },
+          { ko: "POV 1인칭 스마트폰 시점", en: "first-person POV handheld smartphone view, authentic vlogger feel", desc: "📱 내가 직접 스마트폰을 들고 브이로그를 찍는 듯한 시점이에요." },
+          { ko: "하이퍼 타임랩스 패닝", en: "fast sweeping pan across the vibrant scene", desc: "🌪️ 카메라를 빠르게 휙 돌리며 공간을 전환해요." }
+        ],
+        motion: [
+          { ko: "초고속 타임랩스 (Timelapse)", en: "fast-paced hyperlapse movement, speeding clouds and traffic flow", desc: "⏩ 구름과 사람들이 순식간에 휙 지나가는 빠른 배속 영상이에요." },
+          { ko: "통통 튀는 댄스 모션", en: "energetic bouncy rhythm motion, lively TikTok dance tempo", desc: "🎵 음악 리듬에 맞춘 통통 튀는 활기찬 움직임이에요." }
+        ],
+        lighting: [
+          { ko: "링라이트 & 뷰티 라이팅", en: "bright studio ring light, crisp flawless skin lighting", desc: "💡 인플루언서 조명처럼 얼굴이 뽀얗고 환하게 빛나요." },
+          { ko: "비비드 네온 팝 컬러", en: "high-saturation neon glow, vibrant magenta and electric cyan", desc: "🍭 스마트폰 화면에서 눈에 확 띄는 화려한 캔디 색감이에요." }
+        ],
+        quality: [
+          { ko: "4K 60fps 극강의 부드러움", en: "4K 60fps ultra-smooth motion fluidity, zero motion artifacts", desc: "✨ 렉 없이 물 흐르듯 아주 매끄러운 60프레임 영상이에요." },
+          { ko: "노이즈 없는 클린 렌더", en: "crystal-clear digital render, razor-sharp edge details", desc: "💎 지글거림 없이 스마트폰에서 가장 또렷하게 보여요." }
+        ]
+      },
+
+      animation: {
+        template: {
+          ko: "3D 디즈니/픽사 극장판 애니메이션 스타일, 풍부한 캐릭터 감정 표현, 부드러운 물리 엔진",
+          en: "3D Disney Pixar animation movie look, expressive facial physics, stylized vibrant lighting, soft subsurface scattering"
+        },
+        camera: [
+          { ko: "호버링 플로팅 캠 (Floating Cam)", en: "weightless floating camera glide around whimsical characters", desc: "🎈 요정이 날아다니듯 둥둥 떠서 캐릭터 주변을 유영해요." },
+          { ko: "캐릭터 오버더숄더 (OTS)", en: "over-the-shoulder conversation shot, animated character interaction", desc: "👥 캐릭터 어깨 너머로 상대방을 바라보는 대화형 구도예요." },
+          { ko: "미니어처 탑다운 뷰", en: "whimsical low-angle perspective showing world scale", desc: "🧸 인형의 집 세상을 들여다보듯 아기자기한 각도예요." }
+        ],
+        motion: [
+          { ko: "통통 튀는 스쿼시 & 스트레치", en: "squash and stretch character animation physics, expressive cartoon bounce", desc: "🐰 젤리처럼 찌그러졌다 펴지는 클래식 애니메이션 동작 원리에요." },
+          { ko: "바람에 날리는 털/헤어 물리효과", en: "wind simulation dynamic soft fur and cloth movement", desc: "🍃 털과 옷자락이 바람에 살랑살랑 흔들리는 물리 효과예요." }
+        ],
+        lighting: [
+          { ko: "동화 같은 소프트 파스텔광", en: "magical soft pastel lighting, warm fairytale glow, dreamy illumination", desc: "🌸 동화책 속에 들어온 듯 은은하고 사랑스러운 조명이에요." },
+          { ko: "캐릭터 피부 반사광 (SSS)", en: "warm subsurface scattering on skin, soft glowing ear translucency", desc: "✨ 빛이 캐릭터 피부나 귀를 통과해 말랑하고 투명하게 빛나요." }
+        ],
+        quality: [
+          { ko: "픽사 렌더맨 마스터 퀄리티", en: "Pixar RenderMan quality, clay texture micro-details, ultra-soft shadows", desc: "🎬 극장용 3D 대작 애니메이션 수준의 정교한 그래픽이에요." },
+          { ko: "옥탄 3D 클레이 텍스처", en: "Octane render stylized clay shader, beautiful ambient occlusion", desc: "🧸 점토로 정성스레 빚은 듯 매끄럽고 고급스러운 표면감이에요." }
+        ]
+      },
+
+      drone_nature: {
+        template: {
+          ko: "자연 다큐멘터리 항공 드론 촬영, 광활한 파노라마 시야, 안정적인 짐벌 비행 샷",
+          en: "BBC Planet Earth style nature documentary, smooth aerial drone footage, panoramic landscape, ultra-stable 3-axis gimbal"
+        },
+        camera: [
+          { ko: "초고속 FPV 레이싱 드론 샷", en: "ultra-fast FPV drone dive down canyon and through forest gaps", desc: "🦅 숲 사이나 협곡을 번개처럼 내리꽂으며 비행하는 역동적인 샷이에요." },
+          { ko: "고고도 버드아이 수직 하강", en: "high-altitude bird's-eye top-down view descending slowly", desc: "🌍 하늘 높은 곳에서 땅을 수직으로 내려다보며 내려와요." },
+          { ko: "지평선 리빌 샷 (Horizon Reveal)", en: "rising crane tilt-up revealing vast breathtaking mountain panorama", desc: "🏔️ 바닥을 보다가 서서히 고개를 들어 거대한 풍경을 짠 하고 보여줘요." }
+        ],
+        motion: [
+          { ko: "유려하고 잔잔한 드론 활공", en: "slow majestic gliding flight, tranquil cinematic pacing", desc: "🕊️ 흔들림 없이 아주 부드럽게 하늘을 미끄러지듯 날아가요." },
+          { ko: "역동적인 야생동물 추적", en: "high-speed galloping animal chase tracking motion", desc: "🐆 전속력으로 달리는 동물을 공중에서 놓치지 않고 따라가요." }
+        ],
+        lighting: [
+          { ko: "일출/일몰 황금빛 대기광", en: "sunrise golden light mist, atmospheric mountain haze rays", desc: "🌅 안개 낀 산맥 위로 붉은 해가 떠오르는 웅장한 빛이에요." },
+          { ko: "오로라 & 은하수 야경", en: "vibrant dancing green Aurora Borealis, Milky Way starry night sky", desc: "🌌 밤하늘에 춤추는 신비로운 오로라와 쏟아지는 별빛이에요." }
+        ],
+        quality: [
+          { ko: "8K IMAX 네이처 다큐 화질", en: "8K IMAX documentary clarity, hyper-realistic water and foliage textures", desc: "🌿 나뭇잎 하나, 파도의 물방울까지 선명한 내셔널지오그래픽 화질이에요." },
+          { ko: "무손실 짐벌 스태빌라이제이션", en: "zero camera shake, perfect 3-axis gimbal stabilization", desc: "📐 어떤 바람에도 흔들리지 않는 완벽한 수평 안정감이에요." }
+        ]
+      },
+
+      motion_vfx: {
+        template: {
+          ko: "SF 블록버스터 시네마틱 VFX, 화려한 파티클 이펙트, 유체 역학 및 마법 렌더링",
+          en: "Hollywood blockbuster sci-fi VFX shot, glowing energy particle effects, fluid dynamics simulation, dark cosmic background"
+        },
+        camera: [
+          { ko: "불릿 타임 정지 궤적 (Matrix)", en: "Matrix bullet-time frozen camera spin around mid-air explosion", desc: "⏱️ 영화 매트릭스처럼 동작이 멈춘 채 카메라만 휙 회전해요." },
+          { ko: "포털 관통 워프 샷 (Warp)", en: "fast camera zoom flying through glowing interdimensional portal", desc: "🌀 빛나는 차원문이나 우주 웜홀 속으로 쑥 빨려 들어가는 샷이에요." }
+        ],
+        motion: [
+          { ko: "중력 왜곡 파티클 폭발", en: "anti-gravity particle burst, zero-g floating debris physics", desc: "🌌 무중력 상태처럼 돌과 물방울이 사방으로 둥둥 흩어져요." },
+          { ko: "빛의 속도 텔레포트 워프", en: "instant hyperspace light streak teleportation effect", desc: "⚡ 번쩍하는 섬광과 함께 빛의 속도로 사라지는 모션이에요." }
+        ],
+        lighting: [
+          { ko: "플라즈마 네온 에너지 발광", en: "blinding electric plasma energy burst, glowing cyan lightning arcs", desc: "⚡ 파란 번개와 에너지가 지지직거리며 터지는 강렬한 빛이에요." },
+          { ko: "다크 코스믹 & 슈퍼노바", en: "dark cosmic void with supernova nebula explosion colors", desc: "💥 깊은 우주 속에서 별이 폭발하는 듯한 신비로운 우주광이에요." }
+        ],
+        quality: [
+          { ko: "후디니 파티클 시뮬레이션", en: "Houdini VFX particle simulation, complex fluid smoke dynamics", desc: "💨 할리우드 특수효과 전용 엔진으로 만든 극도의 디테일한 연기와 불꽃이에요." },
+          { ko: "레이트레이싱 레이저 림라이트", en: "ray-traced dynamic light reflection on metallic armor", desc: "✨ 마법 빛이나 레이저가 금속에 반사되는 실시간 그래픽이에요." }
+        ]
+      }
+    };
+
+    // 상태 관리
+    let currentTab = "cinematic";
+    let isEnglish = false;
+    let selectedOptions = {
+      camera: new Set(),
+      motion: new Set(),
+      lighting: new Set(),
+      quality: new Set()
+    };
+
+    // 칩 렌더링
+    function renderCategoryChips(category, containerId) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+      const items = DATA_BY_TAB[currentTab][category] || [];
+
+      items.forEach((item) => {
+        const chip = document.createElement("div");
+        chip.className = "chip";
+        chip.textContent = item.ko;
+
+        if (selectedOptions[category].has(item)) {
+          chip.classList.add("active");
+        }
+
+        chip.addEventListener("click", () => {
+          if (selectedOptions[category].has(item)) {
+            selectedOptions[category].delete(item);
+            chip.classList.remove("active");
+          } else {
+            selectedOptions[category].add(item);
+            chip.classList.add("active");
+          }
+        });
+
+        container.appendChild(chip);
+      });
+    }
+
+    function updateAllChips() {
+      renderCategoryChips("camera", "cameraChips");
+      renderCategoryChips("motion", "motionChips");
+      renderCategoryChips("lighting", "lightingChips");
+      renderCategoryChips("quality", "qualityChips");
+    }
+
+    // 탭 전환
+    const tabBtns = document.querySelectorAll(".tab-btn");
+    tabBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        tabBtns.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentTab = btn.getAttribute("data-tab");
+
+        clearSelections();
+        updateAllChips();
+
+        if (document.getElementById("promptBox").style.display === "flex") {
+          document.getElementById("promptOutput").value = buildPrompt(isEnglish);
+        }
+      });
+    });
+
+    function clearSelections() {
+      selectedOptions.camera.clear();
+      selectedOptions.motion.clear();
+      selectedOptions.lighting.clear();
+      selectedOptions.quality.clear();
+    }
+
+    // 프롬프트 조립
+    function buildPrompt(toEnglish = false) {
+      const subject = document.getElementById("subjectInput").value.trim();
+      const lang = toEnglish ? "en" : "ko";
+      const parts = [];
+
+      // 1. 기본 비디오 포맷
+      parts.push(DATA_BY_TAB[currentTab].template[lang]);
+
+      // 2. 핵심 동작 및 장면
+      if (subject) {
+        if (toEnglish) {
+          parts.push(`Action & Scene: ${subject}`);
+        } else {
+          parts.push(`장면/동작: ${subject}`);
+        }
+      }
+
+      // 3. 영상 옵션
+      const camList = Array.from(selectedOptions.camera).map((i) => i[lang]);
+      const motList = Array.from(selectedOptions.motion).map((i) => i[lang]);
+      const lightList = Array.from(selectedOptions.lighting).map((i) => i[lang]);
+      const qualList = Array.from(selectedOptions.quality).map((i) => i[lang]);
+
+      if (camList.length > 0) parts.push(toEnglish ? `Camera Movement: ${camList.join(", ")}` : `카메라 무빙: ${camList.join(", ")}`);
+      if (motList.length > 0) parts.push(toEnglish ? `Motion Pacing: ${motList.join(", ")}` : `속도 및 모션: ${motList.join(", ")}`);
+      if (lightList.length > 0) parts.push(toEnglish ? `Lighting & Mood: ${lightList.join(", ")}` : `분위기 및 조명: ${lightList.join(", ")}`);
+      if (qualList.length > 0) parts.push(toEnglish ? `Video Quality & Engine: ${qualList.join(", ")}` : `화질 및 엔진: ${qualList.join(", ")}`);
+
+      return parts.join(toEnglish ? ", " : ",\n");
+    }
+
+    // 완성 버튼
+    const completeBtn = document.getElementById("completeBtn");
+    const promptBox = document.getElementById("promptBox");
+    const promptOutput = document.getElementById("promptOutput");
+    const translateBtn = document.getElementById("translateBtn");
+
+    completeBtn.addEventListener("click", () => {
+      isEnglish = false;
+      translateBtn.textContent = "🌐 영어로 변환 (KO ➔ EN)";
+      promptOutput.value = buildPrompt(false);
+      promptBox.style.display = "flex";
+      promptBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
+
+    // 리셋 버튼
+    const resetBtn = document.getElementById("resetBtn");
+    resetBtn.addEventListener("click", () => {
+      document.getElementById("subjectInput").value = "";
+      clearSelections();
+      updateAllChips();
+      promptOutput.value = "";
+      promptBox.style.display = "none";
+      isEnglish = false;
+      showToast("모든 설정이 초기화되었습니다.");
+    });
+
+    // 한영 변환
+    translateBtn.addEventListener("click", () => {
+      isEnglish = !isEnglish;
+      promptOutput.value = buildPrompt(isEnglish);
+      translateBtn.textContent = isEnglish
+        ? "🌐 한글로 변환 (EN ➔ KO)"
+        : "🌐 영어로 변환 (KO ➔ EN)";
+    });
+
+    // 복사
+    const copyBtn = document.getElementById("copyBtn");
+    const toast = document.getElementById("toast");
+
+    copyBtn.addEventListener("click", async () => {
+      const text = promptOutput.value;
+      if (!text) return;
+
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast("영상 프롬프트가 복사되었습니다! 🎬");
+      } catch (err) {
+        promptOutput.select();
+        document.execCommand("copy");
+        showToast("영상 프롬프트가 복사되었습니다! 🎬");
+      }
+    });
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2200);
+    }
+
+    // 도움말 모달
+    const helpModal = document.getElementById("helpModal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalBody = document.getElementById("modalBody");
+
+    const categoryNames = {
+      camera: "카메라 무빙 (Camera Movement)",
+      motion: "모션 속도감 (Speed & Motion)",
+      lighting: "분위기 및 조명 (Lighting & Atmosphere)",
+      quality: "화질 및 엔진 파라미터 (Quality & Engine)"
+    };
+
+    function openHelp(category) {
+      modalTitle.textContent = `💡 ${categoryNames[category]} 쉬운 설명`;
+      modalBody.innerHTML = "";
+
+      const items = DATA_BY_TAB[currentTab][category] || [];
+      items.forEach((item) => {
+        const div = document.createElement("div");
+        div.className = "help-item";
+        div.innerHTML = `
+          <div class="help-item-title">${item.ko}</div>
+          <div class="help-item-desc">${item.desc}</div>
+        `;
+        modalBody.appendChild(div);
+      });
+
+      helpModal.classList.add("active");
+    }
+
+    function closeHelp() {
+      helpModal.classList.remove("active");
+    }
+
+    helpModal.addEventListener("click", (e) => {
+      if (e.target === helpModal) closeHelp();
+    });
+
+    // 초기 실행
+    updateAllChips();
+  </script>
+</body>
+</html>
