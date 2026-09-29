@@ -8,8 +8,10 @@
     :root {
       --primary: #8b5cf6;
       --primary-gradient: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+      --accent-gradient: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
       --bg: #0b0f19;
       --card-bg: #151c2e;
+      --card-highlight: #1a233a;
       --text-main: #f8fafc;
       --text-sub: #94a3b8;
       --border: #232f48;
@@ -34,15 +36,16 @@
       padding: 16px;
       display: flex;
       justify-content: center;
+      min-height: 100vh;
     }
 
     .app-container {
       width: 100%;
-      max-width: 720px;
+      max-width: 760px;
       display: flex;
       flex-direction: column;
       gap: 16px;
-      padding-bottom: 60px;
+      padding-bottom: 70px;
     }
 
     header {
@@ -50,24 +53,23 @@
       padding: 12px 0 6px 0;
     }
 
-        header h1 {
-  font-size: 1.55rem;
-  font-weight: 800;
-  background: var(--primary-gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent; /* 구형 브라우저 대비 fallback */
-  letter-spacing: -0.5px;
-  }
-
-    header p {
-      font-size: 0.85rem;
-      color: var(--text-sub);
-      margin-top: 4px;
+    header h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      letter-spacing: -0.5px;
     }
 
-    /* 탭 메뉴 (가운데 정렬) */
+    header p {
+      font-size: 0.88rem;
+      color: var(--text-sub);
+      margin-top: 5px;
+    }
+
     .tab-wrapper {
       display: flex;
       justify-content: center;
@@ -119,6 +121,11 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
+      transition: border-color 0.2s;
+    }
+
+    .card:hover {
+      border-color: rgba(139, 92, 246, 0.4);
     }
 
     .card-header {
@@ -157,17 +164,18 @@
 
     input[type="text"] {
       width: 100%;
-      padding: 12px 14px;
+      padding: 13px 15px;
       background: #0b0f19;
       border: 1.5px solid var(--border);
       border-radius: 10px;
       font-size: 0.95rem;
       color: var(--text-main);
       outline: none;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
     input[type="text"]:focus {
       border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
     }
 
     .chips-group {
@@ -197,14 +205,14 @@
       color: var(--chip-active-text);
       border-color: var(--chip-active-border);
       font-weight: 700;
+      box-shadow: 0 2px 6px rgba(139, 92, 246, 0.25);
     }
 
-    /* 결과 영역 */
     .result-section {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      margin-top: 4px;
+      gap: 12px;
+      margin-top: 6px;
     }
 
     .btn-main-group {
@@ -214,7 +222,7 @@
 
     .btn-complete {
       flex: 3;
-      padding: 14px;
+      padding: 15px;
       background: var(--primary-gradient);
       color: #ffffff;
       border: none;
@@ -224,6 +232,10 @@
       cursor: pointer;
       box-shadow: 0 4px 14px rgba(139, 92, 246, 0.35);
       transition: transform 0.1s, opacity 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
     .btn-complete:active {
       transform: scale(0.99);
@@ -231,7 +243,7 @@
 
     .btn-reset {
       flex: 1;
-      padding: 14px;
+      padding: 15px;
       background: #1e293b;
       color: #cbd5e1;
       border: 1px solid var(--border);
@@ -249,38 +261,78 @@
     .prompt-box {
       display: none;
       flex-direction: column;
-      gap: 10px;
-      margin-top: 6px;
+      gap: 12px;
+      margin-top: 4px;
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1.5px solid var(--border);
+      padding: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .editor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: rgba(59, 130, 246, 0.15);
+      color: #93c5fd;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .user-edited-badge {
+      display: none;
+      font-size: 0.78rem;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: rgba(236, 72, 153, 0.15);
+      color: #f472b6;
+      border: 1px solid rgba(236, 72, 153, 0.3);
+      font-weight: 600;
     }
 
     .prompt-textarea {
       width: 100%;
-      height: 180px;
+      height: 240px;
       padding: 14px;
       border: 1.5px solid var(--border);
       border-radius: 12px;
-      font-size: 0.9rem;
-      line-height: 1.6;
+      font-size: 0.92rem;
+      line-height: 1.65;
       resize: vertical;
       outline: none;
       background: #0b0f19;
       color: var(--text-main);
-      font-family: monospace, sans-serif;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
     .prompt-textarea:focus {
       border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
     }
 
     .action-group {
       display: flex;
+      flex-wrap: wrap;
       gap: 8px;
     }
 
     .action-btn {
       flex: 1;
+      min-width: 140px;
       padding: 13px;
       border-radius: 10px;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       font-weight: 700;
       cursor: pointer;
       display: flex;
@@ -290,14 +342,24 @@
       border: 1.5px solid var(--border);
       background: #151c2e;
       color: var(--text-main);
-      transition: all 0.15s;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .btn-translate {
-      color: #a78bfa;
-      border-color: rgba(139, 92, 246, 0.5);
-      background: rgba(139, 92, 246, 0.1);
+      color: #c4b5fd;
+      border-color: rgba(139, 92, 246, 0.6);
+      background: rgba(139, 92, 246, 0.15);
+      position: relative;
     }
+    .btn-translate:hover {
+      background: rgba(139, 92, 246, 0.25);
+      border-color: #8b5cf6;
+    }
+    .btn-translate.loading {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
     .btn-copy {
       background: #f8fafc;
       color: #0b0f19;
@@ -307,7 +369,38 @@
       background: #e2e8f0;
     }
 
-    /* 토스트 */
+    .btn-split-copy {
+      background: #1e293b;
+      color: #94a3b8;
+      font-size: 0.82rem;
+      padding: 8px 12px;
+    }
+    .btn-split-copy:hover {
+      color: #f8fafc;
+      border-color: #3b82f6;
+    }
+
+    .sub-action-bar {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      font-size: 0.82rem;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
     .toast {
       position: fixed;
       bottom: 24px;
@@ -322,8 +415,8 @@
       opacity: 0;
       transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
       pointer-events: none;
-      z-index: 1000;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      z-index: 3000;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
     }
     .toast.show {
       transform: translateX(-50%) translateY(0);
@@ -415,7 +508,7 @@
   <div class="app-container">
     <header>
       <h1>AI 음악 & 작곡 프롬프트 스튜디오 Pro</h1>
-      <p>Suno v3.5/v4 · Udio · MusicFX 음악 & 가사 구조 빌더</p>
+      <p>Suno v3.5/v4 · Udio · MusicFX 음악 & 사용자 가사 완벽 보존 스튜디오</p>
     </header>
 
     <!-- 1. 음악 장르 탭 -->
@@ -473,7 +566,6 @@
       <div class="chips-group" id="instrumentChips"></div>
     </div>
 
-    <!-- 7. 완료 및 결과창 -->
     <div class="result-section">
       <div class="btn-main-group">
         <button class="btn-complete" id="completeBtn">🎵 완성형 음악 프롬프트 생성</button>
@@ -481,9 +573,30 @@
       </div>
 
       <div class="prompt-box" id="promptBox">
-        <textarea class="prompt-textarea" id="promptOutput" spellcheck="false" placeholder="완성된 음악 스타일 프롬프트 및 가사 템플릿이 표시됩니다."></textarea>
+        <div class="editor-header">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="card-title">📝 완성된 음악 프롬프트 & 가사 에디터</span>
+            <span class="user-edited-badge" id="userEditedBadge">✏️ 사용자 직접 편집 중</span>
+          </div>
+          <span class="status-badge" id="langBadge">🇰🇷 한국어 모드</span>
+        </div>
+
+        <textarea 
+          class="prompt-textarea" 
+          id="promptOutput" 
+          spellcheck="false" 
+          placeholder="완성된 음악 스타일 프롬프트 및 가사가 여기에 표시됩니다. 직접 가사를 작성하거나 수정하셔도 번역 시 완벽히 보존됩니다."></textarea>
+        
+        <div class="sub-action-bar">
+          <button class="action-btn btn-split-copy" id="copyStyleBtn">🎚️ 스타일만 복사</button>
+          <button class="action-btn btn-split-copy" id="copyLyricsBtn">📜 가사 구조만 복사</button>
+        </div>
+
         <div class="action-group">
-          <button class="action-btn btn-translate" id="translateBtn">🌐 영어로 변환 (KO ➔ EN)</button>
+          <button class="action-btn btn-translate" id="translateBtn">
+            <span id="translateBtnIcon">🌐</span>
+            <span id="translateBtnText">AI 스마트 영어 변환 (사용자 가사 완벽 반영)</span>
+          </button>
           <button class="action-btn btn-copy" id="copyBtn">📋 전체 복사</button>
         </div>
       </div>
@@ -501,7 +614,7 @@
     </div>
   </div>
 
-  <!-- 토스트 -->
+  <!-- 토스트 알림 -->
   <div class="toast" id="toast">복사되었습니다!</div>
 
   <script>
@@ -644,15 +757,31 @@
       }
     };
 
-    // 상태 관리
     let currentTab = "kpop";
     let isEnglish = false;
+    let isUserModified = false;
+    let lastGeneratedKoreanPrompt = "";
+    let lastGeneratedEnglishPrompt = "";
+
     let selectedOptions = {
       structure: new Set(),
       vocal: new Set(),
       mood: new Set(),
       instrument: new Set()
     };
+
+    const promptOutput = document.getElementById("promptOutput");
+    const userEditedBadge = document.getElementById("userEditedBadge");
+    const langBadge = document.getElementById("langBadge");
+    const translateBtn = document.getElementById("translateBtn");
+    const translateBtnText = document.getElementById("translateBtnText");
+    const translateBtnIcon = document.getElementById("translateBtnIcon");
+
+    // 사용자가 텍스트 영역을 직접 타이핑하거나 수정할 때 감지
+    promptOutput.addEventListener("input", () => {
+      isUserModified = true;
+      userEditedBadge.style.display = "inline-flex";
+    });
 
     function renderCategoryChips(category, containerId) {
       const container = document.getElementById(containerId);
@@ -700,8 +829,10 @@
         clearSelections();
         updateAllChips();
 
-        if (document.getElementById("promptBox").style.display === "flex") {
-          document.getElementById("promptOutput").value = buildMusicPrompt(isEnglish);
+        // 탭이 바뀔 때 사용자가 편집 중이 아니면 갱신
+        if (!isUserModified && document.getElementById("promptBox").style.display === "flex") {
+          const freshPrompt = buildMusicPrompt(isEnglish);
+          promptOutput.value = freshPrompt;
         }
       });
     });
@@ -713,9 +844,8 @@
       selectedOptions.instrument.clear();
     }
 
-    // 프롬프트 조립기 (스타일 태그 + 가사 구조 템플릿 완벽 생성)
     function buildMusicPrompt(toEnglish = false) {
-      const subject = document.getElementById("subjectInput").value.trim() || (toEnglish ? "A song about freedom and youth" : "자유와 청춘에 관한 이야기");
+      const subject = document.getElementById("subjectInput").value.trim() || (toEnglish ? "A song about freedom, youth, and love" : "자유와 청춘에 관한 이야기");
       const lang = toEnglish ? "en" : "ko";
 
       const vocalList = Array.from(selectedOptions.vocal).map((i) => i[lang]);
@@ -736,7 +866,6 @@
       // 2. 가사 구조 템플릿 (Lyrics Structure)
       const structureLines = [];
       if (structList.length === 0) {
-        // 기본 구조
         structureLines.push(toEnglish ? "[Verse 1]\n(Insert your 1st verse story lyrics here)" : "[Verse 1]\n(여기에 1절 가사를 적어주세요)");
         structureLines.push(toEnglish ? "[Chorus]\n(Insert the most energetic catchy hook lyrics here)" : "[Chorus]\n(여기에 가장 중독성 있고 신나는 후렴구 가사를 적어주세요)");
         structureLines.push(toEnglish ? "[Outro]\n(Ending vocal ad-libs or fade-out)" : "[Outro]\n(마무리 엔딩 및 허밍 가사)");
@@ -750,21 +879,201 @@
       return `${styleHeader}\n${styleParts.join(", ")}\n\n${lyricsHeader}\n${toEnglish ? `[Topic: ${subject}]` : `[주제: ${subject}]`}\n\n${structureLines.join("\n\n")}`;
     }
 
-    // 완성 버튼
+    async function translatePromptWithGemini(sourceText, targetLang = "en") {
+      const apiKey = ""; // Canvas provides runtime key
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+      const systemPrompt = `You are a world-class AI Music Producer & Lyricist specialized in Suno v3.5/v4 and Udio.
+Your goal is to translate and optimize the music prompt and song lyrics provided by the user.
+
+CRITICAL RULES:
+1. Target Language: ${targetLang === "en" ? "English" : "Korean"}.
+2. PRESERVE ALL USER CUSTOM LYRICS: If the user wrote specific lyrics, story lines, or rhyming words, translate them poetically and musically to ${targetLang === "en" ? "natural sounding, rhyming English song lyrics" : "감성적인 한국어 가사"}. DO NOT delete user ideas!
+3. PRESERVE STRUCTURAL TAGS: Keep square bracket tags intact like [Intro], [Verse 1], [Pre-Chorus], [Chorus], [Bridge], [Drop], [Outro], [Guitar Solo], etc.
+4. HEADERS: Format the output with clear headers:
+${targetLang === "en" ? "=== [Style & Genre Prompt (Suno/Udio Style Box)] ===" : "=== [음악 스타일 프롬프트 (Suno/Udio 스타일 창용)] ==="}
+and
+${targetLang === "en" ? "=== [Song Structure & Lyrics Template (Lyrics Box)] ===" : "=== [곡 구조 및 가사 템플릿 (가사 입력 창용)] ==="}
+5. Only output the final translated text, no meta-commentary, markdown backticks, or greetings.`;
+
+      const userQuery = `Please translate and optimize the following music prompt & lyrics for AI music generation:\n\n${sourceText}`;
+
+      const payload = {
+        contents: [{ parts: [{ text: userQuery }] }],
+        systemInstruction: { parts: [{ text: systemPrompt }] }
+      };
+
+      // Exponential backoff
+      for (let attempt = 0; attempt < 3; attempt++) {
+        try {
+          const res = await fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+
+          if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+          const data = await res.json();
+          const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (text) return text.trim();
+        } catch (err) {
+          if (attempt === 2) throw err;
+          await new Promise((r) => setTimeout(r, Math.pow(2, attempt) * 1000));
+        }
+      }
+      throw new Error("Translation failed after retries");
+    }
+
+    function fallbackLocalTranslate(text, toEnglish = true) {
+      if (toEnglish) {
+        let t = text;
+        t = t.replace(/=== \[음악 스타일 프롬프트 \(Suno\/Udio 스타일 창용\)\] ===/g, "=== [Style & Genre Prompt (Suno/Udio Style Box)] ===");
+        t = t.replace(/=== \[곡 구조 및 가사 템플릿 \(가사 입력 창용\)\] ===/g, "=== [Song Structure & Lyrics Template (Lyrics Box)] ===");
+        t = t.replace(/보컬:/g, "Vocals:");
+        t = t.replace(/템포 및 분위기:/g, "Tempo & Mood:");
+        t = t.replace(/악기:/g, "Instruments:");
+        t = t.replace(/\[주제:/g, "[Topic:");
+        t = t.replace(/\(여기에 1절 가사를 적어주세요\)/g, "(Insert your 1st verse story lyrics here)");
+        t = t.replace(/\(여기에 가장 중독성 있고 신나는 후렴구 가사를 적어주세요\)/g, "(Insert catchy hook lyrics here)");
+        t = t.replace(/\(마무리 엔딩 및 허밍 가사\)/g, "(Ending vocal ad-libs or fade-out)");
+        t = t.replace(/\(파트에 어울리는 가사를 작성하세요\)/g, "(Write lyrics matching this section)");
+        return t;
+      } else {
+        let t = text;
+        t = t.replace(/=== \[Style & Genre Prompt \(Suno\/Udio Style Box\)\] ===/g, "=== [음악 스타일 프롬프트 (Suno/Udio 스타일 창용)] ===");
+        t = t.replace(/=== \[Song Structure & Lyrics Template \(Lyrics Box\)\] ===/g, "=== [곡 구조 및 가사 템플릿 (가사 입력 창용)] ===");
+        t = t.replace(/Vocals:/g, "보컬:");
+        t = t.replace(/Tempo & Mood:/g, "템포 및 분위기:");
+        t = t.replace(/Instruments:/g, "악기:");
+        t = t.replace(/\[Topic:/g, "[주제:");
+        return t;
+      }
+    }
+
     const completeBtn = document.getElementById("completeBtn");
     const promptBox = document.getElementById("promptBox");
-    const promptOutput = document.getElementById("promptOutput");
-    const translateBtn = document.getElementById("translateBtn");
 
     completeBtn.addEventListener("click", () => {
       isEnglish = false;
-      translateBtn.textContent = "🌐 영어로 변환 (KO ➔ EN)";
-      promptOutput.value = buildMusicPrompt(false);
+      isUserModified = false;
+      userEditedBadge.style.display = "none";
+      updateLangBadge();
+
+      const prompt = buildMusicPrompt(false);
+      lastGeneratedKoreanPrompt = prompt;
+      promptOutput.value = prompt;
+
       promptBox.style.display = "flex";
       promptBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      showToast("🎵 음악 프롬프트 및 가사 템플릿이 완성되었습니다!");
     });
 
-    // 리셋
+    function updateLangBadge() {
+      if (isEnglish) {
+        langBadge.textContent = "🇺🇸 영어 모드 (Suno/Udio 권장)";
+        langBadge.style.background = "rgba(139, 92, 246, 0.2)";
+        langBadge.style.color = "#c4b5fd";
+        translateBtnText.textContent = "한글로 복원 / 번역 (EN ➔ KO)";
+      } else {
+        langBadge.textContent = "🇰🇷 한국어 모드";
+        langBadge.style.background = "rgba(59, 130, 246, 0.15)";
+        langBadge.style.color = "#93c5fd";
+        translateBtnText.textContent = "AI 스마트 영어 변환 (사용자 가사 완벽 반영)";
+      }
+    }
+
+    // 스마트 번역 및 전환 핸들러 (사용자가 수정한 모든 내용 보존)
+    translateBtn.addEventListener("click", async () => {
+      let currentText = promptOutput.value.trim();
+      if (!currentText) {
+        currentText = buildMusicPrompt(isEnglish);
+      }
+
+      const targetLang = isEnglish ? "ko" : "en";
+
+      // 로딩 UI 설정
+      translateBtn.classList.add("loading");
+      const prevIcon = translateBtnIcon.textContent;
+      translateBtnIcon.innerHTML = `<span class="spinner"></span>`;
+      translateBtnText.textContent = isEnglish ? "가사 및 음악 스타일 한글로 AI 변환 중..." : "사용자 가사 및 프롬프트 AI 영어 변환 중...";
+
+      try {
+        // Gemini API로 사용자가 쓴 텍스트 통째로 번역
+        const translated = await translatePromptWithGemini(currentText, targetLang);
+        promptOutput.value = translated;
+        isEnglish = !isEnglish;
+        updateLangBadge();
+        showToast(isEnglish ? "✨ 사용자의 가사가 영어로 자연스럽게 번역되었습니다!" : "✨ 한글로 변환되었습니다!");
+      } catch (err) {
+        // 만약 네트워크나 API 환경 문제 시 폴백 파서 가동 (사용자 텍스트 손실 방지)
+        console.warn("Gemini API fallback:", err);
+        const fallbackText = fallbackLocalTranslate(currentText, !isEnglish);
+        promptOutput.value = fallbackText;
+        isEnglish = !isEnglish;
+        updateLangBadge();
+        showToast("⚠️ 로컬 변환 완료 (사용자 작성 내용 보존됨)");
+      } finally {
+        translateBtn.classList.remove("loading");
+        translateBtnIcon.textContent = prevIcon;
+      }
+    });
+
+    const copyBtn = document.getElementById("copyBtn");
+    const copyStyleBtn = document.getElementById("copyStyleBtn");
+    const copyLyricsBtn = document.getElementById("copyLyricsBtn");
+    const toast = document.getElementById("toast");
+
+    function copyTextToClipboard(text, successMsg) {
+      if (!text) return;
+      try {
+        const tempTextarea = document.createElement("textarea");
+        tempTextarea.value = text;
+        tempTextarea.style.position = "fixed";
+        tempTextarea.style.opacity = "0";
+        document.body.appendChild(tempTextarea);
+        tempTextarea.focus();
+        tempTextarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempTextarea);
+        showToast(successMsg);
+      } catch (e) {
+        showToast("복사에 실패했습니다.");
+      }
+    }
+
+    copyBtn.addEventListener("click", () => {
+      copyTextToClipboard(promptOutput.value, "📋 전체 프롬프트가 복사되었습니다! 🎵");
+    });
+
+    // Suno / Udio의 Style Box에 넣을 스타일 파트만 분리 복사
+    copyStyleBtn.addEventListener("click", () => {
+      const val = promptOutput.value;
+      const lyricsHeaderMatch = val.match(/=== \[.*?(가사|Lyrics).*?\] ===/i);
+      let styleText = "";
+      if (lyricsHeaderMatch) {
+        styleText = val.substring(0, lyricsHeaderMatch.index);
+      } else {
+        styleText = val;
+      }
+      styleText = styleText.replace(/=== \[.*?\] ===/g, "").trim();
+      copyTextToClipboard(styleText, "🎚️ 스타일 태그만 복사되었습니다! (Suno Style 창에 붙여넣기)");
+    });
+
+    // Suno / Udio의 Lyrics Box에 넣을 가사 파트만 분리 복사
+    copyLyricsBtn.addEventListener("click", () => {
+      const val = promptOutput.value;
+      const lyricsHeaderMatch = val.match(/=== \[.*?(가사|Lyrics).*?\] ===/i);
+      let lyricsText = "";
+      if (lyricsHeaderMatch) {
+        lyricsText = val.substring(lyricsHeaderMatch.index);
+        lyricsText = lyricsText.replace(/=== \[.*?\] ===/g, "").trim();
+      } else {
+        lyricsText = val;
+      }
+      copyTextToClipboard(lyricsText, "📜 가사 및 구조 태그만 복사되었습니다! (Suno Lyrics 창에 붙여넣기)");
+    });
+
+    // 초기화 버튼
     const resetBtn = document.getElementById("resetBtn");
     resetBtn.addEventListener("click", () => {
       document.getElementById("subjectInput").value = "";
@@ -773,34 +1082,10 @@
       promptOutput.value = "";
       promptBox.style.display = "none";
       isEnglish = false;
-      showToast("모든 설정이 초기화되었습니다.");
-    });
-
-    // 한영 변환
-    translateBtn.addEventListener("click", () => {
-      isEnglish = !isEnglish;
-      promptOutput.value = buildMusicPrompt(isEnglish);
-      translateBtn.textContent = isEnglish
-        ? "🌐 한글로 변환 (EN ➔ KO)"
-        : "🌐 영어로 변환 (KO ➔ EN)";
-    });
-
-    // 복사
-    const copyBtn = document.getElementById("copyBtn");
-    const toast = document.getElementById("toast");
-
-    copyBtn.addEventListener("click", async () => {
-      const text = promptOutput.value;
-      if (!text) return;
-
-      try {
-        await navigator.clipboard.writeText(text);
-        showToast("음악 프롬프트가 복사되었습니다! 🎵");
-      } catch (err) {
-        promptOutput.select();
-        document.execCommand("copy");
-        showToast("음악 프롬프트가 복사되었습니다! 🎵");
-      }
+      isUserModified = false;
+      userEditedBadge.style.display = "none";
+      updateLangBadge();
+      showToast("모든 설정과 프롬프트가 초기화되었습니다.");
     });
 
     function showToast(msg) {
@@ -808,10 +1093,10 @@
       toast.classList.add("show");
       setTimeout(() => {
         toast.classList.remove("show");
-      }, 2200);
+      }, 2500);
     }
 
-    // 모달
+    // 모달 관리
     const helpModal = document.getElementById("helpModal");
     const modalTitle = document.getElementById("modalTitle");
     const modalBody = document.getElementById("modalBody");
@@ -849,6 +1134,7 @@
       if (e.target === helpModal) closeHelp();
     });
 
+    // 초기 렌더링
     updateAllChips();
   </script>
 </body>
