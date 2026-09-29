@@ -7,6 +7,7 @@
   <style>
     :root {
       --primary: #4f46e5;
+      --primary-hover: #4338ca;
       --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
       --bg: #f8fafc;
       --card-bg: #ffffff;
@@ -55,9 +56,6 @@
     header h1 {
       font-size: 1.55rem;
       font-weight: 800;
-      /* background: var(--primary-gradient); */
-      /* -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent; */
       -webkit-text-fill-color: #4f46e5;
       letter-spacing: -0.5px;
     }
@@ -68,7 +66,7 @@
       margin-top: 4px;
     }
 
-    /* 탭 메뉴 (가운데 정렬) */
+    /* 탭 메뉴 */
     .tab-wrapper {
       display: flex;
       justify-content: center;
@@ -136,7 +134,7 @@
       gap: 6px;
     }
 
-    /* ? 설명 버튼 */
+    /* 설명 버튼 */
     .help-btn {
       display: inline-flex;
       align-items: center;
@@ -254,9 +252,18 @@
       margin-top: 6px;
     }
 
+    .prompt-header-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      color: var(--text-sub);
+      padding: 0 2px;
+    }
+
     .prompt-textarea {
       width: 100%;
-      height: 160px;
+      height: 180px;
       padding: 14px;
       border: 1.5px solid var(--border);
       border-radius: 12px;
@@ -266,6 +273,7 @@
       outline: none;
       background: #f8fafc;
       color: var(--text-main);
+      transition: border-color 0.2s;
     }
     .prompt-textarea:focus {
       border-color: var(--primary);
@@ -298,6 +306,14 @@
       border-color: #c7d2fe;
       background: #f5f7ff;
     }
+    .btn-translate:hover {
+      background: #eef2ff;
+    }
+    .btn-translate:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
     .btn-copy {
       background: #0f172a;
       color: #ffffff;
@@ -330,7 +346,7 @@
       opacity: 1;
     }
 
-    /* 설명 모달 */
+    /* 모달 */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -407,6 +423,19 @@
       margin-top: 3px;
       line-height: 1.45;
     }
+
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(79, 70, 229, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--primary);
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
@@ -417,7 +446,7 @@
       <p>Gemini · Midjourney · DALL-E 3 글로벌 프롬프트 빌더</p>
     </header>
 
-    <!-- 1. 상단 탭 (가운데 정렬) -->
+    <!-- 1. 상단 탭 -->
     <div class="tab-wrapper">
       <div class="tab-container" id="tabContainer">
         <button class="tab-btn active" data-tab="image">🖼️ 이미지</button>
@@ -480,7 +509,10 @@
       </div>
 
       <div class="prompt-box" id="promptBox">
-        <textarea class="prompt-textarea" id="promptOutput" spellcheck="false" placeholder="완성된 프롬프트가 여기에 표시됩니다."></textarea>
+        <div class="prompt-header-info">
+          <span>✍️ 프롬프트 창 (직접 내용을 추가·수정해도 번역 시 안전하게 반영됩니다)</span>
+        </div>
+        <textarea class="prompt-textarea" id="promptOutput" spellcheck="false" placeholder="완성된 프롬프트가 여기에 표시됩니다. 자유롭게 추가 내용을 입력하세요."></textarea>
         <div class="action-group">
           <button class="action-btn btn-translate" id="translateBtn">🌐 영어로 변환 (KO ➔ EN)</button>
           <button class="action-btn btn-copy" id="copyBtn">📋 전체 복사</button>
@@ -504,7 +536,7 @@
   <div class="toast" id="toast">복사되었습니다!</div>
 
   <script>
-    // 탭별 글로벌 AI 프롬프트 데이터 사전 (Gemini, Midjourney v6, DALL-E 3, SDXL 확장)
+    // 탭별 글로벌 AI 프롬프트 데이터 사전
     const DATA_BY_TAB = {
       image: {
         template: {
@@ -671,6 +703,30 @@
       quality: new Set()
     };
 
+    // 카테고리 헤더 라벨 양방향 매핑
+    const CATEGORY_HEADERS = [
+      { ko: "주제:", en: "Subject:" },
+      { ko: "스타일:", en: "Style:" },
+      { ko: "구도:", en: "Composition:" },
+      { ko: "조명 및 색상:", en: "Lighting & Color:" },
+      { ko: "화질 및 파라미터:", en: "Quality & Parameters:" }
+    ];
+
+    // 빠른 사전 매핑 목록 생성 (모든 탭의 옵션과 템플릿 문구)
+    function getAllDictionaryMappings() {
+      const list = [];
+      Object.keys(DATA_BY_TAB).forEach(tabKey => {
+        const t = DATA_BY_TAB[tabKey];
+        if (t.template) list.push({ ko: t.template.ko, en: t.template.en });
+        ['style', 'composition', 'lighting', 'quality'].forEach(cat => {
+          if (t[cat]) {
+            t[cat].forEach(item => list.push({ ko: item.ko, en: item.en }));
+          }
+        });
+      });
+      return list;
+    }
+
     // 칩 렌더링 함수
     function renderCategoryChips(category, containerId) {
       const container = document.getElementById(containerId);
@@ -700,7 +756,6 @@
       });
     }
 
-    // 모든 칩 갱신
     function updateAllChips() {
       renderCategoryChips("style", "styleChips");
       renderCategoryChips("composition", "compositionChips");
@@ -708,7 +763,7 @@
       renderCategoryChips("quality", "qualityChips");
     }
 
-    // 탭 전환 이벤트 리스너
+    // 탭 전환
     const tabBtns = document.querySelectorAll(".tab-btn");
     tabBtns.forEach((btn) => {
       btn.addEventListener("click", () => {
@@ -719,13 +774,13 @@
         clearSelections();
         updateAllChips();
 
+        // 탭 전환 시 현재 선택/기본값으로 새로 빌드
         if (document.getElementById("promptBox").style.display === "flex") {
           document.getElementById("promptOutput").value = buildPrompt(isEnglish);
         }
       });
     });
 
-    // 선택 초기화 함수
     function clearSelections() {
       selectedOptions.style.clear();
       selectedOptions.composition.clear();
@@ -733,7 +788,7 @@
       selectedOptions.quality.clear();
     }
 
-    // 프롬프트 생성 빌더
+    // 칩 및 주제 입력창 기반 기본 빌더
     function buildPrompt(toEnglish = false) {
       const subject = document.getElementById("subjectInput").value.trim();
       const lang = toEnglish ? "en" : "ko";
@@ -744,14 +799,10 @@
 
       // 2. 주제
       if (subject) {
-        if (toEnglish) {
-          parts.push(`Subject: ${subject}`);
-        } else {
-          parts.push(`주제: ${subject}`);
-        }
+        parts.push(toEnglish ? `Subject: ${subject}` : `주제: ${subject}`);
       }
 
-      // 3. 각 카테고리별 선택 옵션
+      // 3. 각 카테고리별 옵션
       const styleList = Array.from(selectedOptions.style).map((i) => i[lang]);
       const compList = Array.from(selectedOptions.composition).map((i) => i[lang]);
       const lightList = Array.from(selectedOptions.lighting).map((i) => i[lang]);
@@ -765,22 +816,146 @@
       return parts.join(toEnglish ? ", " : ",\n");
     }
 
-    // [프롬프트 완성하기] 버튼
+    // 온라인 무료 번역 API (Google Translate Single Fallback)
+    async function translateTextOnline(text, sourceLang, targetLang) {
+      const clean = text.trim();
+      if (!clean) return "";
+
+      try {
+        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURIComponent(clean)}`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("Translation network response not ok");
+        const json = await res.json();
+        if (json && json[0]) {
+          return json[0].map(item => item[0]).join("");
+        }
+      } catch (e) {
+        console.warn("Google translate fallback error, trying MyMemory...", e);
+      }
+
+      // Fallback: MyMemory API
+      try {
+        const url2 = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(clean)}&langpair=${sourceLang}|${targetLang}`;
+        const res2 = await fetch(url2);
+        if (res2.ok) {
+          const json2 = await res2.json();
+          if (json2 && json2.responseData && json2.responseData.translatedText) {
+            return json2.responseData.translatedText;
+          }
+        }
+      } catch (err) {
+        console.error("Translation failed entirely:", err);
+      }
+
+      // 번역 실패 시 원본 유지
+      return clean;
+    }
+
+    // 프롬프트 창(textarea)의 사용자 직접 입력 및 사전 문구를 스마트하게 번역하는 핵심 로직
+    async function smartTranslatePrompt(currentText, toEnglish) {
+      if (!currentText.trim()) return "";
+
+      const dict = getAllDictionaryMappings();
+      const lines = currentText.split("\n");
+      const translatedLines = [];
+
+      for (let rawLine of lines) {
+        let line = rawLine;
+        if (!line.trim()) {
+          translatedLines.push("");
+          continue;
+        }
+
+        if (toEnglish) {
+          // [KO -> EN]
+          // 1. 카테고리 헤더 변환
+          CATEGORY_HEADERS.forEach(h => {
+            if (line.startsWith(h.ko)) {
+              line = line.replace(h.ko, h.en);
+            }
+          });
+
+          // 2. 탭 기본 템플릿 변환
+          dict.forEach(item => {
+            if (line.includes(item.ko)) {
+              line = line.split(item.ko).join(item.en);
+            }
+          });
+
+          // 3. 사용자가 추가한 한국어 문장/주제(Subject) 감지 및 실제 번역
+          const hasKorean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(line);
+          if (hasKorean) {
+            // "Subject: [한글내용]" 형태인 경우 접두사 보존 후 번역
+            const subjectMatch = line.match(/^(\s*Subject:\s*)(.+)$/i);
+            if (subjectMatch) {
+              const prefix = subjectMatch[1];
+              const userContent = subjectMatch[2];
+              const translatedContent = await translateTextOnline(userContent, "ko", "en");
+              line = `${prefix}${translatedContent}`;
+            } else {
+              // 사용자가 자유롭게 입력한 한국어 문장/단락 번역
+              line = await translateTextOnline(line, "ko", "en");
+            }
+          }
+        } else {
+          // [EN -> KO]
+          // 1. 영문 카테고리 헤더 변환
+          CATEGORY_HEADERS.forEach(h => {
+            if (line.startsWith(h.en)) {
+              line = line.replace(h.en, h.ko);
+            }
+          });
+
+          // 2. 등록된 영문 AI 프롬프트 사전 키워드를 한국어로 변환
+          dict.forEach(item => {
+            if (line.includes(item.en)) {
+              line = line.split(item.en).join(item.ko);
+            }
+          });
+
+          // 3. 주제(Subject) 또는 사용자가 영문으로 적은 문맥을 한글로 번역
+          const subjectMatch = line.match(/^(\s*주제:\s*)(.+)$/i);
+          if (subjectMatch) {
+            const prefix = subjectMatch[1];
+            const engContent = subjectMatch[2];
+            // 영어 알파벳이 포함되어 있다면 번역 수행
+            if (/[a-zA-Z]/.test(engContent)) {
+              const translatedContent = await translateTextOnline(engContent, "en", "ko");
+              line = `${prefix}${translatedContent}`;
+            }
+          } else {
+            // 헤더 없는 일반 문장인데 순수 영문인 경우
+            if (/[a-zA-Z]/.test(line) && !line.includes("--ar") && !line.includes("--stylize")) {
+              line = await translateTextOnline(line, "en", "ko");
+            }
+          }
+        }
+
+        translatedLines.push(line);
+      }
+
+      return translatedLines.join("\n");
+    }
+
     const completeBtn = document.getElementById("completeBtn");
     const promptBox = document.getElementById("promptBox");
     const promptOutput = document.getElementById("promptOutput");
     const translateBtn = document.getElementById("translateBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const copyBtn = document.getElementById("copyBtn");
+    const toast = document.getElementById("toast");
 
+    // [프롬프트 완성하기] 버튼
     completeBtn.addEventListener("click", () => {
       isEnglish = false;
       translateBtn.textContent = "🌐 영어로 변환 (KO ➔ EN)";
       promptOutput.value = buildPrompt(false);
       promptBox.style.display = "flex";
       promptBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      showToast("새로운 프롬프트가 생성되었습니다! 자유롭게 수정하세요.");
     });
 
     // [전체 다시 하기] 버튼
-    const resetBtn = document.getElementById("resetBtn");
     resetBtn.addEventListener("click", () => {
       document.getElementById("subjectInput").value = "";
       clearSelections();
@@ -788,33 +963,62 @@
       promptOutput.value = "";
       promptBox.style.display = "none";
       isEnglish = false;
-      showToast("모든 설정이 초기화되었습니다.");
+      translateBtn.textContent = "🌐 영어로 변환 (KO ➔ EN)";
+      showToast("모든 설정과 텍스트가 초기화되었습니다.");
     });
 
-    // [한/영 변환] 버튼
-    translateBtn.addEventListener("click", () => {
-      isEnglish = !isEnglish;
-      promptOutput.value = buildPrompt(isEnglish);
-      translateBtn.textContent = isEnglish
-        ? "🌐 한글로 변환 (EN ➔ KO)"
-        : "🌐 영어로 변환 (KO ➔ EN)";
+    // [한/영 번역 토글] 버튼 (사용자 직접 입력 내용 완벽 반영 & 보존)
+    translateBtn.addEventListener("click", async () => {
+      const currentVal = promptOutput.value.trim();
+      if (!currentVal) {
+        showToast("변환할 프롬프트 내용이 없습니다.");
+        return;
+      }
+
+      const targetToEnglish = !isEnglish;
+      const originalBtnText = translateBtn.innerHTML;
+
+      // 번역 중 상태 표시
+      translateBtn.disabled = true;
+      translateBtn.innerHTML = `<span class="spinner"></span> 번역 반영 중...`;
+
+      try {
+        const converted = await smartTranslatePrompt(promptOutput.value, targetToEnglish);
+        promptOutput.value = converted;
+        isEnglish = targetToEnglish;
+
+        translateBtn.textContent = isEnglish
+          ? "🌐 한글로 변환 (EN ➔ KO)"
+          : "🌐 영어로 변환 (KO ➔ EN)";
+
+        showToast(isEnglish ? "영문 변환이 완료되었습니다! 🚀" : "한글 변환이 완료되었습니다! ✨");
+      } catch (err) {
+        console.error("Translate error:", err);
+        showToast("번역 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+        translateBtn.innerHTML = originalBtnText;
+      } finally {
+        translateBtn.disabled = false;
+      }
     });
 
     // [전체 복사] 버튼
-    const copyBtn = document.getElementById("copyBtn");
-    const toast = document.getElementById("toast");
-
-    copyBtn.addEventListener("click", async () => {
+    copyBtn.addEventListener("click", () => {
       const text = promptOutput.value;
-      if (!text) return;
+      if (!text) {
+        showToast("복사할 내용이 없습니다.");
+        return;
+      }
 
+      promptOutput.select();
       try {
-        await navigator.clipboard.writeText(text);
+        document.execCommand("copy");
         showToast("프롬프트가 클립보드에 복사되었습니다! 🎉");
       } catch (err) {
-        promptOutput.select();
-        document.execCommand("copy");
-        showToast("프롬프트가 복사되었습니다! 🎉");
+        navigator.clipboard.writeText(text).then(() => {
+          showToast("프롬프트가 클립보드에 복사되었습니다! 🎉");
+        }).catch(() => {
+          showToast("복사에 실패했습니다. 수동으로 복사해주세요.");
+        });
       }
     });
 
@@ -823,7 +1027,7 @@
       toast.classList.add("show");
       setTimeout(() => {
         toast.classList.remove("show");
-      }, 2200);
+      }, 2400);
     }
 
     // [? 설명 모달]
