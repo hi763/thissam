@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>AI 이미지 생성 프롬프트 스튜디오 Pro</title>
+  <title>웹툰 캐릭터 프롬프트 빌더 Pro</title>
   <style>
     :root {
       --primary: #4f46e5;
@@ -55,10 +55,11 @@
     header h1 {
       font-size: 1.55rem;
       font-weight: 800;
-      /* background: var(--primary-gradient); */
-      /* -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent; */
-      -webkit-text-fill-color: #4f46e5;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
       letter-spacing: -0.5px;
     }
 
@@ -109,7 +110,7 @@
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     }
 
-    /* 카드 스타일 */
+    /* 카드 공통 스타일 */
     .card {
       background: var(--card-bg);
       border-radius: 16px;
@@ -156,21 +157,59 @@
       transform: scale(0.96);
     }
 
-    /* 입력창 */
+    /* 인풋 그리드 */
+    .input-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    @media (max-width: 540px) {
+      .input-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .input-field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .input-field label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-sub);
+    }
+
     input[type="text"] {
       width: 100%;
-      padding: 12px 14px;
+      padding: 11px 13px;
       border: 1.5px solid var(--border);
       border-radius: 10px;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       outline: none;
       transition: border-color 0.2s;
+      background: #ffffff;
+      color: var(--text-main);
     }
     input[type="text"]:focus {
       border-color: var(--primary);
     }
 
-    /* 칩 목록 */
+    /* 칩 스타일 */
+    .chips-subgroup {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .chips-sub-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
     .chips-group {
       display: flex;
       flex-wrap: wrap;
@@ -200,7 +239,17 @@
       font-weight: 700;
     }
 
-    /* 하단 액션 */
+    .info-box {
+      padding: 11px 13px;
+      background: #f5f7ff;
+      border: 1px solid #c7d2fe;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      color: #3730a3;
+      line-height: 1.45;
+    }
+
+    /* 하단 결과 및 액션 */
     .result-section {
       display: flex;
       flex-direction: column;
@@ -256,7 +305,7 @@
 
     .prompt-textarea {
       width: 100%;
-      height: 160px;
+      height: 180px;
       padding: 14px;
       border: 1.5px solid var(--border);
       border-radius: 12px;
@@ -298,6 +347,11 @@
       border-color: #c7d2fe;
       background: #f5f7ff;
     }
+    .btn-translate:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
     .btn-copy {
       background: #0f172a;
       color: #ffffff;
@@ -330,7 +384,7 @@
       opacity: 1;
     }
 
-    /* 설명 모달 */
+    /* 모달 */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -413,66 +467,147 @@
 
   <div class="app-container">
     <header>
-      <h1>AI 이미지 생성 프롬프트 스튜디오 Pro</h1>
-      <p>Gemini · Midjourney · DALL-E 3 글로벌 프롬프트 빌더</p>
+      <h1>웹툰 캐릭터 프롬프트 빌더 Pro</h1>
+      <p>Gemini · Midjourney · DALL-E 3 · SDXL 캐릭터 생성기</p>
     </header>
 
-    <!-- 1. 상단 탭 (가운데 정렬) -->
+    <!-- 1. 캐릭터 장르 탭 -->
     <div class="tab-wrapper">
       <div class="tab-container" id="tabContainer">
-        <button class="tab-btn active" data-tab="image">🖼️ 이미지</button>
-        <button class="tab-btn" data-tab="poster">📜 포스터</button>
-        <button class="tab-btn" data-tab="sticker">✨ 스티커</button>
-        <button class="tab-btn" data-tab="travel_map">🗺️ 여행지도</button>
-        <button class="tab-btn" data-tab="popup_book">📖 팝업북</button>
+        <button class="tab-btn active" data-tab="school">🏫 학원 청춘</button>
+        <button class="tab-btn" data-tab="fantasy">👑 로맨스 판타지</button>
+        <button class="tab-btn" data-tab="action">⚔️ 현대 헌터/액션</button>
+        <button class="tab-btn" data-tab="creature">🐾 수인 & 크리처</button>
+        <button class="tab-btn" data-tab="cyber">🏙️ SF & 사이버</button>
       </div>
     </div>
 
-    <!-- 2. 주제 입력 -->
+    <!-- 2. 주제 & 비율 -->
     <div class="card">
       <div class="card-header">
-        <span class="card-title">💡 1. 주제 (Subject)</span>
+        <span class="card-title">💡 1. 핵심 주제 및 화면 비율</span>
+        <button class="help-btn" onclick="openHelp('ratio')">? 설명</button>
       </div>
-      <input type="text" id="subjectInput" placeholder="예: 구름 위를 달리는 황금 기차" />
+      <div class="input-field">
+        <label for="topicInput">만들고자 하는 핵심 상황 및 주제</label>
+        <input type="text" id="topicInput" placeholder="예: 새 학기 교실 문을 열며 들어서는 웹툰 주인공" />
+      </div>
+      <div class="chips-subgroup">
+        <span class="chips-sub-label">화면 비율 (Aspect Ratio) 선택</span>
+        <div class="chips-group" id="ratioChips"></div>
+      </div>
     </div>
 
-    <!-- 3. 스타일 -->
+    <!-- 3. 캐릭터 기본 정체성 -->
     <div class="card">
       <div class="card-header">
-        <span class="card-title">🎨 2. 스타일 (Style)</span>
-        <button class="help-btn" onclick="openHelp('style')">? 설명</button>
+        <span class="card-title">👤 2. 캐릭터 기본 정체성 (Identity)</span>
+        <button class="help-btn" onclick="openHelp('identity')">? 설명</button>
       </div>
-      <div class="chips-group" id="styleChips"></div>
+      <p style="font-size:0.8rem; color:var(--text-muted); margin-top:-6px;">
+        사람뿐만 아니라 동물, 수인, 마법 정령, 사이보그 등 원하는 캐릭터의 형태를 자유롭게 입력하세요.
+      </p>
+      <div class="input-grid">
+        <div class="input-field">
+          <label for="speciesInput">종족 및 외형 형태</label>
+          <input type="text" id="speciesInput" placeholder="예: 10대 소년, 아기 백호 수인, 미소녀 안드로이드" />
+        </div>
+        <div class="input-field">
+          <label for="genderAgeInput">성별 및 연령대</label>
+          <input type="text" id="genderAgeInput" placeholder="예: 남성 18세, 여성 19세, 성별 불명 300세" />
+        </div>
+        <div class="input-field">
+          <label for="personalityInput">성격 및 분위기</label>
+          <input type="text" id="personalityInput" placeholder="예: 츤데레, 차갑고 시크함, 엉뚱 발랄함" />
+        </div>
+        <div class="input-field">
+          <label for="bodyInput">체형 및 체격 특징</label>
+          <input type="text" id="bodyInput" placeholder="예: 슬림하고 다부진 체형, 아담하고 작은 체구" />
+        </div>
+      </div>
     </div>
 
-    <!-- 4. 구도 -->
+    <!-- 4. 헤어/털 형태 및 색상 -->
     <div class="card">
       <div class="card-header">
-        <span class="card-title">📐 3. 구도 (Composition)</span>
-        <button class="help-btn" onclick="openHelp('composition')">? 설명</button>
+        <span class="card-title">✂️ 3. 헤어 / 털 형태 및 색상 (Hair & Fur)</span>
+        <button class="help-btn" onclick="openHelp('hair')">? 설명</button>
       </div>
-      <div class="chips-group" id="compositionChips"></div>
+      <div class="chips-subgroup">
+        <span class="chips-sub-label">헤어 / 털 형태</span>
+        <div class="chips-group" id="hairStyleChips"></div>
+      </div>
+      <div class="chips-subgroup" style="margin-top:6px;">
+        <span class="chips-sub-label">헤어 / 털 색상</span>
+        <div class="chips-group" id="hairColorChips"></div>
+      </div>
     </div>
 
-    <!-- 5. 조명 및 색상 -->
+    <!-- 5. 눈매 & 표정 & 특수 포인트 -->
     <div class="card">
       <div class="card-header">
-        <span class="card-title">💡 4. 조명 및 색상 (Lighting & Color)</span>
-        <button class="help-btn" onclick="openHelp('lighting')">? 설명</button>
+        <span class="card-title">👀 4. 눈매, 표정 & 특수 포인트 (Face & Details)</span>
+        <button class="help-btn" onclick="openHelp('face')">? 설명</button>
       </div>
-      <div class="chips-group" id="lightingChips"></div>
+      <div class="chips-subgroup">
+        <span class="chips-sub-label">눈매 및 동공 디테일</span>
+        <div class="chips-group" id="eyesChips"></div>
+      </div>
+      <div class="chips-subgroup" style="margin-top:6px;">
+        <span class="chips-sub-label">표정 연출</span>
+        <div class="chips-group" id="expressionChips"></div>
+      </div>
+      <div class="chips-subgroup" style="margin-top:6px;">
+        <span class="chips-sub-label">고유 매력 포인트 & 특수 외형</span>
+        <div class="chips-group" id="traitsChips"></div>
+      </div>
     </div>
 
-    <!-- 6. 화질 및 파라미터 -->
+    <!-- 6. 의상 및 소품 -->
     <div class="card">
       <div class="card-header">
-        <span class="card-title">💎 5. 화질 및 글로벌 AI 파라미터 (Quality & Engine)</span>
-        <button class="help-btn" onclick="openHelp('quality')">? 설명</button>
+        <span class="card-title">👕 5. 의상 테마 및 소품 (Outfit & Items)</span>
+        <button class="help-btn" onclick="openHelp('outfit')">? 설명</button>
       </div>
-      <div class="chips-group" id="qualityChips"></div>
+      <div class="chips-subgroup">
+        <span class="chips-sub-label">의상 스타일 테마</span>
+        <div class="chips-group" id="clothingChips"></div>
+      </div>
+      <div class="chips-subgroup" style="margin-top:6px;">
+        <span class="chips-sub-label">시그니처 지참 소품</span>
+        <div class="chips-group" id="accessoriesChips"></div>
+      </div>
     </div>
 
-    <!-- 7. 하단 버튼 및 결과 영역 -->
+    <!-- 7. 작화 화풍 & 조명 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">🎨 6. 웹툰 작화 화풍 & 조명 (Art Style & Light)</span>
+        <button class="help-btn" onclick="openHelp('artstyle')">? 설명</button>
+      </div>
+      <div class="chips-subgroup">
+        <span class="chips-sub-label">선화 및 채색 화풍</span>
+        <div class="chips-group" id="artstyleChips"></div>
+      </div>
+      <div class="chips-subgroup" style="margin-top:6px;">
+        <span class="chips-sub-label">조명 및 분위기</span>
+        <div class="chips-group" id="lightingChips"></div>
+      </div>
+    </div>
+
+    <!-- 8. 구도 및 설정화 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">📐 7. 카메라 구도 및 설정화 (Composition)</span>
+        <button class="help-btn" onclick="openHelp('framing')">? 설명</button>
+      </div>
+      <div class="chips-group" id="framingChips"></div>
+      <div class="info-box">
+        ✨ <strong>누끼 합성용 배경 자동 적용</strong>: 웹툰 컷에 쉽게 오려 붙일 수 있도록 배경은 투명/단색 분리 키워드가 기본 포함됩니다.
+      </div>
+    </div>
+
+    <!-- 9. 하단 액션 & 결과 영역 -->
     <div class="result-section">
       <div class="btn-main-group">
         <button class="btn-complete" id="completeBtn">✨ 프롬프트 완성하기</button>
@@ -480,7 +615,7 @@
       </div>
 
       <div class="prompt-box" id="promptBox">
-        <textarea class="prompt-textarea" id="promptOutput" spellcheck="false" placeholder="완성된 프롬프트가 여기에 표시됩니다."></textarea>
+        <textarea class="prompt-textarea" id="promptOutput" spellcheck="false" placeholder="완성된 프롬프트가 여기에 표시됩니다. 직접 글자를 수정할 수도 있습니다."></textarea>
         <div class="action-group">
           <button class="action-btn btn-translate" id="translateBtn">🌐 영어로 변환 (KO ➔ EN)</button>
           <button class="action-btn btn-copy" id="copyBtn">📋 전체 복사</button>
@@ -500,182 +635,187 @@
     </div>
   </div>
 
-  <!-- 토스트 -->
-  <div class="toast" id="toast">복사되었습니다!</div>
+  <!-- 복사 토스트 알림 -->
+  <div class="toast" id="toast">클립보드에 복사되었습니다! 🎉</div>
 
   <script>
-    // 탭별 글로벌 AI 프롬프트 데이터 사전 (Gemini, Midjourney v6, DALL-E 3, SDXL 확장)
-    const DATA_BY_TAB = {
-      image: {
-        template: {
-          ko: "16:9 와이드 비율의 고해상도 이미지, 단일 피사체 중심, 디테일한 배경 표현",
-          en: "--ar 16:9, master visual composition, high-end photography, cinematic realism"
-        },
-        style: [
-          { ko: "실사 사진 (Photorealistic)", en: "photorealistic, shot on 35mm lens, f/1.8, award-winning photography", desc: "📷 진짜 카메라로 정밀하게 찍은 실제 사진처럼 만들어줘요." },
-          { ko: "지브리/신카이 애니풍", en: "Studio Ghibli aesthetic, Makoto Shinkai vibrant sky art style", desc: "🍃 감성적인 하늘과 따뜻한 색감의 극장판 애니메이션 스타일이에요." },
-          { ko: "디지털 일러스트 (ArtStation)", en: "trending on ArtStation, polished digital illustration, concept art", desc: "💻 게임 원화가들이 그리는 트렌디하고 세련된 컴퓨터 그래픽이에요." },
-          { ko: "3D 디즈니/픽사 (Pixar 3D)", en: "Disney Pixar 3D animation style, cute character render, soft shading", desc: "🎬 토이스토리나 엘리멘탈처럼 통통 튀고 귀여운 3D 애니메이션 스타일이에요." },
-          { ko: "수채화 (Watercolor)", en: "delicate watercolor painting, wet-on-wet technique, soft ink bleeding", desc: "🎨 물감이 맑고 투명하게 번지는 촉촉한 손그림 느낌이에요." },
-          { ko: "사이버펑크 SF (Cyberpunk)", en: "cyberpunk futuristic neon concept art, high-tech dystopian cityscape", desc: "🏙️ 네온사인과 홀로그램이 번쩍이는 미래 SF 도시 분위기예요." },
-          { ko: "클레이메이션 (Claymation)", en: "Aardman claymation stop-motion style, hand-sculpted plasticine texture", desc: "🧸 점토(클레이) 인형을 손으로 직접 빚어 만든 클레이 애니메이션 느낌이에요." },
-          { ko: "다크 판타지 (Dark Fantasy)", en: "dark fantasy aesthetic, mystical gothic atmosphere, Elden Ring vibe", desc: "🏰 고대 마법과 신비롭고 웅장한 판타지 세계 분위기예요." }
-        ],
-        composition: [
-          { ko: "피사계 심도/보케 (Depth of Field)", en: "shallow depth of field, sharp foreground focus, creamy bokeh background", desc: "✨ 주인공은 선명하고 뒷배경은 몽환적으로 흐릿하게 뭉개져요." },
-          { ko: "클로즈업 (Close-up)", en: "extreme detailed close-up portrait shot", desc: "🔍 주인공의 표정이나 세밀한 부분을 가까이서 돋보이게 해요." },
-          { ko: "광각 랜드스케이프 (Wide-Angle)", en: "ultra wide-angle landscape view, breathtaking vast perspective", desc: "🏞️ 넓고 웅장한 자연이나 건물 전체를 시원하게 담아요." },
-          { ko: "삼등분 법칙 구도 (Rule of Thirds)", en: "rule of thirds composition, harmoniously balanced framing", desc: "⚖️ 사진 구도의 황금 비율로 주인공을 가장 보기 편한 위치에 둬요." },
-          { ko: "로우 앵글 (Low Angle)", en: "dramatic low-angle worm's-eye view looking up", desc: "📐 아래에서 위로 치켜올려다보아 주인공이 영웅처럼 거대해 보여요." },
-          { ko: "시점샷 (POV / First-Person)", en: "first-person POV view, immersive perspective", desc: "👀 내 눈으로 직접 보고 있는 것 같은 생생한 1인칭 시점이에요." },
-          { ko: "드치 앵글 (Dutch Angle/비틀기)", en: "dutch angle tilted frame, tension and dynamism", desc: "⚡ 카메라를 비스듬히 기울여 스릴 넘치고 긴장감 있는 느낌을 줘요." }
-        ],
-        lighting: [
-          { ko: "빛내림/볼류메트릭 (Volumetric God Rays)", en: "volumetric lighting, dramatic god rays piercing through atmosphere, Tyndall effect", desc: "✨ 구름이나 나무 틈새로 신비로운 햇빛 줄기가 쏟아져 내려요." },
-          { ko: "골든아워 (노을빛)", en: "golden hour magic light, warm amber sunlight", desc: "🌅 해 질 무렵 따스하고 부드러운 주황빛 햇살이에요." },
-          { ko: "생체발광 (Bioluminescent Glow)", en: "bioluminescent glowing flora and fauna, ethereal night neon illumination", desc: "🍄 영화 아바타처럼 숲속 생명체들이 은은한 에메랄드빛으로 빛나요." },
-          { ko: "스튜디오 림라이트 (Rim Light)", en: "dramatic studio rim lighting, silhouette edge glow", desc: "💡 피사체 테두리를 따라 빛나는 하이라이트가 입체감을 살려줘요." },
-          { ko: "시네마틱 듀얼 톤 (Teal & Orange)", en: "cinematic teal and orange color grading, movie color palette", desc: "🎬 영화에서 가장 많이 쓰는 청록색과 주황색의 고급스러운 대비예요." }
-        ],
-        quality: [
-          { ko: "8K UHD 마스터피스 (8K Masterpiece)", en: "8K UHD, masterpiece, award-winning clarity, hyper-detailed", desc: "🏆 세계적인 사진 공모전 수상작처럼 극도로 선명한 최고 화질이에요." },
-          { ko: "언리얼 5 & 레이트레이싱 (UE5)", en: "Unreal Engine 5, Lumen global illumination, hardware ray-tracing", desc: "🎮 최신 고사양 3D 게임처럼 빛 반사와 질감이 사실적이에요." },
-          { ko: "미드저니 스타일라이즈 (--stylize 250)", en: "--stylize 250, artistic finesse, high aesthetics", desc: "🎨 AI가 더 화려하고 예술적인 감각을 발휘하게 만드는 마법 파라미터예요." },
-          { ko: "옥탄 렌더 (Octane Render)", en: "Octane Render 3D, buttery smooth textures, photorealistic render", desc: "💎 3D 전문가들이 쓰는 가장 매끄럽고 고급스러운 그래픽 렌더러예요." }
-        ]
-      },
+    // 1. 비율 데이터
+    const RATIO_DATA = [
+      { ko: "1:1 (정사각형/프로필)", en: "--ar 1:1" },
+      { ko: "3:4 (웹툰 컷 표준)", en: "--ar 3:4" },
+      { ko: "9:16 (스마트폰 세로 전신)", en: "--ar 9:16" },
+      { ko: "16:9 (와이드 배경 컷)", en: "--ar 16:9" }
+    ];
 
-      poster: {
-        template: {
-          ko: "세로형 그래픽 디자인 포스터, 2:3 비율, 텍스트 배치가 용이한 여백, 높은 시각적 임팩트",
-          en: "--ar 2:3, vertical modern graphic design poster, clean negative copy space, high visual hierarchy"
-        },
-        style: [
-          { ko: "미니멀리즘 벡터 (Minimalist)", en: "minimalist flat vector poster, bold geometry, Bauhaus inspiration", desc: "📐 단순한 선과 면으로 직관적이고 깔끔하게 표현하는 현대적 포스터예요." },
-          { ko: "스위스 인터내셔널 그리드", en: "Swiss graphic design, international typographic style, strict grid layout", desc: "🏛️ 잡지나 전시회 포스터처럼 정돈된 정통 디자인 스타일이에요." },
-          { ko: "빈티지 레트로 트래블 1970", en: "vintage 1970s screen-printed travel poster, nostalgic lithograph", desc: "📻 옛날 관광지나 영화 홍보 판화 같은 복고풍 스타일이에요." },
-          { ko: "80s 레트로 신스웨이브 (Synthwave)", en: "80s synthwave neon grid poster, outrun retrofuturism aesthetic", desc: "🕹️ 80년대 레트로 게임과 보랏빛 네온 그리드가 어우러진 신스웨이브예요." },
-          { ko: "팝아트 (Pop Art & Halftone)", en: "bold Pop Art style, Roy Lichtenstein inspired halftone screen dots", desc: "💥 만화 인쇄 도트와 강렬한 원색이 어우러진 앤디 워홀 스타일이에요." }
-        ],
-        composition: [
-          { ko: "상단 여백 확보 (헤드라인용)", en: "vast negative space at the top for headline text, clean breathing room", desc: "📝 큰 제목 글자를 넣을 수 있도록 상단을 시원하게 비워둬요." },
-          { ko: "중앙 엠블럼형 (Hero Center)", en: "centered hero subject emblem, commanding focal point", desc: "🏆 한가운데 심볼이나 대표 그림이 웅장하게 시선을 압도해요." },
-          { ko: "역동적 대각선 구도 (Dynamic Diagonal)", en: "dynamic diagonal layout, high kinetic visual flow", desc: "⚡ 사선 구도로 배치되어 활기차고 속도감 넘치는 느낌을 줘요." },
-          { ko: "기하학적 보더 프레임", en: "framed composition with elegant geometric borders and margin rules", desc: "🖼️ 가장자리에 모던한 테두리 선이 들어가 단정하고 완성도 높아요." }
-        ],
-        lighting: [
-          { ko: "듀오톤 고대비 (Duotone)", en: "high contrast bold duotone color scheme (electric indigo and warm amber)", desc: "🎭 두 가지 강렬한 색상만 대비시켜 눈에 확 띄게 만들어요." },
-          { ko: "선명한 CMYK 비비드", en: "vivid punchy CMYK primary colors, vibrant print contrast", desc: "🎨 인쇄물 전용 원색처럼 쨍하고 화사한 컬러 팔레트예요." },
-          { ko: "네온 다크모드 (Dark Glow)", en: "moody matte dark backdrop with glowing fluorescent linework", desc: "🖤 시크한 검정 배경 위에 형광 라인이 빛나는 세련된 포스터예요." }
-        ],
-        quality: [
-          { ko: "실크스크린 하프톤 텍스처", en: "authentic silkscreen print texture, subtle halftone pattern grain", desc: "📄 판화 공방에서 잉크로 직접 찍어낸 듯한 아날로그 인쇄 질감이에요." },
-          { ko: "무광 매트 마감 (Matte Finish)", en: "premium heavyweight matte cardstock texture, clean edges", desc: "📜 빛 반사 없이 차분하고 고급스러운 미술관 도화지 질감이에요." },
-          { ko: "칼선 벡터 선명도 (Crisp Scalable)", en: "razor-sharp vector precision, zero blur artifacts, infinite crispness", desc: "✨ 아무리 크게 확대해도 선이 칼처럼 선명해요." }
-        ]
+    // 2. 탭별 기본값
+    const TAB_DEFAULTS = {
+      school: {
+        topic: "새 학기 첫날 교실 문을 열며 들어서는 웹툰 주인공",
+        species: "10대 한국 고등학생 소년",
+        genderAge: "남성, 18세",
+        personality: "시크하지만 다정한 츤데레",
+        body: "슬림하고 다부진 체형, 평균보다 큰 키"
       },
-
-      sticker: {
-        template: {
-          ko: "다이컷 스티커, 흰색 도톰한 외곽선 테두리, 단순한 벡터 형태, 단색 흰색 배경 (배경 분리 용이)",
-          en: "die-cut sticker graphic, crisp thick white border contour, vector illustration, isolated on pure white solid background, --no shadows background"
-        },
-        style: [
-          { ko: "귀여운 SD/카와이 (Chibi)", en: "cute kawaii chibi style sticker, expressive eyes, adorable proportions", desc: "🧸 머리가 크고 눈이 반짝이는 귀여운 캐릭터 스티커예요." },
-          { ko: "다이어리 꾸미기 손그림 (Doodle)", en: "hand-drawn aesthetic journal doodle sticker, cozy pastel felt pen lines", desc: "📔 다이어리나 플래너에 붙이기 좋은 아기자기한 손낙서 스타일이에요." },
-          { ko: "3D 에폭시 젤리 (Puffy 3D)", en: "3D puffed epoxy sticker, rounded glossy clay finish, tactile feel", desc: "🍬 손으로 만지면 말랑말랑 튀어나올 것 같은 입체 젤리 스티커예요." },
-          { ko: "픽셀 도트 (Pixel Sprite)", en: "retro 16-bit pixel art character sprite sticker, crisp grid outline", desc: "👾 네모난 도트가 콕콕 박힌 레트로 게임 캐릭터 스티커예요." },
-          { ko: "색연필/크레용 (Crayon Texture)", en: "textured colored pencil and crayon drawing sticker, warm wax grain", desc: "🖍️ 크레파스로 쓱쓱 색칠한 듯 따스하고 순수한 질감이에요." }
-        ],
-        composition: [
-          { ko: "정면 단독 피사체 (Isolated)", en: "single isolated character, centered front view, easy cutout", desc: "🎯 주인공 하나만 깔끔하게 정면에 있어 오려 쓰기 가장 편해요." },
-          { ko: "스티커 팩 시트 (Multi Pack)", en: "sticker pack sheet collection, assorted themed mini icon stickers set", desc: "📦 여러 개의 아기자기한 스티커들이 한 장에 모여 있는 종합 세트예요." },
-          { ko: "역동적인 동작 (Action Pose)", en: "lively dynamic action pose, jumping and waving happily", desc: "🏃 인사하거나 방방 뛰는 활기찬 캐릭터 포즈예요." }
-        ],
-        lighting: [
-          { ko: "플랫 라이팅 (그림자 없음)", en: "flat uniform illumination, shadowless clean graphic lighting", desc: "☀️ 그림자가 없어 모양대로 칼선 따기 가장 좋은 밝은 조명이에요." },
-          { ko: "캔디 팝 컬러 (Candy Palette)", en: "cheerful candy-colored vibrant palette, bright pastels", desc: "🍭 사탕처럼 알록달록하고 기분 좋아지는 발랄한 색상이에요." }
-        ],
-        quality: [
-          { ko: "도톰한 흰색 다이컷 테두리", en: "thick solid white vinyl die-cut border contour around edges", desc: "✂️ 스티커 둘레에 하얗고 깔끔한 외곽선 칼선이 선명하게 생겨요." },
-          { ko: "홀로그램 프리즘박 (Holographic)", en: "iridescent rainbow holographic foil overlay, shimmering metallic reflection", desc: "🌈 각도에 따라 무지개색으로 영롱하게 반짝이는 스페셜 스티커예요." },
-          { ko: "유광 비닐 코팅 (Glossy Vinyl)", en: "glossy vinyl waterproof texture, smooth glossy protective coat", desc: "✨ 매끈하고 물에 젖지 않을 것 같은 반짝이는 비닐 스티커 코팅이에요." }
-        ]
+      fantasy: {
+        topic: "황실 무도회에서 카리스마를 뽐내는 천재 마법사",
+        species: "제국 공작가의 공작 영애",
+        genderAge: "여성, 19세",
+        personality: "도도하고 지적인 천재",
+        body: "가녀리고 우아한 실루엣"
       },
-
-      travel_map: {
-        template: {
-          ko: "일러스트 여행 지도, 3D 아이소메트릭 입체 조감도, 주요 랜드마크 아이콘, 점선 여행 경로, 장식 요소",
-          en: "illustrated 3D isometric tourist travel map, landmark icons, dotted path route, whimsical detailed terrain, decorative compass"
-        },
-        style: [
-          { ko: "3D 아이소메트릭 미니어처 맵", en: "3D isometric miniature city map, low-poly cute landmarks, tilt-shift model world", desc: "🏙️ 장난감 미니어처 세상을 대각선 위에서 내려다보는 입체 지도예요." },
-          { ko: "동화책 수채화 맵 (Whimsical)", en: "hand-painted watercolor exploration map, storybook illustration, organic ink contours", desc: "🎨 손으로 직접 칠한 동화책 속 모험 지도 같은 따뜻한 스타일이에요." },
-          { ko: "탐험가 양피지 고지도 (Antique)", en: "vintage pirate antique parchment map, aged sepia textures, decorative compass rose and sea monsters", desc: "🧭 보물섬을 찾아 떠나는 옛날 탐험가의 낡은 양피지 지도 스타일이에요." },
-          { ko: "클린 인포그래픽 노선도 맵", en: "clean modern vector infographic map, stylized metro tourist guide", desc: "🚇 지하철 노선도나 가이드북처럼 깔끔하고 보기 편한 지도예요." }
-        ],
-        composition: [
-          { ko: "파노라마 조감도 (Bird's Eye)", en: "panoramic bird's-eye isometric view of the entire island/region", desc: "🦅 하늘을 나는 새처럼 도시나 섬 전체를 한눈에 굽어보는 구도예요." },
-          { ko: "빨간 점선 여행 경로 (Dotted Trail)", en: "prominent red dashed travel path with waypoint location pins", desc: "📍 주요 명소들을 콕콕 연결하는 점선 발자국 경로가 표시돼요." },
-          { ko: "랜드마크 과장 확대 (Hero Icons)", en: "exaggerated giant landmark architecture icons on miniature landscape", desc: "🗼 에펠탑, 성, 타워 같은 명소를 큼직하게 강조해서 배치해요." },
-          { ko: "틸트 시프트 미니어처 효과 (Tilt-Shift)", en: "miniature tilt-shift effect, macro lens perspective, tiny town look", desc: "🔍 실제 도시가 아기자기한 장난감 디오라마처럼 보이게 만드는 특수 효과예요." }
-        ],
-        lighting: [
-          { ko: "맑은 한낮 햇살 (Sunny Day)", en: "bright crisp daytime sunlight, clear blue sky reflections", desc: "☀️ 여행하기 가장 좋은 맑고 화창한 날의 밝은 조명이에요." },
-          { ko: "빈티지 세피아 웜톤 (Warm Sepia)", en: "warm antique parchment tones, sepia aged paper glow", desc: "🍂 고풍스러운 갈색과 베이지색으로 아늑함을 더해줘요." },
-          { ko: "에메랄드 오션 & 포레스트", en: "tropical emerald green and deep azure ocean color palette", desc: "🏝️ 시원한 바다 파랑과 푸른 자연 초록이 어우러진 산뜻한 색감이에요." }
-        ],
-        quality: [
-          { ko: "크래프트 마분지 종이 질감", en: "fibrous kraft paper texture, authentic rough paper grain", desc: "📜 오돌토돌한 친환경 마분지 종이의 촉감이 느껴져요." },
-          { ko: "정교한 3D 클레이 텍스처", en: "smooth matte polymer clay material, tactile diorama feel", desc: "🧸 찰흙(클레이)으로 정성스레 빚어 만든 것 같은 따스한 촉감이에요." },
-          { ko: "핀포인트 마이크로 디테일", en: "ultra-high precision micro icon illustrations, crisp lines", desc: "🔎 돋보기로 들여다봐도 작은 나무 한 그루까지 선명해요." }
-        ]
+      action: {
+        topic: "보스 몬스터 던전 게이트 앞에 선 최강 헌터",
+        species: "S급 국가대표 마도 헌터",
+        genderAge: "남성, 24세",
+        personality: "냉철하고 압도적인 분위기",
+        body: "넓은 어깨의 탄탄한 근육질 체형"
       },
-
-      popup_book: {
-        template: {
-          ko: "입체 팝업북 아트, 펼쳐진 책 위에 솟아오른 정교한 종이 공예 구조, 사실적인 깊이감과 그림자, 레이어드 페이퍼",
-          en: "3D layered pop-up book scene, intricate paper engineering erected on an open storybook, realistic ambient occlusion shadows, dimensional papercraft"
-        },
-        style: [
-          { ko: "클래식 정밀 페이퍼 커팅", en: "intricate laser paper-cutting art, layered paper silhouette sculpture", desc: "✂️ 종이를 정교하게 오려 층층이 세운 예술적인 페이퍼 아트예요." },
-          { ko: "동화책 일러스트 팝업", en: "storybook illustration 3D pop-up, whimsical fairytale fantasy pop-up structure", desc: "📚 책장을 펼치면 마법 성과 숲이 쑥 튀어나오는 동화책 느낌이에요." },
-          { ko: "오리가미 기하학 종이접기", en: "geometric architectural origami pop-up, clean white card folds", desc: "🤍 반듯하게 접힌 기하학적 건축물 형태의 세련된 종이접기예요." },
-          { ko: "엔틱 골드박 마법서", en: "antique grimoire pop-up book, illuminated gold foil stamping along paper edges", desc: "✨ 마법 고서처럼 종이 테두리마다 금박이 반짝이는 팝업북이에요." }
-        ],
-        composition: [
-          { ko: "펼쳐진 책 정면 구도 (Open Book Spread)", en: "front angle view showing wide open book pages and rising centerpiece", desc: "📖 책장이 양옆으로 펼쳐지고 가운데서 웅장하게 솟아오르는 정석 구도예요." },
-          { ko: "다층 레이어 원근감 (Multi-layered)", en: "deep perspective layered pop-up with distinct foreground and background tabs", desc: "🏞️ 앞단, 중간단, 뒷단 종이가 겹쳐서 입체적인 깊이감이 극대화돼요." },
-          { ko: "접힘 관절 매크로 샷 (Macro Hinge)", en: "close-up angle showing delicate paper hinges and folding crease mechanics", desc: "🔎 종이가 접히는 이음새와 관절 구조를 실감나게 보여줘요." }
-        ],
-        lighting: [
-          { ko: "종이 그림자 앰비언트 오클루전", en: "soft directional light casting authentic paper layer drop shadows and ambient occlusion", desc: "🕯️ 종이 틈새마다 진짜 그림자가 드리워져서 튀어나온 입체감이 확실해요." },
-          { ko: "책 속 신비로운 요정빛 (Magical Glow)", en: "ethereal magical luminescence rising from the book gutter, glowing floating motes", desc: "✨ 책 속 깊은 곳에서 은은한 마법의 빛이 피어오르는 환상적인 연출이에요." },
-          { ko: "아늑한 촛불 무드 (Candlelight)", en: "warm cozy fireplace and candlelit ambience, deep amber glow", desc: "🔥 밤에 스탠드나 촛불 아래서 책을 읽는 아늑하고 포근한 빛이에요." }
-        ],
-        quality: [
-          { ko: "두꺼운 고급 판지/펠트 질감", en: "heavy 300gsm textured watercolor cardstock, visible fibrous paper tooth", desc: "📄 만지면 도톰함이 느껴지는 고급 수채화 판지의 종이 결이에요." },
-          { ko: "초정밀 레이저 컷 칼선 (Laser Cut)", en: "flawless laser-cut edge precision, intricate paper filigree", desc: "✂️ 레이저로 정밀하게 자른 듯 한 치의 오차도 없이 섬세해요." },
-          { ko: "자연스러운 종이 접힘 주름 (Crease)", en: "authentic scoring crease marks and soft folded paper edges", desc: "📐 종이가 접혔다 펴질 때 생기는 자연스러운 주름이 들어가요." }
-        ]
+      creature: {
+        topic: "신비로운 요정 숲에서 뛰노는 정령",
+        species: "아기 백호 수인 정령",
+        genderAge: "소년, 12세",
+        personality: "장난기 넘치고 씩씩함",
+        body: "작고 앙증맞은 체구"
+      },
+      cyber: {
+        topic: "비 내리는 미래 네온 도시를 질주하는 해결사",
+        species: "사이버네틱 인간 해결사",
+        genderAge: "여성, 22세",
+        personality: "과묵하고 프로페셔널함",
+        body: "날렵하고 기계 의수를 장착한 체형"
       }
     };
 
-    // 상태 관리
-    let currentTab = "image";
-    let isEnglish = false;
-    let selectedOptions = {
-      style: new Set(),
-      composition: new Set(),
-      lighting: new Set(),
-      quality: new Set()
+    // 3. 카테고리별 글로벌 AI 핵심 키워드 사전
+    const OPTIONS_DATA = {
+      hairStyle: [
+        { ko: "단정한 댄디컷 헤어", en: "clean neat dandy haircut, smooth bangs", desc: "앞머리를 차분하게 내린 스타일로, 인기 웹툰 남주인공의 대표 머리예요." },
+        { ko: "가르마 애즈펌 헤어", en: "stylish parted as-perm hair, natural wave bangs", desc: "이마가 살짝 보이게 자연스럽게 가른 세련된 헤어스타일이에요." },
+        { ko: "샤프한 트렌디 울프컷", en: "trendy modern wolf cut hairstyle, layered locks", desc: "뒷머리를 날렵하게 기른 카리스마 넘치는 스타일이에요." },
+        { ko: "올백 슬릭백 언더컷", en: "charismatic slicked back undercut, bold style", desc: "머리를 시원하게 뒤로 넘긴 어른스럽고 강렬한 스타일이에요." },
+        { ko: "찰랑이는 긴 생머리 풀뱅", en: "sleek straight long hair with full blunt bangs", desc: "이마를 덮는 앞머리와 찰랑거리는 긴 생머리의 청순한 조합이에요." },
+        { ko: "우아한 S컬 롱웨이브", en: "voluminous soft wavy loose curl long hair", desc: "풍성하고 부드러운 물결 웨이브로 귀족적이거나 우아한 느낌이에요." },
+        { ko: "발랄한 하이 포니테일", en: "high energetic buoyant ponytail, fluttering hair", desc: "정수리 높이 하나로 묶어 올려 활기차고 당찬 느낌을 줘요." },
+        { ko: "양갈래 트윈테일", en: "cute adorable twin-tails pigtails", desc: "양쪽으로 묶은 귀엽고 통통 튀는 머리예요." },
+        { ko: "도도한 히메컷", en: "striking chic hime cut with straight side locks", desc: "옆머리를 뺨 라인에 맞춰 반듯하게 자른 신비롭고 도도한 머리예요." },
+        { ko: "산뜻한 단발 보브컷", en: "sophisticated clean short bob haircut", desc: "턱선에서 깔끔하게 떨어지는 지적인 단발머리예요." },
+        { ko: "뻗친 스파이키 헤어", en: "dynamic anime spiky layered hair, action style", desc: "바람에 날리듯 역동적으로 삐죽삐죽 뻗친 액션 만화 스타일이에요." },
+        { ko: "몽실몽실 구름 솜털", en: "fluffy soft marshmallow cloud animal fur", desc: "동물 캐릭터나 수인의 구름처럼 복슬복슬 부드러운 솜털이에요." },
+        { ko: "풍성하고 위엄 있는 갈기털", en: "majestic voluminous fluffy animal mane fur", desc: "사자나 늑대 수인의 멋지고 풍성한 목 갈기털이에요." }
+      ],
+
+      hairColor: [
+        { ko: "깊고 짙은 칠흑 흑발", en: "glossy deep jet black hair", desc: "한국 웹툰 남주/여주인공에게 가장 인기 많은 진한 검은색이에요." },
+        { ko: "신비로운 플래티넘 은발 백발", en: "luminous platinum silver white hair", desc: "판타지 세계관의 마법사나 신비로운 캐릭터에게 딱 어울리는 은빛이에요." },
+        { ko: "화사한 애쉬 블론드 금발", en: "radiant soft ash blonde golden hair", desc: "햇살처럼 눈부시고 고급스러운 금빛 머리칼이에요." },
+        { ko: "따뜻한 밀크초코 브라운", en: "warm natural chocolate milk brown hair", desc: "부드럽고 다정하며 자연스러운 갈색 머리예요." },
+        { ko: "사랑스러운 파스텔 벚꽃 핑크", en: "sweet pastel cherry blossom pink hair", desc: "봄날의 벚꽃처럼 화사하고 사랑스러운 분홍빛이에요." },
+        { ko: "시크한 미드나잇 딥블루", en: "sleek cool midnight deep navy blue hair", desc: "깊은 밤하늘처럼 차분하고 세련된 남색/파랑 머리예요." },
+        { ko: "트렌디 시크릿 투톤 옴브레", en: "trendy secret two-tone gradient hair, hidden color", desc: "겉과 안쪽의 색이 다른 최신 트렌드 염색 머리예요." },
+        { ko: "몽환적인 무지개빛 오팔 프리즘", en: "ethereal shimmering rainbow opal pastel hair", desc: "빛에 따라 오색영롱하게 반짝이는 환상적인 머리색이에요." }
+      ],
+
+      eyes: [
+        { ko: "날카로운 고양이상 눈매", en: "sharp attractive feline cat eyes, piercing gaze", desc: "눈꼬리가 살짝 올라가 매력적이고 총명해 보이는 눈매예요." },
+        { ko: "순하고 큰 강아지상 눈망울", en: "large gentle puppy dog eyes, innocent round gaze", desc: "동글동글하고 눈꼬리가 부드러워 순수하고 착해 보여요." },
+        { ko: "도도하고 앙큼한 여우상 눈매", en: "sly alluring fox-like eyes, elegant gaze", desc: "길게 뻗은 눈매로 똑 부러지고 도도한 느낌을 줘요." },
+        { ko: "시크한 삼백안 눈매", en: "intense charismatic sanpaku eyes, rebellious look", desc: "검은 눈동자 아래 흰자가 보여 나른하고 시크한 매력이 넘쳐요." },
+        { ko: "양쪽 색이 다른 신비한 오드아이", en: "striking heterochromia odd eyes with contrasting dual colors", desc: "양쪽 눈 색깔이 서로 다른 신비한 마법의 눈동자예요." },
+        { ko: "맑고 투명한 사파이어 벽안", en: "glowing luminous sapphire crystal blue eyes", desc: "푸른 보석 사파이어처럼 투명하게 빛나는 파란 눈이에요." },
+        { ko: "강렬하게 빛나는 루비 적안", en: "vivid glowing ruby red crimson eyes", desc: "붉은 보석처럼 강렬하고 카리스마 넘치는 빨간 눈이에요." }
+      ],
+
+      expression: [
+        { ko: "자신감 넘치는 여유로운 미소", en: "confident handsome subtle smirk smile, composed", desc: "어떤 상황에서도 여유를 잃지 않는 매력적인 미소예요." },
+        { ko: "냉철하고 차분한 포커페이스", en: "stoic calm cold impassive poker face", desc: "속마음을 쉽게 드러내지 않는 시크하고 차가운 표정이에요." },
+        { ko: "볼을 붉히며 뾰로통한 츤데레", en: "blushing pouting tsundere embarrassed cute expression", desc: "쑥스러워서 볼이 빨개진 채 뾰로통해진 귀여운 표정이에요." },
+        { ko: "해맑고 눈부신 함박웃음", en: "cheerful radiant bright joyful grin, happy eyes", desc: "바라보기만 해도 기분 좋아지는 시원한 미소예요." },
+        { ko: "결의에 찬 강렬한 전투 눈빛", en: "fierce resolute determined battle gaze, intense focus", desc: "위기의 순간 승리를 다짐하는 진지하고 멋진 눈빛이에요." },
+        { ko: "장난기 가득한 익살스런 윙크", en: "playful mischievous charming wink, cheeky look", desc: "한쪽 눈을 깜빡이며 장난을 치는 사랑스러운 표정이에요." }
+      ],
+
+      traits: [
+        { ko: "눈가 밑 매력적인 눈물점", en: "alluring delicate beauty mark mole under eye", desc: "눈 밑에 콕 찍혀 시선을 끄는 매력 포인트 점이에요." },
+        { ko: "콧등의 귀여운 반창고", en: "cute anime adhesive bandage strip on nose bridge", desc: "코 위에 반창고를 붙여 씩씩하고 활동적인 소년/소녀미를 줘요." },
+        { ko: "지적인 동글이 금테 안경", en: "intellectual classy round metallic rimmed glasses", desc: "동글동글한 안경으로 스마트하고 단정한 느낌을 살려요." },
+        { ko: "카리스마 있는 얇은 흉터", en: "subtle charismatic battle scar near eye or cheek", desc: "수많은 모험과 수련을 거쳤음을 보여주는 멋진 흉터예요." },
+        { ko: "볼에 흩뿌려진 귀여운 주근깨", en: "cute freckles dusted across cheeks and nose", desc: "소녀 감성과 순수한 매력을 더해주는 주근깨예요." },
+        { ko: "신비로운 뾰족한 엘프 요정 귀", en: "mystical pointed graceful elf ears", desc: "자연과 마법을 다루는 엘프 요정의 귀예요." },
+        { ko: "귀여운 동물 귀와 복슬복슬 꼬리", en: "cute fluffy animal ears on head and buoyant tail", desc: "머리 위에 쫑긋 솟은 귀와 꼬리로 수인 캐릭터를 완성해요." },
+        { ko: "스타일리시한 작은 악마 뿔", en: "small stylish devil horns protruding from hair", desc: "머리카락 사이로 살짝 돋아난 앙증맞은 마족의 뿔이에요." }
+      ],
+
+      clothing: [
+        { ko: "단정한 한국형 고교 교복 블레이저", en: "neat stylish Korean high school uniform blazer jacket with tie", desc: "웹툰 학원물에 빠질 수 없는 깔끔하고 핏이 좋은 교복이에요." },
+        { ko: "편안한 학교 체육복 트레이닝 져지", en: "comfy school athletic track jacket jersey set", desc: "자연스럽고 편안한 느낌의 학생 체육복 져지 셋업이에요." },
+        { ko: "트렌디한 오버핏 스트릿 후드티", en: "trendy oversized streetwear hoodie with baggy cargo pants", desc: "힙합 감성과 현대적인 캐주얼을 보여주는 스트릿웨어예요." },
+        { ko: "화려한 로맨스 판타지 황실 제복", en: "ornate noble fantasy royal officer uniform suit with gold braids", desc: "금빛 자수와 견장이 돋보이는 마법 왕국의 근위대 제복이에요." },
+        { ko: "우아한 로판 레이스 프릴 드레스", en: "exquisite fantasy noble ballgown dress with layered lace ribbons", desc: "풍성한 레이스와 보석 리본이 달린 귀족 영애의 드레스예요." },
+        { ko: "현대 헌터물 전술 아머 롱코트", en: "modern hunter tactical armor combat leather long coat", desc: "괴수를 사냥할 때 입는 날렵하고 방어력이 높은 전투 롱코트예요." },
+        { ko: "모험가 경량 가죽 갑옷", en: "classic fantasy adventurer fitted leather light armor", desc: "판타지 숲과 던전을 탐험하기 편한 가죽 갑옷이에요." },
+        { ko: "모던 퓨전 개량 한복 도포", en: "modern stylized Korean Hanbok robe with elegant drape", desc: "전통 한복의 멋을 현대적으로 멋지게 재해석한 도포예요." },
+        { ko: "사이버펑크 야광 LED 테크웨어", en: "futuristic cyberpunk glowing led techwear jacket, high-tech straps", desc: "미래 도시에서 빛을 발하는 첨단 기능성 방수 재킷이에요." }
+      ],
+
+      accessories: [
+        { ko: "목에 걸친 트렌디 무선 헤드셋", en: "stylish modern wireless over-ear headphones resting around neck", desc: "목에 헤드폰을 걸쳐 트렌디한 감각을 뽐내요." },
+        { ko: "한쪽 어깨에 멘 슬링백 백팩", en: "urban one-strap crossbody sling backpack", desc: "한쪽으로 가볍게 메는 도시적인 가방이에요." },
+        { ko: "손에 든 최신형 스마트폰", en: "holding a modern illuminated smartphone in hand", desc: "웹툰 주인공들이 늘 들고 다니는 필수 아이템이에요." },
+        { ko: "푸른 빛이 감도는 마법 룬검", en: "holding an ornate glowing blue rune fantasy sword", desc: "검신에 고대 마법 문자가 반짝이는 검이에요." },
+        { ko: "두꺼운 앤틱 가죽 마법서 (그리모어)", en: "carrying a thick antique leather-bound magic grimoire book", desc: "강력한 주문이 적힌 오래된 양피지 마법책이에요." },
+        { ko: "테이크아웃 아이스 아메리카노", en: "holding a takeout iced coffee plastic cup with straw", desc: "일상 만화의 디테일을 살려주는 시원한 커피 컵이에요." },
+        { ko: "공중에 뜬 사이언스 홀로그램 패널", en: "floating sci-fi holographic interface display", desc: "허공에 반투명하게 떠오른 미래형 컴퓨터 화면이에요." }
+      ],
+
+      artstyle: [
+        { ko: "K-웹툰 정석 잉크선 (Manhwa Style)", en: "popular Korean modern webtoon artstyle, crisp clean ink lineart, manhwa aesthetic", desc: "네이버/카카오 인기 웹툰처럼 선이 아주 깔끔하고 세련된 화풍이에요." },
+        { ko: "애니메이션 셀 채색 (Anime Cel-Shading)", en: "vibrant anime cel-shaded style, defined bold shadows", desc: "극장판 만화영화처럼 빛과 그림자가 딱 떨어지는 선명한 채색이에요." },
+        { ko: "로판풍 부드러운 수채화 광택 채색", en: "romantic fantasy otome webtoon style, soft water-colored highlights, jewel shimmer", desc: "보석처럼 반짝이고 수채화처럼 부드러운 순정만화 채색이에요." },
+        { ko: "밀도 높은 반실사 웹툰 채색", en: "semi-realistic manhwa rendering, sophisticated 3D volumetric shading", desc: "입체감이 풍부하여 실감 나고 무게감 있는 고퀄리티 채색이에요." },
+        { ko: "미국 그래픽 노블 강렬한 먹선", en: "dynamic graphic novel comic book style, bold expressive ink outlines", desc: "마블 코믹스처럼 힘찬 선과 뚜렷한 명암이 돋보여요." },
+        { ko: "감성적인 90년대 레트로 애니풍", en: "retro 90s vintage anime aesthetic, warm nostalgic cel animation", desc: "옛날 세일러문이나 슬램덩크 같은 따스한 아날로그 감성이에요." },
+        { ko: "귀여운 2등신 치비 SD 캐릭터", en: "cute super-deformed chibi character art style, 2-head proportion", desc: "머리가 크고 몸이 앙증맞은 인형 같은 2등신 그림체예요." }
+      ],
+
+      lighting: [
+        { ko: "화사한 자연광 & 윤곽선 림라이트", en: "bright natural ambient daylight, delicate rim lighting edge highlights", desc: "햇살과 함께 캐릭터 테두리에 눈부신 빛을 주어 인물이 확 살아나요." },
+        { ko: "황금빛 노을빛 골든아워 조명", en: "warm sunset golden hour cinematic glowing light", desc: "해 질 무렵의 따뜻한 주황빛 감성 조명이에요." },
+        { ko: "사이버펑크 네온 듀얼 조명", en: "cyberpunk neon cyan and magenta volumetric split lighting", desc: "푸른색과 분홍색 네온사인이 양쪽에서 비치는 도시 야경 빛이에요." },
+        { ko: "스튜디오 뽀샤시 소프트박스 조명", en: "diffused studio softbox beauty lighting, flawless skin glow", desc: "잡티 없이 피부를 뽀샤시하고 화사하게 밝혀주는 사진관 조명이에요." }
+      ],
+
+      framing: [
+        { ko: "캐릭터 공식 설정화 3면도 시트", en: "official character design sheet, multiple view angles front view side view, model sheet turnaround, facial expressions", desc: "웹툰 작가님이 연재 전에 그리는 캐릭터 설계도예요! 앞/옆모습과 표정 모음을 한 장에 담아줘요." },
+        { ko: "얼굴 중심 섬세한 클로즈업", en: "intimate detailed portrait close-up shot focused on face", desc: "눈빛과 섬세한 표정 연기를 크게 보여주는 각도예요." },
+        { ko: "상반신 중심 바스트샷", en: "upper body bust shot, clear posture", desc: "가슴 위쪽과 얼굴, 의상 상의가 잘 보이는 표준 구도예요." },
+        { ko: "머리부터 발끝까지 전신 풀샷", en: "full-body shot showing head to toe standing pose", desc: "신발까지 의상 전체와 키, 비율을 모두 보여주는 전신 샷이에요." },
+        { ko: "영웅적인 다이나믹 로우 앵글", en: "heroic dynamic low angle perspective looking up", desc: "아래에서 위로 올려다보아 캐릭터가 웅장하고 당당해 보여요." }
+      ]
     };
 
-    // 칩 렌더링 함수
+    // 상태 관리
+    let currentTab = "school";
+    let isEnglish = false;
+    let selectedRatio = RATIO_DATA[0];
+
+    const selectedOptions = {
+      hairStyle: new Set(),
+      hairColor: new Set(),
+      eyes: new Set(),
+      expression: new Set(),
+      traits: new Set(),
+      clothing: new Set(),
+      accessories: new Set(),
+      artstyle: new Set(),
+      lighting: new Set(),
+      framing: new Set()
+    };
+
+    // 칩 렌더러
     function renderCategoryChips(category, containerId) {
       const container = document.getElementById(containerId);
       container.innerHTML = "";
-      const items = DATA_BY_TAB[currentTab][category] || [];
+      const items = OPTIONS_DATA[category] || [];
 
       items.forEach((item) => {
         const chip = document.createElement("div");
@@ -700,15 +840,51 @@
       });
     }
 
-    // 모든 칩 갱신
-    function updateAllChips() {
-      renderCategoryChips("style", "styleChips");
-      renderCategoryChips("composition", "compositionChips");
-      renderCategoryChips("lighting", "lightingChips");
-      renderCategoryChips("quality", "qualityChips");
+    function renderRatioChips() {
+      const container = document.getElementById("ratioChips");
+      container.innerHTML = "";
+      RATIO_DATA.forEach((item) => {
+        const chip = document.createElement("div");
+        chip.className = "chip" + (selectedRatio === item ? " active" : "");
+        chip.textContent = item.ko;
+        chip.addEventListener("click", () => {
+          selectedRatio = item;
+          renderRatioChips();
+        });
+        container.appendChild(chip);
+      });
     }
 
-    // 탭 전환 이벤트 리스너
+    function updateAllChips() {
+      renderRatioChips();
+      renderCategoryChips("hairStyle", "hairStyleChips");
+      renderCategoryChips("hairColor", "hairColorChips");
+      renderCategoryChips("eyes", "eyesChips");
+      renderCategoryChips("expression", "expressionChips");
+      renderCategoryChips("traits", "traitsChips");
+      renderCategoryChips("clothing", "clothingChips");
+      renderCategoryChips("accessories", "accessoriesChips");
+      renderCategoryChips("artstyle", "artstyleChips");
+      renderCategoryChips("lighting", "lightingChips");
+      renderCategoryChips("framing", "framingChips");
+    }
+
+    function applyTabDefaults(tabKey) {
+      const d = TAB_DEFAULTS[tabKey];
+      if (!d) return;
+      document.getElementById("topicInput").value = d.topic;
+      document.getElementById("speciesInput").value = d.species;
+      document.getElementById("genderAgeInput").value = d.genderAge;
+      document.getElementById("personalityInput").value = d.personality;
+      document.getElementById("bodyInput").value = d.body;
+    }
+
+    function clearSelections() {
+      Object.keys(selectedOptions).forEach((cat) => selectedOptions[cat].clear());
+      selectedRatio = RATIO_DATA[0];
+    }
+
+    // 탭 전환 이벤트
     const tabBtns = document.querySelectorAll(".tab-btn");
     tabBtns.forEach((btn) => {
       btn.addEventListener("click", () => {
@@ -717,93 +893,164 @@
         currentTab = btn.getAttribute("data-tab");
 
         clearSelections();
+        applyTabDefaults(currentTab);
         updateAllChips();
 
         if (document.getElementById("promptBox").style.display === "flex") {
-          document.getElementById("promptOutput").value = buildPrompt(isEnglish);
+          document.getElementById("promptOutput").value = buildPrompt();
+          isEnglish = false;
+          translateBtn.textContent = "🌐 영어로 변환 (KO ➔ EN)";
         }
       });
     });
 
-    // 선택 초기화 함수
-    function clearSelections() {
-      selectedOptions.style.clear();
-      selectedOptions.composition.clear();
-      selectedOptions.lighting.clear();
-      selectedOptions.quality.clear();
-    }
+    // 프롬프트 조립기 (한글 기준)
+    function buildPrompt() {
+      const topic = document.getElementById("topicInput").value.trim();
+      const species = document.getElementById("speciesInput").value.trim();
+      const genderAge = document.getElementById("genderAgeInput").value.trim();
+      const personality = document.getElementById("personalityInput").value.trim();
+      const body = document.getElementById("bodyInput").value.trim();
 
-    // 프롬프트 생성 빌더
-    function buildPrompt(toEnglish = false) {
-      const subject = document.getElementById("subjectInput").value.trim();
-      const lang = toEnglish ? "en" : "ko";
       const parts = [];
 
-      // 1. 기본 탭 템플릿
-      parts.push(DATA_BY_TAB[currentTab].template[lang]);
-
-      // 2. 주제
-      if (subject) {
-        if (toEnglish) {
-          parts.push(`Subject: ${subject}`);
-        } else {
-          parts.push(`주제: ${subject}`);
-        }
+      // 1. 카메라 구도 / 설정화 시트
+      const framingList = Array.from(selectedOptions.framing).map((i) => i.ko);
+      if (framingList.length > 0) {
+        parts.push(`[카메라 구도] ${framingList.join(", ")}`);
       }
 
-      // 3. 각 카테고리별 선택 옵션
-      const styleList = Array.from(selectedOptions.style).map((i) => i[lang]);
-      const compList = Array.from(selectedOptions.composition).map((i) => i[lang]);
-      const lightList = Array.from(selectedOptions.lighting).map((i) => i[lang]);
-      const qualList = Array.from(selectedOptions.quality).map((i) => i[lang]);
+      // 2. 메인 주제
+      if (topic) {
+        parts.push(`[작품 및 메인 상황] ${topic}`);
+      }
 
-      if (styleList.length > 0) parts.push(toEnglish ? `Style: ${styleList.join(", ")}` : `스타일: ${styleList.join(", ")}`);
-      if (compList.length > 0) parts.push(toEnglish ? `Composition: ${compList.join(", ")}` : `구도: ${compList.join(", ")}`);
-      if (lightList.length > 0) parts.push(toEnglish ? `Lighting & Color: ${lightList.join(", ")}` : `조명 및 색상: ${lightList.join(", ")}`);
-      if (qualList.length > 0) parts.push(toEnglish ? `Quality & Parameters: ${qualList.join(", ")}` : `화질 및 파라미터: ${qualList.join(", ")}`);
+      // 3. 캐릭터 기본 정체성
+      const identityItems = [];
+      if (species) identityItems.push(`종족/형태: ${species}`);
+      if (genderAge) identityItems.push(`성별/연령: ${genderAge}`);
+      if (personality) identityItems.push(`성격/분위기: ${personality}`);
+      if (body) identityItems.push(`체형: ${body}`);
 
-      return parts.join(toEnglish ? ", " : ",\n");
+      if (identityItems.length > 0) {
+        parts.push(`[캐릭터 정체성] ${identityItems.join(", ")}`);
+      }
+
+      // 4. 헤어/털 디테일
+      const hairStyleList = Array.from(selectedOptions.hairStyle).map((i) => i.ko);
+      const hairColorList = Array.from(selectedOptions.hairColor).map((i) => i.ko);
+      if (hairStyleList.length > 0 || hairColorList.length > 0) {
+        const hairCombined = [...hairStyleList, ...hairColorList].join(", ");
+        parts.push(`[헤어 및 털 디테일] ${hairCombined}`);
+      }
+
+      // 5. 눈매 & 표정 & 특수 포인트
+      const eyesList = Array.from(selectedOptions.eyes).map((i) => i.ko);
+      const expList = Array.from(selectedOptions.expression).map((i) => i.ko);
+      const traitsList = Array.from(selectedOptions.traits).map((i) => i.ko);
+      if (eyesList.length > 0) parts.push(`[눈매 및 시선] ${eyesList.join(", ")}`);
+      if (expList.length > 0) parts.push(`[표정 연출] ${expList.join(", ")}`);
+      if (traitsList.length > 0) parts.push(`[고유 매력 포인트] ${traitsList.join(", ")}`);
+
+      // 6. 의상 및 소품
+      const clothList = Array.from(selectedOptions.clothing).map((i) => i.ko);
+      const accList = Array.from(selectedOptions.accessories).map((i) => i.ko);
+      if (clothList.length > 0) parts.push(`[의상 스타일] ${clothList.join(", ")}`);
+      if (accList.length > 0) parts.push(`[지참 소품] ${accList.join(", ")}`);
+
+      // 7. 화풍 및 조명
+      const artList = Array.from(selectedOptions.artstyle).map((i) => i.ko);
+      const lightList = Array.from(selectedOptions.lighting).map((i) => i.ko);
+      if (artList.length > 0) parts.push(`[웹툰 작화 기법] ${artList.join(", ")}`);
+      if (lightList.length > 0) parts.push(`[조명 및 무드] ${lightList.join(", ")}`);
+
+      // 8. 웹툰 누끼용 배경 분리
+      parts.push("[배경 연출] 웹툰 컷 누끼 합성용 단색/투명 배경, 배경 오브젝트 제거");
+
+      // 9. 품질 및 비율
+      parts.push(`[품질 및 비율] 마스터피스 고화질 웹툰 일러스트, 왜곡 없는 정확한 인체 비례, 화면비율: ${selectedRatio.ko} (${selectedRatio.en})`);
+
+      return parts.join("\n\n");
     }
 
-    // [프롬프트 완성하기] 버튼
+    // 텍스트 실시간 번역 API 호출기 (사용자가 직접 수정한 내용까지 100% 반영)
+    async function translateText(text, targetLang) {
+      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      return data[0].map(item => item[0]).join('');
+    }
+
+    // 버튼 요소 참조
     const completeBtn = document.getElementById("completeBtn");
+    const resetBtn = document.getElementById("resetBtn");
     const promptBox = document.getElementById("promptBox");
     const promptOutput = document.getElementById("promptOutput");
     const translateBtn = document.getElementById("translateBtn");
+    const copyBtn = document.getElementById("copyBtn");
+    const toast = document.getElementById("toast");
 
+    // [프롬프트 완성하기]
     completeBtn.addEventListener("click", () => {
       isEnglish = false;
       translateBtn.textContent = "🌐 영어로 변환 (KO ➔ EN)";
-      promptOutput.value = buildPrompt(false);
+      promptOutput.value = buildPrompt();
       promptBox.style.display = "flex";
       promptBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
     });
 
-    // [전체 다시 하기] 버튼
-    const resetBtn = document.getElementById("resetBtn");
+    // [전체 다시 하기] 완전 초기화
     resetBtn.addEventListener("click", () => {
-      document.getElementById("subjectInput").value = "";
+      document.getElementById("topicInput").value = "";
+      document.getElementById("speciesInput").value = "";
+      document.getElementById("genderAgeInput").value = "";
+      document.getElementById("personalityInput").value = "";
+      document.getElementById("bodyInput").value = "";
+
       clearSelections();
       updateAllChips();
+
       promptOutput.value = "";
       promptBox.style.display = "none";
       isEnglish = false;
-      showToast("모든 설정이 초기화되었습니다.");
+
+      showToast("모든 설정과 입력값이 초기화되었습니다.");
     });
 
-    // [한/영 변환] 버튼
-    translateBtn.addEventListener("click", () => {
-      isEnglish = !isEnglish;
-      promptOutput.value = buildPrompt(isEnglish);
-      translateBtn.textContent = isEnglish
-        ? "🌐 한글로 변환 (EN ➔ KO)"
-        : "🌐 영어로 변환 (KO ➔ EN)";
+    // [한/영 변환] 현재 창의 텍스트(사용자 입력/수정분 포함)를 실시간 번역
+    translateBtn.addEventListener("click", async () => {
+      const currentText = promptOutput.value.trim();
+      if (!currentText) {
+        showToast("변환할 프롬프트 내용이 없습니다.");
+        return;
+      }
+
+      const targetLang = isEnglish ? "ko" : "en";
+      const originalBtnText = translateBtn.textContent;
+      
+      translateBtn.disabled = true;
+      translateBtn.textContent = "⏳ 번역 중...";
+
+      try {
+        const translatedResult = await translateText(currentText, targetLang);
+        promptOutput.value = translatedResult;
+        isEnglish = !isEnglish;
+        
+        translateBtn.textContent = isEnglish
+          ? "🌐 한글로 변환 (EN ➔ KO)"
+          : "🌐 영어로 변환 (KO ➔ EN)";
+          
+        showToast(isEnglish ? "영문으로 번역되었습니다!" : "한글로 번역되었습니다!");
+      } catch (err) {
+        console.error(err);
+        showToast("번역 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+        translateBtn.textContent = originalBtnText;
+      } finally {
+        translateBtn.disabled = false;
+      }
     });
 
-    // [전체 복사] 버튼
-    const copyBtn = document.getElementById("copyBtn");
-    const toast = document.getElementById("toast");
-
+    // [전체 복사]
     copyBtn.addEventListener("click", async () => {
       const text = promptOutput.value;
       if (!text) return;
@@ -814,7 +1061,7 @@
       } catch (err) {
         promptOutput.select();
         document.execCommand("copy");
-        showToast("프롬프트가 복사되었습니다! 🎉");
+        showToast("프롬프트가 클립보드에 복사되었습니다! 🎉");
       }
     });
 
@@ -826,28 +1073,89 @@
       }, 2200);
     }
 
-    // [? 설명 모달]
+    // 모달 제어
     const helpModal = document.getElementById("helpModal");
     const modalTitle = document.getElementById("modalTitle");
     const modalBody = document.getElementById("modalBody");
 
-    const categoryNames = {
-      style: "스타일 (Style)",
-      composition: "구도 (Composition)",
-      lighting: "조명 및 색상 (Lighting & Color)",
-      quality: "화질 및 글로벌 AI 파라미터 (Quality & Engine)"
+    const HELP_CONTENT = {
+      ratio: {
+        title: "화면 비율 (Aspect Ratio) 쉬운 설명",
+        items: [
+          { name: "1:1 (정사각형)", desc: "카카오톡 프로필이나 인스타그램에 올리기 가장 좋은 반듯한 비율이에요." },
+          { name: "3:4 (웹툰 컷 표준)", desc: "스마트폰 웹툰 만화 컷 상자에 딱 맞게 들어가는 안정적인 비율이에요." },
+          { name: "9:16 (스마트폰 세로 전신)", desc: "머리부터 발끝까지 캐릭터의 전신 실루엣을 시원하게 담을 때 좋아요." },
+          { name: "16:9 (와이드 배경 컷)", desc: "유튜브 썸네일이나 캐릭터 뒤로 넓은 배경을 함께 보여줄 때 써요." }
+        ]
+      },
+      identity: {
+        title: "캐릭터 정체성 (Identity) 쉬운 설명",
+        items: [
+          { name: "종족 및 외형 형태", desc: "사람뿐 아니라 아기 백호, 늑대 수인, 마법 요정, 사이보그 등 상상하는 모든 존재를 자유롭게 적을 수 있어요." },
+          { name: "성별 및 연령대", desc: "소년 18세, 여성 19세, 불명 300세 등 캐릭터의 나이와 성별을 알려주면 AI가 얼굴 골격과 분위기를 맞춰줘요." },
+          { name: "성격 및 분위기", desc: "츤데레, 차갑고 시크함, 긍정 발랄함 등을 적으면 눈빛과 표정에 감정이 실려요." },
+          { name: "체형 및 체격", desc: "슬림 탄탄형, 아담하고 귀여운 체구, 듬직한 체격 등 캐릭터의 몸매 특징을 적어주세요." }
+        ]
+      },
+      hair: {
+        title: "헤어 / 털 (Hair & Fur) 쉬운 설명",
+        items: [
+          { name: "댄디컷 & 애즈펌", desc: "앞머리를 단정하게 내리거나 살짝 이마를 드러낸 인기 웹툰 남주인공의 대표 머리예요." },
+          { name: "울프컷 & 슬릭백", desc: "뒷머리를 날렵하게 기르거나 뒤로 넘겨서 카리스마 있고 힙한 느낌을 줘요." },
+          { name: "생머리 & 롱웨이브", desc: "찰랑거리는 긴 생머리나 부드러운 물결 웨이브로 청순하거나 우아한 분위기를 살려요." },
+          { name: "포니테일 & 트윈테일", desc: "높게 하나로 묶거나 양갈래로 묶어 발랄하고 당찬 소년/소녀미를 보여줘요." },
+          { name: "스파이키 & 솜털", desc: "액션 만화의 삐죽삐죽 뻗친 머리나 수인의 구름처럼 복슬복슬한 털이에요." }
+        ]
+      },
+      face: {
+        title: "눈매 & 표정 (Face & Details) 쉬운 설명",
+        items: [
+          { name: "고양이상 vs 강아지상", desc: "눈꼬리가 올라가면 도도한 고양이상, 부드럽게 처지면 착하고 순한 강아지상이 돼요." },
+          { name: "삼백안 & 오드아이", desc: "검은 눈동자 밑 흰자가 보여 시크한 삼백안과, 양쪽 눈동자 색이 다른 신비한 눈이에요." },
+          { name: "츤데레 홍조 & 함박웃음", desc: "볼을 붉히며 뾰로통해하거나 이가 보일 정도로 환하게 웃는 생생한 감정 표현이에요." },
+          { name: "반창고, 눈물점, 동물 귀", desc: "코 위의 반창고, 눈 밑의 점, 쫑긋한 동물 귀로 캐릭터만의 고유한 매력을 찍어줘요." }
+        ]
+      },
+      outfit: {
+        title: "의상 및 소품 (Outfit & Items) 쉬운 설명",
+        items: [
+          { name: "한국형 교복 & 체육복 져지", desc: "학원물 웹툰에 가장 잘 어울리는 친근하고 단정한 학생 복장이에요." },
+          { name: "로판 제복 & 레이스 드레스", desc: "중세 마법 왕국이나 귀족 영애가 입는 화려한 금빛 자수 옷과 풍성한 드레스예요." },
+          { name: "헌터 롱코트 & 테크웨어", desc: "괴수를 사냥하거나 미래 도시를 누비는 주인공의 날렵하고 멋진 전투복이에요." },
+          { name: "헤드셋, 마법검, 스마트폰", desc: "목에 헤드셋을 걸치거나 손에 검을 쥐어주어 캐릭터의 직업과 개성을 한눈에 보여줘요." }
+        ]
+      },
+      artstyle: {
+        title: "작화 화풍 & 조명 (Art Style & Light) 쉬운 설명",
+        items: [
+          { name: "K-웹툰 정석 잉크선", desc: "실제 사진이 아니라, 네이버/카카오 웹툰처럼 깔끔하고 선명한 디지털 펜선으로 그려줘요." },
+          { name: "애니메이션 셀 채색", desc: "극장판 만화영화처럼 빛과 그림자가 똑 떨어져 선명하고 알록달록한 채색법이에요." },
+          { name: "자연광 & 림라이트", desc: "화사한 햇살과 함께 캐릭터 머리와 어깨 테두리를 눈부시게 밝혀주는 고급 조명 연출이에요." },
+          { name: "황혼 골든아워 & 네온 듀얼", desc: "따스한 노을빛 감성을 담거나 미래 도시의 네온 블루/핑크빛을 캐릭터에 입혀줘요." }
+        ]
+      },
+      framing: {
+        title: "구도 및 설정화 (Composition) 쉬운 설명",
+        items: [
+          { name: "설정화 3면도 시트", desc: "만화 작가님이 연재 전에 그리는 캐릭터 공식 설계도예요! 앞모습, 옆모습, 표정 모음을 한 장에 그려줘요." },
+          { name: "얼굴 클로즈업 & 전신 풀샷", desc: "얼굴 표정에 집중하거나, 머리부터 발끝까지 신발과 의상 전체를 보여줄 수 있어요." },
+          { name: "누끼 합성용 배경 자동 분리", desc: "배경이 깔끔하게 지워져 있어야 가위로 오려내듯(누끼 따기) 캐릭터만 쏙 웹툰 컷에 합성할 수 있어요." }
+        ]
+      }
     };
 
-    function openHelp(category) {
-      modalTitle.textContent = `💡 ${categoryNames[category]} 쉬운 설명`;
+    function openHelp(categoryKey) {
+      const data = HELP_CONTENT[categoryKey];
+      if (!data) return;
+
+      modalTitle.textContent = `💡 ${data.title}`;
       modalBody.innerHTML = "";
 
-      const items = DATA_BY_TAB[currentTab][category] || [];
-      items.forEach((item) => {
+      data.items.forEach((item) => {
         const div = document.createElement("div");
         div.className = "help-item";
         div.innerHTML = `
-          <div class="help-item-title">${item.ko}</div>
+          <div class="help-item-title">${item.name}</div>
           <div class="help-item-desc">${item.desc}</div>
         `;
         modalBody.appendChild(div);
@@ -865,6 +1173,7 @@
     });
 
     // 초기 실행
+    applyTabDefaults(currentTab);
     updateAllChips();
   </script>
 </body>
