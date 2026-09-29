@@ -495,7 +495,15 @@
             <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
             <h3 class="font-extrabold text-slate-900 text-base sm:text-lg">실시간 프롬프트 콘솔</h3>
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 flex-wrap">
+            <!-- Custom Edit Notice Badge -->
+            <span id="customEditBadge" class="hidden text-xs font-bold px-2.5 py-1 rounded-xl bg-violet-50 text-violet-700 border border-violet-200 flex items-center gap-1.5 shadow-xs">
+              <i class="fa-solid fa-pen-to-square"></i>
+              <span>직접 수정됨</span>
+              <button type="button" id="revertAutoBtn" title="칩 선택값으로 다시 덮어쓰기" class="underline text-violet-900 hover:text-violet-950 font-bold ml-1">
+                자동연동 복귀
+              </button>
+            </span>
             <!-- 1000-char Character Count Badge -->
             <span id="charCountBadge" class="text-xs sm:text-sm font-bold px-3 py-1 rounded-xl bg-slate-100 text-slate-700 border border-slate-200 transition-colors flex items-center gap-1">
               <i class="fa-solid fa-text-width text-slate-400"></i>
@@ -517,7 +525,7 @@
         </div>
 
         <p class="text-xs sm:text-sm text-slate-500">
-          선택한 항목이 실시간으로 조립됩니다. 박스 안의 글자를 직접 수정하거나 새 내용을 추가할 수도 있어요!
+          선택한 항목이 실시간으로 조립됩니다. 박스 안의 글자를 직접 수정하거나 새 내용을 추가해도 번역과 확정 시 온전히 반영됩니다!
         </p>
 
         <!-- Prompt Textarea -->
@@ -536,7 +544,7 @@
           <div id="actionButtonGroup" class="hidden grid grid-cols-2 gap-2.5 pt-1">
             <!-- Toggle Lang -->
             <button type="button" id="toggleLangBtn" class="py-3 px-3 rounded-2xl bg-slate-800 hover:bg-slate-900 active:scale-95 text-white text-xs sm:text-sm font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
-              <i class="fa-solid fa-language text-yellow-300"></i>
+              <i id="toggleLangIcon" class="fa-solid fa-language text-yellow-300"></i>
               <span id="toggleLangText">영문(AI용)으로 변경</span>
             </button>
 
@@ -756,9 +764,9 @@
             desc: "만화 작가님이 연재 전에 그리는 캐릭터 공식 설계도예요! 앞모습, 옆모습, 표정 모음을 한 장에 그려줘요."
           },
           {
-            name: "투명 배경 고정 (Transparent Cutout)",
+            name: "배경 완전 제거 (Pure White Backdrop)",
             icon: "✂️",
-            desc: "뒤 배경에 잡다한 그림이 없어야 가위로 오려내듯(누끼 따기) 캐릭터만 쏙 웹툰 컷에 합성할 수 있어요."
+            desc: "뒤 배경의 잡다한 풍경이나 물건을 완전히 없애고 오직 캐릭터만 깨끗하게 그려주어 바로 웹툰에 쓸 수 있어요."
           }
         ]
       },
@@ -788,6 +796,14 @@
     let currentLanguage = 'ko';
     let isConfirmed = false;
     let selectedRatio = '1:1';
+    let isTranslating = false;
+
+    // Track user customization and save text for both languages
+    let userHasCustomized = false;
+    let customEditsByLang = {
+      ko: '',
+      en: ''
+    };
 
     // DOM Elements
     const charSpeciesInput = document.getElementById('charSpecies');
@@ -800,11 +816,14 @@
     const charCountNum = document.getElementById('charCountNum');
     const charProgressBar = document.getElementById('charProgressBar');
     const charLimitWarning = document.getElementById('charLimitWarning');
+    const customEditBadge = document.getElementById('customEditBadge');
+    const revertAutoBtn = document.getElementById('revertAutoBtn');
     const confirmBtn = document.getElementById('confirmBtn');
     const confirmBtnText = document.getElementById('confirmBtnText');
     const actionButtonGroup = document.getElementById('actionButtonGroup');
     const toggleLangBtn = document.getElementById('toggleLangBtn');
     const toggleLangText = document.getElementById('toggleLangText');
+    const toggleLangIcon = document.getElementById('toggleLangIcon');
     const copyPromptBtn = document.getElementById('copyPromptBtn');
     const langBadge = document.getElementById('langBadge');
     const headerResetBtn = document.getElementById('headerResetBtn');
@@ -941,10 +960,52 @@
       }
     }
 
+    // Online Translation Engine with Fallback Support
+    async function translateTextOnline(text, fromLang, toLang) {
+      if (!text || !text.trim()) return '';
+
+      // 1. Primary: Google Translate GTX free public endpoint
+      try {
+        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${fromLang}&tl=${toLang}&dt=t&q=${encodeURIComponent(text)}`;
+        const res = await fetch(url);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data[0]) {
+            let result = data[0].map(item => item[0]).join('');
+            // Preserve Midjourney & AI prompt parameter formats
+            result = result.replace(/--\s*ar\s*(\d+)\s*:\s*(\d+)/gi, '--ar $1:$2');
+            result = result.replace(/--\s*v\s*(\d+(\.\d+)?)/gi, '--v $1');
+            result = result.replace(/--\s*niji\s*(\d+)/gi, '--niji $1');
+            return result;
+          }
+        }
+      } catch (err) {
+        console.warn('Google Translate API error, falling back:', err);
+      }
+
+      // 2. Secondary fallback: MyMemory API
+      try {
+        const mmUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text.substring(0, 450))}&langpair=${fromLang}|${toLang}`;
+        const res = await fetch(mmUrl);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.responseData && data.responseData.translatedText) {
+            return data.responseData.translatedText;
+          }
+        }
+      } catch (err) {
+        console.warn('MyMemory fallback failed:', err);
+      }
+
+      // Return null if all network translation failed
+      return null;
+    }
+
     // Refresh prompt display
     function updatePromptDisplay() {
-      if (!isConfirmed) {
+      if (!isConfirmed && !userHasCustomized) {
         promptOutput.value = generatePromptText(currentLanguage);
+        customEditsByLang[currentLanguage] = promptOutput.value;
       }
       updateCharacterCount();
     }
@@ -959,10 +1020,24 @@
       }
     }
 
-    // Real-time typing in textarea
+    // Real-time typing in textarea (User customized input)
     promptOutput.addEventListener('input', () => {
+      userHasCustomized = true;
+      customEditsByLang[currentLanguage] = promptOutput.value;
+      customEditBadge.classList.remove('hidden');
       updateCharacterCount();
       resetConfirmation();
+    });
+
+    // Revert to auto sync from chips & inputs
+    revertAutoBtn.addEventListener('click', () => {
+      userHasCustomized = false;
+      customEditBadge.classList.add('hidden');
+      customEditsByLang = { ko: '', en: '' };
+      promptOutput.value = generatePromptText(currentLanguage);
+      updateCharacterCount();
+      resetConfirmation();
+      showToast("선택 칩과 입력 양식의 자동 연동 상태로 복귀했습니다.", "info");
     });
 
     // Chip click handler
@@ -970,7 +1045,11 @@
       chip.addEventListener('click', () => {
         chip.classList.toggle('chip-active');
         resetConfirmation();
-        updatePromptDisplay();
+        if (userHasCustomized) {
+          showToast("직접 작성 모드 상태입니다. [자동연동 복귀]를 누르면 칩 선택으로 갱신됩니다.", "info");
+        } else {
+          updatePromptDisplay();
+        }
       });
     });
 
@@ -978,7 +1057,11 @@
     [charSpeciesInput, charGenderAgeInput, charGenreInput, charBodyInput, sceneTopicInput].forEach(inp => {
       inp.addEventListener('input', () => {
         resetConfirmation();
-        updatePromptDisplay();
+        if (userHasCustomized) {
+          showToast("직접 작성 모드 상태입니다. [자동연동 복귀]를 누르면 칩 선택으로 갱신됩니다.", "info");
+        } else {
+          updatePromptDisplay();
+        }
       });
     });
 
@@ -989,7 +1072,18 @@
         btn.classList.add('chip-active');
         selectedRatio = btn.getAttribute('data-ratio');
         resetConfirmation();
-        updatePromptDisplay();
+        if (!userHasCustomized) {
+          updatePromptDisplay();
+        } else {
+          // Update ratio parameter in user customized text if present
+          let currentText = promptOutput.value;
+          if (currentText.includes('--ar')) {
+            currentText = currentText.replace(/--ar\s*\d+:\d+/g, `--ar ${selectedRatio}`);
+            promptOutput.value = currentText;
+            customEditsByLang[currentLanguage] = currentText;
+            updateCharacterCount();
+          }
+        }
       });
     });
 
@@ -998,6 +1092,9 @@
       isConfirmed = true;
       const count = updateCharacterCount();
       
+      // Save current state for active language
+      customEditsByLang[currentLanguage] = promptOutput.value;
+
       if (count > 1000) {
         confirmBtnText.innerText = `설정 완료됨 (총 ${count.toLocaleString()}자 / ⚠️ 1,000자 초과)`;
         confirmBtn.className = "w-full py-3 px-4 rounded-2xl bg-rose-50 text-rose-700 border border-rose-300 font-bold text-sm hover:bg-rose-100 transition-all flex items-center justify-center gap-2";
@@ -1011,23 +1108,87 @@
       }
     });
 
-    // Toggle Korean / English
-    toggleLangBtn.addEventListener('click', () => {
-      if (currentLanguage === 'ko') {
-        currentLanguage = 'en';
+    // Toggle Korean / English with Full User Customization Translation & State Preservation
+    toggleLangBtn.addEventListener('click', async () => {
+      if (isTranslating) return;
+
+      const targetLanguage = (currentLanguage === 'ko') ? 'en' : 'ko';
+      const currentText = promptOutput.value || '';
+
+      // Save current language content
+      customEditsByLang[currentLanguage] = currentText;
+
+      // Case 1: Standard template mode (user hasn't manually edited the text in textarea)
+      if (!userHasCustomized) {
+        currentLanguage = targetLanguage;
+        updateLanguageUIState();
+        promptOutput.value = generatePromptText(currentLanguage);
+        customEditsByLang[currentLanguage] = promptOutput.value;
+        const newCount = updateCharacterCount();
+        showToast(`${currentLanguage === 'ko' ? '한국어' : '영문(AI 최적화)'} 프롬프트로 변환되었습니다. (총 ${newCount.toLocaleString()}자)`);
+        return;
+      }
+
+      // Case 2: User manually entered/edited text in promptOutput
+      // Check if we already have the translation cached for the target language
+      if (customEditsByLang[targetLanguage] && customEditsByLang[targetLanguage].trim().length > 0) {
+        currentLanguage = targetLanguage;
+        updateLanguageUIState();
+        promptOutput.value = customEditsByLang[targetLanguage];
+        const newCount = updateCharacterCount();
+        showToast(`작성하신 내용이 포함된 ${currentLanguage === 'ko' ? '한국어' : '영문'} 프롬프트로 전환되었습니다. (총 ${newCount.toLocaleString()}자)`);
+        return;
+      }
+
+      // Perform online live translation of user's custom text
+      isTranslating = true;
+      toggleLangBtn.disabled = true;
+      toggleLangIcon.className = 'fa-solid fa-spinner fa-spin text-yellow-300';
+      toggleLangText.innerText = '실시간 번역 진행 중...';
+
+      try {
+        const translated = await translateTextOnline(currentText, currentLanguage, targetLanguage);
+        
+        if (translated) {
+          currentLanguage = targetLanguage;
+          customEditsByLang[currentLanguage] = translated;
+          promptOutput.value = translated;
+          updateLanguageUIState();
+          const newCount = updateCharacterCount();
+          showToast(`직접 작성/수정한 내용이 ${currentLanguage === 'ko' ? '한국어' : '영문'}으로 실시간 번역되었습니다! (총 ${newCount.toLocaleString()}자)`, "success");
+        } else {
+          // If translation fails (e.g. offline), preserve the existing text and switch UI with notice
+          showToast("번역 서버 연결이 원활하지 않아 작성하신 원본 텍스트를 그대로 유지합니다.", "error");
+        }
+      } catch (err) {
+        showToast("번역 중 오류가 발생하여 작성하신 원본 텍스트를 유지합니다.", "error");
+      } finally {
+        isTranslating = false;
+        toggleLangBtn.disabled = false;
+        updateToggleLangButtonText();
+      }
+    });
+
+    // Helper: Update badge and button labels based on current language
+    function updateLanguageUIState() {
+      if (currentLanguage === 'en') {
         langBadge.innerText = '영문 모드 (AI 최적화)';
         langBadge.className = 'text-xs sm:text-sm font-bold px-3 py-1 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200';
-        toggleLangText.innerText = '한국어로 변경';
       } else {
-        currentLanguage = 'ko';
         langBadge.innerText = '한국어 모드';
         langBadge.className = 'text-xs sm:text-sm font-bold px-3 py-1 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200';
-        toggleLangText.innerText = '영문(AI용)으로 변경';
       }
-      promptOutput.value = generatePromptText(currentLanguage);
-      const newCount = updateCharacterCount();
-      showToast(`${currentLanguage === 'ko' ? '한국어' : '영문(AI 최적화)'} 프롬프트로 변환되었습니다. (총 ${newCount.toLocaleString()}자)`);
-    });
+      updateToggleLangButtonText();
+    }
+
+    function updateToggleLangButtonText() {
+      toggleLangIcon.className = 'fa-solid fa-language text-yellow-300';
+      if (currentLanguage === 'ko') {
+        toggleLangText.innerText = '영문(AI용)으로 변경';
+      } else {
+        toggleLangText.innerText = '한국어로 변경';
+      }
+    }
 
     // Copy to clipboard
     copyPromptBtn.addEventListener('click', () => {
@@ -1061,6 +1222,11 @@
 
     // Preset Applicator
     function applyPreset(type) {
+      // Clear custom status on preset application
+      userHasCustomized = false;
+      customEditBadge.classList.add('hidden');
+      customEditsByLang = { ko: '', en: '' };
+
       // Clear all chips first
       document.querySelectorAll('.chip').forEach(c => c.classList.remove('chip-active'));
 
@@ -1145,6 +1311,10 @@
 
     // Reset All functionality
     function resetAll() {
+      userHasCustomized = false;
+      customEditBadge.classList.add('hidden');
+      customEditsByLang = { ko: '', en: '' };
+
       charSpeciesInput.value = "10대 한국 고등학생 소년";
       charGenderAgeInput.value = "남성, 18세, 시크하지만 다정한 츤데레";
       charGenreInput.value = "학원 청춘 성장물";
@@ -1172,9 +1342,7 @@
       selectedRatio = '1:1';
 
       currentLanguage = 'ko';
-      langBadge.innerText = '한국어 모드';
-      langBadge.className = 'text-xs sm:text-sm font-bold px-3 py-1 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200';
-      toggleLangText.innerText = '영문(AI용)으로 변경';
+      updateLanguageUIState();
       
       resetConfirmation();
       updatePromptDisplay();
