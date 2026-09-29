@@ -435,7 +435,7 @@
     "target": ["초등", "중등", "고등", "수업도구"],
     "tagline": "웹툰 캐릭터 생성을 위한 프롬프트를 작성",
     "tags": ["웹툰", "생성형 AI", "프롬프트", "캐릭터", "프롬프토 생성 빌더"],
-    "url": "https://hi763.github.io/thissam/p018_Webtoon_character_generation_AI copy.html",
+    "url": "https://hi763.github.io/thissam/p018_Webtoon_character_generation_AI.html",
 
     "description": "요소를 선택하여 프롬프트를 생성할 수 있다.",
     "features": [
