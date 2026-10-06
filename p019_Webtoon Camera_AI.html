@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>웹툰 캐릭터 카메라 구도 & 캐릭터 시트 프롬프트 빌더</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Pretendard', 'Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    }
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.05);
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background: rgba(100, 116, 139, 0.3);
+      border-radius: 9999px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+      background: rgba(100, 116, 139, 0.5);
+    }
+    .shot-card.active {
+      border-color: #6366f1;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(129, 140, 248, 0.15) 100%);
+      box-shadow: 0 4px 14px -1px rgba(99, 102, 241, 0.25);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-md shadow-indigo-200">
+          <i class="fa-solid fa-camera-retro text-lg"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-slate-900 tracking-tight leading-none">웹툰 카메라 구도 & 시트 빌더</h1>
+          <p class="text-xs text-slate-500 mt-1">AI Webtoon Composition & Character Sheet Builder</p>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <button id="resetAllBtn" class="text-xs sm:text-sm px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-600 font-medium transition flex items-center space-x-1.5">
+          <i class="fa-solid fa-arrow-rotate-right text-xs"></i>
+          <span class="hidden sm:inline">초기화</span>
+        </button>
+        <button id="openGuideBtn" class="text-xs sm:text-sm px-3 py-1.5 rounded-lg bg-indigo-50 border border-indigo-200 text-indigo-700 font-medium hover:bg-indigo-100 transition flex items-center space-x-1.5 shadow-2xs">
+          <i class="fa-solid fa-circle-question text-indigo-500"></i>
+          <span>카메라 구도 쉽게 배우기</span>
+        </button>
+        <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100">
+          v2.5 Pro
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- LEFT COLUMN: CONTROLS & SELECTION (7 cols) -->
+    <section class="lg:col-span-7 space-y-6">
+
+      <!-- 1. IMAGE REFERENCE & CONSISTENCY -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition hover:shadow">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center space-x-2">
+            <span class="w-6 h-6 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold">1</span>
+            <h2 class="text-sm font-bold text-slate-800">참조 이미지 및 캐릭터 일관성 설정</h2>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="includeRefToggle" checked class="sr-only peer">
+            <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+            <span class="ml-2 text-xs font-medium text-slate-600 select-none">참조 프롬프트 포함</span>
+          </label>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+          <div id="dropZone" class="sm:col-span-8 border-2 border-dashed border-slate-200 hover:border-indigo-400 bg-slate-50 hover:bg-indigo-50/40 rounded-xl p-4 text-center cursor-pointer transition flex flex-col items-center justify-center min-h-[105px]">
+            <input type="file" id="imageInput" accept="image/*" class="hidden">
+            <div id="uploadPlaceholder" class="flex flex-col items-center">
+              <i class="fa-solid fa-cloud-arrow-up text-2xl text-slate-400 mb-1"></i>
+              <p class="text-xs font-medium text-slate-700">참고할 캐릭터 이미지를 드래그하거나 클릭하여 업로드</p>
+              <p class="text-[11px] text-slate-400 mt-0.5">PNG, JPG, WEBP (브라우저 메모리 로컬 미리보기)</p>
+            </div>
+            <div id="uploadPreviewWrapper" class="hidden items-center space-x-3 w-full">
+              <img id="imagePreview" src="" alt="참조 이미지" class="w-14 h-14 rounded-lg object-cover border border-slate-200 shadow-xs">
+              <div class="text-left flex-1 min-w-0">
+                <p id="imageFileName" class="text-xs font-semibold text-slate-800 truncate">character.png</p>
+                <p class="text-[11px] text-indigo-600 font-medium">참조 이미지 장착됨 (프롬프트 선두 반영)</p>
+                <button type="button" id="removeImgBtn" class="text-[11px] text-rose-500 hover:text-rose-700 mt-1 font-medium underline">
+                  이미지 제거
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="sm:col-span-4 bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs space-y-2">
+            <span class="font-semibold text-slate-700 flex items-center gap-1">
+              <i class="fa-solid fa-sliders text-indigo-500"></i> 일관성 강도
+            </span>
+            <select id="refIntensity" class="w-full text-xs bg-white border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+              <option value="strict">엄격 (얼굴·헤어·의상 동일 유지)</option>
+              <option value="balanced" selected>표준 (핵심 외모 일관성)</option>
+              <option value="creative">자유 (분위기 및 인물 모티브)</option>
+            </select>
+            <p class="text-[10px] text-slate-400 leading-tight">프롬프트 맨 앞에 참조 이미지 기반 렌더링 문구가 자동 배치됩니다.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. CAMERA SHOTS & ANGLES -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition hover:shadow">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center space-x-2">
+            <span class="w-6 h-6 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold">2</span>
+            <h2 class="text-sm font-bold text-slate-800">카메라 구도 및 촬영 연출 기법</h2>
+          </div>
+          <span class="text-xs text-slate-400">복수 선택 조합 가능</span>
+        </div>
+
+        <!-- Category Tabs for Better Navigation -->
+        <div class="flex border-b border-slate-200 mb-3 space-x-2 text-xs">
+          <button type="button" class="tab-btn font-semibold pb-1.5 border-b-2 border-indigo-600 text-indigo-600 px-1" data-cat="all">전체 보기</button>
+          <button type="button" class="tab-btn text-slate-500 hover:text-slate-800 pb-1.5 border-b-2 border-transparent px-1" data-cat="distance">인물 거리 샷</button>
+          <button type="button" class="tab-btn text-slate-500 hover:text-slate-800 pb-1.5 border-b-2 border-transparent px-1" data-cat="angle">앵글 & 시점</button>
+          <button type="button" class="tab-btn text-slate-500 hover:text-slate-800 pb-1.5 border-b-2 border-transparent px-1" data-cat="cinematic">특수 촬영 연출</button>
+        </div>
+
+        <!-- Shot Type Grid (Expanded with OTS, Dutch Angle, 3/4 View, Extreme Close-Up, Fisheye, Bokeh) -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-[360px] overflow-y-auto scrollbar-thin pr-1" id="shotGrid">
+          <!-- 전신 -->
+          <button type="button" data-cat="distance" data-shot="fullBody" class="shot-card p-3 rounded-xl border border-slate-200 hover:border-indigo-300 text-left transition flex flex-col justify-between group active relative">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-slate-800 group-hover:text-indigo-600">전신</span>
+              <div class="flex items-center space-x-1.5">
+                <span class="help-btn text-[11px] text-slate-400 hover:text-indigo-600 p-0.5 rounded cursor-pointer" data-shot-help="fullBody" title="쉬운 설명 보기"><i class="fa-regular fa-circle-question"></i></span>
+                <i class="fa-solid fa-person text-indigo-500 text-sm"></i>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-500 line-clamp-1">Full body shot</p>
+          </button>
+
+          <!-- 상반신 -->
+          <button type="button" data-cat="distance" data-shot="upperBody" class="shot-card p-3 rounded-xl border border-slate-200 hover:border-indigo-300 text-left transition flex flex-col justify-between group relative">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-slate-800 group-hover:text-indigo-600">상반신</span>
+              <div class="flex items-center space-x-1.5">
+                <span class="help-btn text-[11px] text-slate-400 hover:text-indigo-600 p-0.5 rounded cursor-pointer" data-shot-help="upperBody" title="쉬운 설명 보기"><i class="fa-regular fa-circle-question"></i></span>
+                <i class="fa-solid fa-user text-slate-400 text-sm"></i>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-500 line-clamp-1">Upper body / Medium shot</p>
+          </button>
+
+          <!-- 얼굴 클로즈업 -->
+          <button type="button" data-cat="distance" data-shot="closeUp" class="shot-card p-3 rounded-xl border border-slate-200 hover:border-indigo-300 text-left transition flex flex-col justify-between group relative">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-slate-800 group-hover:text-indigo-600">얼굴 클로즈업</span>
+              <div class="flex items-center space-x-1.5">
+                <span class="help-btn text-[11px] text-slate-400 hover:text-indigo-600 p-0.5 rounded cursor-pointer" data-shot-help="closeUp" title="쉬운 설명 보기"><i class="fa-regular fa-circle-question"></i></span>
+                <i class="fa-regular fa-face-smile text-slate-400 text-sm"></i>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-500 line-clamp-1">Close-up portrait</p>
+          </button>
+
+          <!-- 익스트림 클로즈업 (추가) -->
+          <button type="button" data-cat="distance" data-shot="extremeCloseUp" class="shot-card p-3 rounded-xl border border-slate-200 hover:border-indigo-300 text-left transition flex flex-col justify-between group relative">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-slate-800 group-hover:text-indigo-600">익스트림 클로즈업</span>
+              <div class="flex items-center space-x-1.5">
+                <span class="help-btn text-[11px] text-slate-400 hover:text-indigo-600 p-0.5 rounded cursor-pointer" data-shot-help="extremeCloseUp" title="쉬운 설명 보기"><i class="fa-regular fa-circle-question"></i></span>
+                <i class="fa-regular fa-eye text-slate-400 text-sm"></i>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-500 line-clamp-1">눈·입술 강한 확대 집중</p>
+          </button>
+
+          <!-- 멀리서 보는 장면 -->
+          <button type="button" data-cat="distance" data-shot="longShot" class="shot-card p-3 rounded-xl border border-slate-200 hover:border-indigo-300 text-left transition flex flex-col justify-between group relative">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-slate-800 group-hover:text-indigo-600">멀리서 보는 장면</span>
+              <div class="flex items-center space-x-1.5">
+                <span class="help-btn text-[11px] text-slate-400 hover:text-indigo-600 p-0.5 rounded cursor-pointer" data-shot-help="longShot" title="쉬운 설명 보기"><i class="fa-regular fa-circle-question"></i></span>
+                <i class="fa-solid fa-mountain-sun text-slate-400 text-sm"></i>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-500 line-clamp-1">Long wide scenic shot</p>
+          </button>
+
+          <!-- 위에서 보는 장면 -->
+          <button type="button" data-cat="angle" data-shot="highAngle" class="shot-card p-3 rounded-xl border border-slate-200 hover:border-indigo-300 text-left transition flex flex-col justify-between group relative">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-slate-800 group-hover:text-indigo-600">위에서 보는 장면</span>
+              <div class="flex items-center space-x-1.5">
+                <span class="help-btn text-[11px] text-slate-400 hover:text-indigo-600 p-0.5 rounded cursor-pointer" data-shot-help="highAngle" title="쉬운 설명 보기"><i class="fa-regular fa-circle-question"></i></span>
+                <i class="fa-solid fa-arrow-down-long text-slate-400 text-sm"></i>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-500 line-clamp-1">High angle / Bird's eye</p>
+          </button>
+
+          <!-- 아래서 보는 장면 -->
+          <button type="button" data-cat="angle" data-shot="lowAngle" class="shot-card p-3 rounded-xl border border-slate-200 hover:border-indigo-300 text-left transition flex flex-col justify-between group relative">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-slate-800 group-hover:text-indigo-600">아래서 보는 장면</span>
+              <div class="flex items-center space-x-1.5">
+                <span class="help-btn text-[11px] text-slate-400 hover:text-indigo-600 p-0.5 rounded cursor-pointer" data-shot-help="lowAngle" title="쉬운 설명 보기"><i class="fa-regular fa-circle-question"></i></span>
+                <i class="fa-solid fa-arrow-up-long text-slate-400 text-sm"></i>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-500 line-clamp-1">Low angle / Worm's eye</p>
+          </button>
+
+          <!-- 앞모습 -->
+          <button type="button" data-cat="angle" data-shot="front" class="shot-card p-3 rounded-xl border border-slate-200 hover:border-indigo-300 text-left transition flex flex-col justify-between group relative">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-slate-800 group-hover:text-indigo-600">앞모습</span>
+              <div class="flex items-center space-x-1.5">
+                <span class="help-btn text-[11px] text-slate-400 hover:text-indigo-600 p-0.5 rounded cursor-pointer" data-shot-help="front" title="쉬운 설명 보기"><i class="fa-regular fa-circle-question"></i></span>
+                <i class="fa-solid fa-id-badge text-slate-400 text-sm"></i>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-500 line-clamp-1">Frontal view</p>
+          </button>
+
+          <!-- 3/4 반측면 (추가) -->
+          <button type="button" data-cat="angle" data-shot="threeQuarter" class="shot-card p-3 rounded-xl border border-slate-200 hover:border-indigo-300 text-left transition flex flex-col justify-between group relative">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-slate-800 group-hover:text-indigo-600">3/4 반측면</span>
+              <div class="flex items-center space-x-1.5">
+                <span class="help-btn text-[11px] text-slate-400 hover:text-indigo-600 p-0.5 rounded cursor-pointer" data-shot-help="threeQuarter" title="쉬운 설명 보기"><i class="fa-regular fa-circle-question"></i></span>
+                <i class="fa-regular fa-compass text-slate-400 text-sm"></i>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-500 line-clamp-1">Three-quarter view (얼짱 각도)</p>
+          </button>
+
+          <!-- 옆모습 -->
+          <button type="button" data-cat="angle" data-shot="profile" class="shot-card p-3 rounded-xl border border-slate-200 hover:border-indigo-300 text-left transition flex flex-col justify-between group relative">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-slate-800 group-hover:text-indigo-600">옆모습</span>
+              <div class="flex items-center space-x-1.5">
+                <span class="help-btn text-[11px] text-slate-400 hover:text-indigo-600 p-0.5 rounded cursor-pointer" data-shot-help="profile" title="쉬운 설명 보기"><i class="fa-regular fa-circle-question"></i></span>
+                <i class="fa-solid fa-arrow-right-arrow-left text-slate-400 text-sm"></i>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-500 line-clamp-1">Side profile view</p>
+          </button>
+
+          <!-- 뒷모습 -->
+          <button type="button" data-cat="angle" data-shot="back" class="shot-card p-3 rounded-xl border border-slate-200 hover:border-indigo-300 text-left transition flex flex-col justify-between group relative">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-slate-800 group-hover:text-indigo-600">뒷모습</span>
+              <div class="flex items-center space-x-1.5">
+                <span class="help-btn text-[11px] text-slate-400 hover:text-indigo-600 p-0.5 rounded cursor-pointer" data-shot-help="back" title="쉬운 설명 보기"><i class="fa-regular fa-circle-question"></i></span>
+                <i class="fa-solid fa-user-astronaut text-slate-400 text-sm"></i>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-500 line-clamp-1">Back view / Rear view</p>
+          </button>
+
+          <!-- 어깨 너머 샷 (추가) -->
+          <button type="button" data-cat="cinematic" data-shot="overTheShoulder" class="shot-card p-3 rounded-xl border border-slate-200 hover:border-indigo-300 text-left transition flex flex-col justify-between group relative">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-slate-800 group-hover:text-indigo-600">어깨 너머 샷 (OTS)</span>
+              <div class="flex items-center space-x-1.5">
+                <span class="help-btn text-[11px] text-slate-400 hover:text-indigo-600 p-0.5 rounded cursor-pointer" data-shot-help="overTheShoulder" title="쉬운 설명 보기"><i class="fa-regular fa-circle-question"></i></span>
+                <i class="fa-solid fa-people-arrows text-slate-400 text-sm"></i>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-500 line-clamp-1">대화·대립 연출 Over-the-shoulder</p>
+          </button>
+
+          <!-- 더치 앵글 (추가) -->
+          <button type="button" data-cat="cinematic" data-shot="dutchAngle" class="shot-card p-3 rounded-xl border border-slate-200 hover:border-indigo-300 text-left transition flex flex-col justify-between group relative">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-slate-800 group-hover:text-indigo-600">더치 앵글 (기울임)</span>
+              <div class="flex items-center space-x-1.5">
+                <span class="help-btn text-[11px] text-slate-400 hover:text-indigo-600 p-0.5 rounded cursor-pointer" data-shot-help="dutchAngle" title="쉬운 설명 보기"><i class="fa-regular fa-circle-question"></i></span>
+                <i class="fa-solid fa-mobile-screen-button rotate-12 text-slate-400 text-sm"></i>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-500 line-clamp-1">긴장·혼란 틴트 샷 (Tilted angle)</p>
+          </button>
+
+          <!-- 어안 / 초광각 렌즈 (추가) -->
+          <button type="button" data-cat="cinematic" data-shot="fisheyeWide" class="shot-card p-3 rounded-xl border border-slate-200 hover:border-indigo-300 text-left transition flex flex-col justify-between group relative">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-slate-800 group-hover:text-indigo-600">광각·어안 왜곡</span>
+              <div class="flex items-center space-x-1.5">
+                <span class="help-btn text-[11px] text-slate-400 hover:text-indigo-600 p-0.5 rounded cursor-pointer" data-shot-help="fisheyeWide" title="쉬운 설명 보기"><i class="fa-regular fa-circle-question"></i></span>
+                <i class="fa-solid fa-expand text-slate-400 text-sm"></i>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-500 line-clamp-1">Ultra wide / Fisheye dynamic</p>
+          </button>
+
+          <!-- 얕은 심도 / 아웃포커싱 (추가) -->
+          <button type="button" data-cat="cinematic" data-shot="shallowDof" class="shot-card p-3 rounded-xl border border-slate-200 hover:border-indigo-300 text-left transition flex flex-col justify-between group relative">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-slate-800 group-hover:text-indigo-600">아웃포커싱 (보케)</span>
+              <div class="flex items-center space-x-1.5">
+                <span class="help-btn text-[11px] text-slate-400 hover:text-indigo-600 p-0.5 rounded cursor-pointer" data-shot-help="shallowDof" title="쉬운 설명 보기"><i class="fa-regular fa-circle-question"></i></span>
+                <i class="fa-solid fa-circle-dot text-slate-400 text-sm"></i>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-500 line-clamp-1">인물 선명 + 배경 흐림 (Bokeh)</p>
+          </button>
+        </div>
+      </div>
+
+      <!-- 3. CHARACTER SHEET / MODEL SHEET MODE -->
+      <div class="bg-gradient-to-r from-violet-50 to-indigo-50 border border-indigo-200 p-5 rounded-2xl shadow-sm transition">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center space-x-2">
+            <span class="w-6 h-6 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs font-bold">3</span>
+            <div>
+              <h2 class="text-sm font-bold text-indigo-950">캐릭터 시트 (Character Sheet Mode)</h2>
+              <p class="text-[11px] text-indigo-700">다양한 각도와 표정을 하나의 이미지에 종합 설계</p>
+            </div>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="characterSheetToggle" class="sr-only peer">
+            <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+          </label>
+        </div>
+
+        <div id="characterSheetOptions" class="space-y-3 hidden pt-2 border-t border-indigo-100">
+          <p class="text-xs text-indigo-900">시트에 포함할 턴어라운드 및 요소 (복수 선택):</p>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <label class="flex items-center space-x-2 text-xs bg-white p-2 rounded-lg border border-indigo-200 cursor-pointer hover:bg-indigo-50">
+              <input type="checkbox" name="sheetAngle" value="turnaround" checked class="rounded text-indigo-600 focus:ring-indigo-500">
+              <span class="text-slate-700 font-medium">3단 턴어라운드</span>
+            </label>
+            <label class="flex items-center space-x-2 text-xs bg-white p-2 rounded-lg border border-indigo-200 cursor-pointer hover:bg-indigo-50">
+              <input type="checkbox" name="sheetAngle" value="expressions" checked class="rounded text-indigo-600 focus:ring-indigo-500">
+              <span class="text-slate-700 font-medium">표정 모음 (4종)</span>
+            </label>
+            <label class="flex items-center space-x-2 text-xs bg-white p-2 rounded-lg border border-indigo-200 cursor-pointer hover:bg-indigo-50">
+              <input type="checkbox" name="sheetAngle" value="costumeDetails" checked class="rounded text-indigo-600 focus:ring-indigo-500">
+              <span class="text-slate-700 font-medium">의상 & 소품 디테일</span>
+            </label>
+            <label class="flex items-center space-x-2 text-xs bg-white p-2 rounded-lg border border-indigo-200 cursor-pointer hover:bg-indigo-50">
+              <input type="checkbox" name="sheetAngle" value="poses" class="rounded text-indigo-600 focus:ring-indigo-500">
+              <span class="text-slate-700 font-medium">동적 액션 포즈</span>
+            </label>
+          </div>
+          <div class="flex items-center space-x-2 pt-1">
+            <span class="text-xs text-indigo-800 font-medium">배경 처리:</span>
+            <select id="sheetBackground" class="text-xs bg-white border border-indigo-200 rounded-md py-1 px-2 text-slate-700 focus:outline-none">
+              <option value="white">깔끔한 화이트 배경 (Clean white background)</option>
+              <option value="neutral">중립 회색 스튜디오 (Neutral gray studio)</option>
+              <option value="grid">투시 그리드 배경 (Perspective grid line)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. WEBTOON STYLE & LIGHTING ACCENTS -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm transition hover:shadow">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center space-x-2">
+            <span class="w-6 h-6 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold">4</span>
+            <h2 class="text-sm font-bold text-slate-800">웹툰 화풍 및 연출 디테일</h2>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">웹툰 아트 스타일</label>
+            <select id="webtoonStyle" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+              <option value="koreanWebtoon">한국 웹툰 스타일 (K-Webtoon art style)</option>
+              <option value="actionManhwa">액션 판타지 만화 (Action Shonen Manhwa)</option>
+              <option value="romanceFantasy">로맨스 판타지 (Rom-Fan glamorous style)</option>
+              <option value="celShading">선명한 셀 채색 (Crisp lineart, cel shading)</option>
+              <option value="animeIllustration">고화질 애니메이션 일러스트 (Anime Key Visual)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">조명 & 분위기</label>
+            <select id="lightingStyle" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+              <option value="dramatic">드라마틱 림라이트 (Dramatic rim lighting)</option>
+              <option value="cinematic">시네마틱 자연광 (Cinematic soft daylight)</option>
+              <option value="moodyDark">어두운 분위기 / 역광 (Moody dark silhouette)</option>
+              <option value="brightStudio">화사한 스튜디오 조명 (Bright even lighting)</option>
+              <option value="cyberNeon">네온 사이버 조명 (Vibrant neon glow)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">추가 캐릭터 묘사 (직접 입력)</label>
+            <input type="text" id="customSubjectInput" placeholder="예: 은발 벽안의 소년, 검은 코트" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- RIGHT COLUMN: PROMPT OUTPUT & ACTIONS (5 cols) -->
+    <section class="lg:col-span-5 flex flex-col space-y-4">
+
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col flex-1 p-5 overflow-hidden">
+        
+        <!-- Header with Language Selector & Status -->
+        <div class="flex items-center justify-between pb-3 border-b border-slate-200 mb-3">
+          <div class="flex items-center space-x-2">
+            <i class="fa-solid fa-wand-magic-sparkles text-indigo-600 text-sm"></i>
+            <h3 class="text-sm font-bold text-slate-900">생성된 실시간 프롬프트</h3>
+          </div>
+
+          <!-- Language Switcher Tabs -->
+          <div class="inline-flex p-1 bg-slate-100 rounded-xl">
+            <button id="langEnBtn" class="px-3 py-1 rounded-lg text-xs font-bold transition bg-white text-indigo-600 shadow-xs">
+              English
+            </button>
+            <button id="langKoBtn" class="px-3 py-1 rounded-lg text-xs font-bold transition text-slate-500 hover:text-slate-900">
+              한국어
+            </button>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
+          <span class="flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            실시간 직접 편집 가능 (타이핑 즉시 적용)
+          </span>
+          <span id="charCount" class="font-mono text-slate-400">0자</span>
+        </div>
+
+        <!-- Editable Prompt Box -->
+        <div class="relative flex-1 flex flex-col">
+          <textarea id="promptTextarea" rows="13" class="w-full flex-1 p-4 text-xs sm:text-sm font-mono leading-relaxed bg-slate-900 text-emerald-300 rounded-xl border border-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none resize-none scrollbar-thin shadow-inner" placeholder="옵션을 선택하거나 이곳에 직접 프롬프트를 수정하세요..."></textarea>
+        </div>
+
+        <!-- Notification Toast (Inside Card) -->
+        <div id="toastMessage" class="hidden transition duration-200 ease-out mt-3 py-2 px-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs flex items-center justify-between">
+          <span class="flex items-center gap-1.5 font-medium">
+            <i class="fa-solid fa-circle-check text-emerald-500"></i>
+            <span id="toastText">클립보드에 프롬프트가 복사되었습니다!</span>
+          </span>
+        </div>
+
+        <!-- Action Buttons: Translate, Copy, Quick Negative Prompt -->
+        <div class="pt-4 border-t border-slate-200 mt-4 space-y-2.5">
+          <div class="grid grid-cols-2 gap-2">
+            <!-- Language Toggle Action Button -->
+            <button id="toggleLangActionBtn" type="button" class="flex items-center justify-center space-x-2 py-2.5 px-3 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition shadow-2xs active:scale-[0.98]">
+              <i class="fa-solid fa-language text-sm text-indigo-600"></i>
+              <span id="toggleLangText">한/영 전환 (EN ⇄ KO)</span>
+            </button>
+
+            <!-- Copy Button -->
+            <button id="copyPromptBtn" type="button" class="flex items-center justify-center space-x-2 py-2.5 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold text-xs transition shadow-md shadow-indigo-200 active:scale-[0.98]">
+              <i class="fa-regular fa-copy text-sm"></i>
+              <span>프롬프트 복사</span>
+            </button>
+          </div>
+
+          <!-- Negative Prompt Accordion for convenience -->
+          <details class="group bg-slate-50 rounded-xl border border-slate-200 p-2.5 text-xs text-slate-600">
+            <summary class="font-medium cursor-pointer list-none flex items-center justify-between select-none">
+              <span class="flex items-center gap-1.5 font-semibold text-slate-700">
+                <i class="fa-solid fa-ban text-rose-500"></i> 추천 네거티브 프롬프트 (Negative Prompt)
+              </span>
+              <i class="fa-solid fa-chevron-down text-[10px] transition group-open:rotate-180"></i>
+            </summary>
+            <div class="pt-2 text-[11px] text-slate-500 border-t border-slate-200 mt-2 font-mono break-all leading-normal flex items-center justify-between gap-2">
+              <span id="negativePromptText">low quality, worst quality, bad anatomy, deformed limbs, extra fingers, poorly drawn face, bad proportions, blurry, watermark, text, cropped head</span>
+              <button id="copyNegBtn" type="button" class="text-xs shrink-0 text-indigo-600 hover:text-indigo-800 font-semibold underline">복사</button>
+            </div>
+          </details>
+        </div>
+
+      </div>
+
+      <!-- Quick Tips Box -->
+      <div class="bg-indigo-50/70 border border-indigo-100 rounded-xl p-3.5 text-xs text-indigo-900 leading-relaxed">
+        <p class="font-bold flex items-center gap-1.5 mb-1 text-indigo-950">
+          <i class="fa-regular fa-lightbulb text-amber-500"></i> 웹툰 프롬프트 팁
+        </p>
+        <p class="text-[11px] text-indigo-800">
+          Midjourney, Stable Diffusion, NAI 등에 사용 시 참조 이미지를 먼저 업로드한 후, 생성된 영어 프롬프트와 이미지 링크(`url`)를 결합하면 일관성 높은 컷을 손쉽게 완성할 수 있습니다.
+        </p>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Easy Explanation Modal (Kid & Beginner Friendly) -->
+  <div id="guideModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+    <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[85vh] animate-in fade-in zoom-in duration-150">
+      
+      <!-- Modal Header -->
+      <div class="bg-gradient-to-r from-indigo-600 to-violet-600 p-4 text-white flex items-center justify-between">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center text-lg">
+            <span id="modalIcon">🎬</span>
+          </div>
+          <div>
+            <h3 id="modalTitle" class="text-sm sm:text-base font-bold">카메라 구도 쉽게 알아보기</h3>
+            <p id="modalSubtitle" class="text-[11px] text-indigo-100">초등학생도 1분이면 이해하는 만화 속 카메라 연출!</p>
+          </div>
+        </div>
+        <button id="closeModalBtn" class="text-white/80 hover:text-white w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white/10 transition">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-5 overflow-y-auto space-y-4 scrollbar-thin text-slate-700 text-xs sm:text-sm">
+        
+        <!-- Easy Analogy Section -->
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-3.5 flex items-start space-x-3">
+          <i class="fa-solid fa-wand-magic text-amber-600 text-lg mt-0.5"></i>
+          <div>
+            <span class="font-bold text-amber-950 block mb-1">쉽게 말하면 어떤 모습인가요?</span>
+            <p id="modalEasyExplain" class="text-amber-900 leading-relaxed font-medium">
+              설명이 들어갈 자리입니다.
+            </p>
+          </div>
+        </div>
+
+        <!-- Webtoon Use Case -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-1.5">
+          <span class="font-bold text-slate-900 flex items-center gap-1.5">
+            <i class="fa-solid fa-book-open text-indigo-600"></i> 웹툰에서 언제 쓸까요?
+          </span>
+          <p id="modalWhenToUse" class="text-slate-600 leading-relaxed">
+            웹툰 사용 장면 설명
+          </p>
+        </div>
+
+        <!-- Fun Tip for Kids -->
+        <div class="bg-indigo-50/60 border border-indigo-100 rounded-xl p-3 space-y-1">
+          <span class="font-bold text-indigo-950 flex items-center gap-1.5 text-xs">
+            <i class="fa-regular fa-smile text-indigo-600"></i> 꿀팁 한 줄!
+          </span>
+          <p id="modalTip" class="text-indigo-800 text-[11px] leading-relaxed">
+            재미있는 연출 팁
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-3.5 bg-slate-50 border-t border-slate-200 flex justify-end">
+        <button id="modalSelectApplyBtn" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-xs shadow-md shadow-indigo-200 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-check"></i>
+          <span>이 구도 선택하기</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Dictionary of Shot definitions in EN and KO
+    const SHOT_DEFINITIONS = {
+      fullBody: {
+        en: "full body shot, entire character visible from head to toe, complete figure stance",
+        ko: "전신 샷, 머리부터 발끝까지 전체 모습 묘사, 전신 포즈"
+      },
+      upperBody: {
+        en: "upper body medium shot, waist-up composition, clear chest and head view",
+        ko: "상반신 미디엄 샷, 허리 위 구도, 안정된 상체와 헤드 뷰"
+      },
+      closeUp: {
+        en: "close-up face portrait, facial focus, detailed emotive eyes, expressive face",
+        ko: "얼굴 클로즈업 포트레이트, 디테일한 눈동자와 표정 집중 연출"
+      },
+      extremeCloseUp: {
+        en: "extreme close-up macro shot, dramatic tight crop on eyes and expression, high emotional tension",
+        ko: "익스트림 클로즈업 매크로 샷, 눈과 표정에 극단적으로 밀착된 구도, 극적인 긴장감"
+      },
+      longShot: {
+        en: "long shot, wide establishing scenic view, character integrated into wide atmospheric environment",
+        ko: "멀리서 보는 장면(원경), 웅장한 배경과 어우러진 넓은 공간감의 샷"
+      },
+      highAngle: {
+        en: "high angle shot, looking down from above, bird's-eye perspective, top-down view",
+        ko: "위에서 내려다보는 장면, 하이앵글 및 버드아이 뷰 투시"
+      },
+      lowAngle: {
+        en: "low angle shot, dramatic looking up from below, worm's-eye view, imposing perspective",
+        ko: "아래에서 위로 올려다보는 장면, 로우앵글 및 웜스아이 뷰의 역동적 연출"
+      },
+      threeQuarter: {
+        en: "three-quarter angle view, flattering dynamic 3/4 portrait perspective, three-dimensional depth",
+        ko: "3/4 반측면 앵글, 가장 입체적이고 역동적인 3/4 캐릭터 투시"
+      },
+      profile: {
+        en: "side profile view, 90-degree lateral angle, sharp profile contour",
+        ko: "옆모습, 90도 측면 프로필 앵글, 선명한 옆라인 윤곽"
+      },
+      front: {
+        en: "front view, straight frontal angle, centered composition, direct eye contact with viewer",
+        ko: "앞모습, 정면 시선 앵글, 안정적인 정면 대칭 구도"
+      },
+      back: {
+        en: "back view, seen from behind, looking away from camera, dorsal view",
+        ko: "뒷모습, 뒤에서 바라본 장면, 카메라를 등진 구도"
+      },
+      overTheShoulder: {
+        en: "over-the-shoulder shot (OTS), third-person conversational perspective, cinematic narrative framing",
+        ko: "어깨 너머 샷(OTS), 대화 상대의 어깨 뒤에서 바라보는 시점, 드라마틱한 대치 구도"
+      },
+      dutchAngle: {
+        en: "dutch angle shot, canted camera frame, tilted dynamic horizon, psychological suspense and tension",
+        ko: "더치 앵글(기울어진 구도), 비스듬한 카메라 앵글, 극적인 긴장감과 심리적 서스펜스"
+      },
+      fisheyeWide: {
+        en: "ultra-wide fisheye lens perspective, extreme dynamic barrel distortion, high kinetic energy",
+        ko: "초광각 어안 렌즈 왜곡, 역동적인 공간 투시와 강렬한 액션 에너지"
+      },
+      shallowDof: {
+        en: "shallow depth of field, sharp character subject focus, creamy bokeh background blur",
+        ko: "얕은 심도(아웃포커싱), 인물 초점 강조 및 배경 보케 블러 효과"
+      }
+    };
+
+    // Kid-Friendly / Easy Explanations for all camera shots
+    const EASY_SHOT_GUIDES = {
+      fullBody: {
+        title: "전신 (Full Body)",
+        icon: "🧍‍♂️",
+        easy: "머리 끝부터 신발 끝까지 캐릭터의 몸 전체가 한 화면에 쏙 다 보이는 구도예요.",
+        when: "주인공이 멋진 새 옷을 입었을 때나, 키와 전체적인 체형을 처음 보여줄 때 자주 쓰여요.",
+        tip: "신발 디자인이나 바지 핏까지 빠짐없이 다 표현할 수 있어요!"
+      },
+      upperBody: {
+        title: "상반신 (Upper Body / 미디엄 샷)",
+        icon: "🙋",
+        easy: "허리 위쪽으로 가슴과 머리, 손짓이 또렷하게 보이는 구도예요. TV 뉴스 아나운서처럼요!",
+        when: "친구와 서서 편안하게 대화하거나, 손으로 무언가를 쥐고 있을 때 가장 자연스럽게 써요.",
+        tip: "웹툰에서 가장 많이 쓰이는 가장 편안하고 안정적인 구도랍니다."
+      },
+      closeUp: {
+        title: "얼굴 클로즈업 (Close-up)",
+        icon: "😃",
+        easy: "화면에 얼굴이 꽉 차게 가까이 다가온 구도예요.",
+        when: "주인공이 기뻐서 활짝 웃거나, 슬퍼서 눈물을 흘릴 때처럼 표정을 똑똑히 보여주고 싶을 때 써요.",
+        tip: "반짝이는 눈동자와 눈썹 모양까지 세밀하게 그릴 수 있어요."
+      },
+      extremeCloseUp: {
+        title: "익스트림 클로즈업 (초밀착 확대)",
+        icon: "👁️",
+        easy: "얼굴 전체도 아니고, 오직 '눈'이나 '입술'만 화면에 거대하게 돋보기로 보듯 비추는 샷이에요.",
+        when: "무서운 비밀을 알아챘을 때 동공이 흔들리거나, 결전 직전 주먹을 꽉 쥐고 이를 악물 때 써요.",
+        tip: "보는 사람의 심장을 쿵쾅거리게 만드는 긴장감 만점 구도예요!"
+      },
+      longShot: {
+        title: "멀리서 보는 장면 (원경 / Long Shot)",
+        icon: "🏞️",
+        easy: "드론을 타고 멀리서 넓은 풍경과 함께 작은 주인공을 한 번에 바라보는 구도예요.",
+        when: "주인공이 거대한 마법 성에 도착했거나, 드넓은 사막이나 학교 운동장에 홀로 서 있을 때 써요.",
+        tip: "주인공이 지금 어떤 웅장한 장소에 있는지 분위기를 한눈에 전달해 줘요."
+      },
+      highAngle: {
+        title: "위에서 보는 장면 (하이앵글 / 새의 시선)",
+        icon: "🦅",
+        easy: "하늘을 나는 새나 키 큰 거인이 아래에 있는 주인공을 내려다보는 듯한 각도예요.",
+        when: "주인공이 슬프거나, 무서워서 혼자 움츠러들어 작고 안쓰러워 보일 때 주로 써요.",
+        tip: "바닥에 떨어진 단서나 지도를 함께 보여줄 때도 아주 좋아요."
+      },
+      lowAngle: {
+        title: "아래서 보는 장면 (로우앵글 / 개미의 시선)",
+        icon: "🐜",
+        easy: "바닥에 엎드린 개미가 위를 올려다보듯, 카메라를 땅바닥에 대고 위로 치켜올려 찍는 각도예요.",
+        when: "영웅이 악당 앞에 당당히 등장하거나, 주인공이 엄청나게 강하고 멋져 보이고 싶을 때 써요.",
+        tip: "다리가 길어 보이고 키가 10배는 웅장하고 거대해 보인답니다!"
+      },
+      front: {
+        title: "앞모습 (정면 샷)",
+        icon: "🪪",
+        easy: "증명사진이나 거울을 볼 때처럼 캐릭터가 나를 똑바로 쳐다보는 똑바른 각도예요.",
+        when: "독자와 눈을 딱 마주치며 중요한 대사를 하거나, 캐릭터 소개 카드를 만들 때 좋아요.",
+        tip: "얼굴의 좌우 대칭과 복장 디자인을 가장 정직하게 보여줄 수 있어요."
+      },
+      threeQuarter: {
+        title: "3/4 반측면 (얼짱 각도)",
+        icon: "😎",
+        easy: "정면도 아니고 완전 옆모습도 아닌, 살짝 45도 돌린 우리가 셀카 찍을 때 쓰는 얼짱 각도예요!",
+        when: "만화 주인공이 가장 입체적이고 잘생기거나 예뻐 보이게 그리고 싶을 때 무조건 쓰는 황금 각도예요.",
+        tip: "코의 오똑함과 반대쪽 눈까지 입체적으로 다 보여서 만화가들이 가장 사랑하는 각도예요."
+      },
+      profile: {
+        title: "옆모습 (90도 측면)",
+        icon: "👤",
+        easy: "동전 속 사람 그림처럼 정확히 옆 얼굴(코끝, 턱선, 귀)만 일직선으로 보여주는 각도예요.",
+        when: "바람을 맞으며 먼 곳을 생각에 잠겨 바라보거나, 깊은 고민을 할 때 분위기 있게 연출돼요.",
+        tip: "코와 턱선의 날렵한 실루엣이 멋지게 살아나요."
+      },
+      back: {
+        title: "뒷모습 (등 돌린 샷)",
+        icon: "🚶",
+        easy: "카메라를 등지고 저 멀리 걸어가거나 앞을 내다보는 등 뒤 모습이에요.",
+        when: "쓸쓸히 떠나는 뒷모습이나, 거대한 적을 마주보고 전장으로 걸어 들어가는 비장한 결의를 보일 때 써요.",
+        tip: "등 뒤에 메고 있는 망토, 검, 날개 같은 멋진 소품을 강조할 때 최고예요!"
+      },
+      overTheShoulder: {
+        title: "어깨 너머 샷 (OTS 샷)",
+        icon: "👥",
+        easy: "앞사람의 어깨 뒤쪽에서 건너편에 있는 상대방을 훔쳐보듯 촬영하는 영화 같은 구도예요.",
+        when: "두 인물이 마주보고 진지하게 대화하거나, 라이벌끼리 팽팽하게 눈싸움을 할 때 필수예요.",
+        tip: "실제 그 자리에 내가 서서 둘의 대화를 지켜보는 것처럼 생생해져요."
+      },
+      dutchAngle: {
+        title: "더치 앵글 (카메라 기울이기)",
+        icon: "📐",
+        easy: "카메라를 똑바로 들지 않고 삐딱하게 비스듬히 기울여서 찍는 구도예요.",
+        when: "지진이 나거나 폭발이 일어났을 때, 혹은 주인공이 악몽을 꾸며 머리가 어지러울 때 써요.",
+        tip: "보는 사람에게 '어? 무슨 큰일이 일어날 것 같아!' 하는 아슬아슬한 긴장감을 줘요."
+      },
+      fisheyeWide: {
+        title: "초광각·어안 렌즈 왜곡",
+        icon: "🔮",
+        easy: "유리구슬이나 동그란 현관문 렌즈로 보듯 화면 중앙이 불룩 튀어나오고 넓게 휘어지는 마법 렌즈예요.",
+        when: "주먹이나 발차기가 화면을 뚫고 나올 듯 박력 넘치는 격투 씬을 연출할 때 최고예요!",
+        tip: "카메라에 가까운 것은 엄청 커 보이고, 먼 것은 쪼끄매져서 역동감이 폭발해요."
+      },
+      shallowDof: {
+        title: "아웃포커싱 (보케 효과)",
+        icon: "✨",
+        easy: "주인공만 선명하게 똑똑히 보이고, 뒤쪽 배경이나 불빛은 부드럽고 몽환적으로 흐려지는 효과예요.",
+        when: "시끄러운 교실이나 번화가 속에서 오직 주인공에게만 시선을 집중시키고 싶을 때 써요.",
+        tip: "배경의 가로등이나 조명이 보석처럼 동글동글 예쁘게 번져서 감성적인 분위기가 돼요."
+      }
+    };
+
+    const SHEET_DEFINITIONS = {
+      turnaround: {
+        en: "multiple character turnaround angles (front view, side profile view, back view)",
+        ko: "다각도 3단 턴어라운드 (정면, 측면, 후면)"
+      },
+      expressions: {
+        en: "multiple facial expressions chart (neutral, joyful smile, angry combat, surprised)",
+        ko: "표정 모음 4종 차트 (무표정, 미소, 분노 전투, 놀람)"
+      },
+      costumeDetails: {
+        en: "isolated costume detail breakdown, accessory close-ups, weapons and gear references",
+        ko: "의상 부위별 상세 브레이크다운 및 액세서리 클로즈업 디테일"
+      },
+      poses: {
+        en: "dynamic action poses sheet, signature combat posture, gesture sketches",
+        ko: "동적 액션 포즈 및 시그니처 제스처 스케치"
+      }
+    };
+
+    const STYLES = {
+      koreanWebtoon: {
+        en: "Korean webtoon digital manhwa style, clean crisp line art, modern high quality digital coloring",
+        ko: "한국 웹툰 스타일, 깔끔하고 선명한 라인아트, 트렌디한 디지털 채색"
+      },
+      actionManhwa: {
+        en: "action fantasy manhwa illustration, dynamic high-octane aura, intense visual impact",
+        ko: "액션 판타지 만화 화풍, 역동적인 이펙트와 임팩트 있는 비주얼"
+      },
+      romanceFantasy: {
+        en: "glamorous romance fantasy manhwa visual, sparkling ambient dust, delicate shimmering aesthetics",
+        ko: "로맨스 판타지 만화 비주얼, 화려하고 반짝이는 색감과 섬세한 묘사"
+      },
+      celShading: {
+        en: "crisp cell shading, solid ink outlines, anime animation production cel style",
+        ko: "선명한 셀 채색, 깔끔한 잉크 외곽선, 고품질 애니메이션 원화 감성"
+      },
+      animeIllustration: {
+        en: "high-end Japanese anime key visual, masterpiece illustration, polished rendering",
+        ko: "고화질 애니메이션 키비주얼, 정밀하게 완성된 마스터피스 일러스트"
+      }
+    };
+
+    const LIGHTINGS = {
+      dramatic: {
+        en: "dramatic rim lighting, deep chiaroscuro contrast, volumetric sharp highlights",
+        ko: "드라마틱한 림라이트, 깊은 명암 대비, 입체적인 하이라이트"
+      },
+      cinematic: {
+        en: "cinematic soft daylight, natural ambient illumination, gentle subtle shadows",
+        ko: "시네마틱 자연광, 부드러운 환경광 조명, 자연스러운 음영"
+      },
+      moodyDark: {
+        en: "moody dark atmosphere, backlit silhouette, subtle edge highlights in shadows",
+        ko: "어두운 분위기, 역광 실루엣, 묵직하고 신비로운 그림자 톤"
+      },
+      brightStudio: {
+        en: "bright balanced studio lighting, softbox illumination, clean clarity without harsh cast shadows",
+        ko: "화사한 스튜디오 조명, 소프트박스 균일 조명, 잡음 없는 깨끗한 화질"
+      },
+      cyberNeon: {
+        en: "vibrant neon cyberpunk lighting, cyan and magenta dual rim illumination",
+        ko: "사이버 네온 조명, 시안 및 마젠타 듀얼 림라이트 발광 연출"
+      }
+    };
+
+    // State tracking
+    const state = {
+      currentLang: 'en', // 'en' or 'ko'
+      hasUploadedImage: false,
+      uploadedFileName: '',
+      includeRefPrompt: true,
+      refIntensity: 'balanced',
+      selectedShots: new Set(['fullBody']),
+      isCharacterSheet: false,
+      sheetOptions: new Set(['turnaround', 'expressions', 'costumeDetails']),
+      sheetBg: 'white',
+      webtoonStyle: 'koreanWebtoon',
+      lightingStyle: 'dramatic',
+      customSubject: '',
+      manualEdited: {
+        en: false,
+        ko: false
+      },
+      prompts: {
+        en: '',
+        ko: ''
+      }
+    };
+
+    // DOM Elements
+    const dropZone = document.getElementById('dropZone');
+    const imageInput = document.getElementById('imageInput');
+    const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+    const uploadPreviewWrapper = document.getElementById('uploadPreviewWrapper');
+    const imagePreview = document.getElementById('imagePreview');
+    const imageFileName = document.getElementById('imageFileName');
+    const removeImgBtn = document.getElementById('removeImgBtn');
+    const includeRefToggle = document.getElementById('includeRefToggle');
+    const refIntensity = document.getElementById('refIntensity');
+
+    const shotGrid = document.getElementById('shotGrid');
+    const characterSheetToggle = document.getElementById('characterSheetToggle');
+    const characterSheetOptions = document.getElementById('characterSheetOptions');
+    const sheetBackground = document.getElementById('sheetBackground');
+
+    const webtoonStyle = document.getElementById('webtoonStyle');
+    const lightingStyle = document.getElementById('lightingStyle');
+    const customSubjectInput = document.getElementById('customSubjectInput');
+
+    const langEnBtn = document.getElementById('langEnBtn');
+    const langKoBtn = document.getElementById('langKoBtn');
+    const promptTextarea = document.getElementById('promptTextarea');
+    const charCount = document.getElementById('charCount');
+    const toggleLangActionBtn = document.getElementById('toggleLangActionBtn');
+    const copyPromptBtn = document.getElementById('copyPromptBtn');
+    const copyNegBtn = document.getElementById('copyNegBtn');
+    const toastMessage = document.getElementById('toastMessage');
+    const toastText = document.getElementById('toastText');
+    const resetAllBtn = document.getElementById('resetAllBtn');
+
+    // Guide Modal Elements
+    const guideModal = document.getElementById('guideModal');
+    const openGuideBtn = document.getElementById('openGuideBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const modalIcon = document.getElementById('modalIcon');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalSubtitle = document.getElementById('modalSubtitle');
+    const modalEasyExplain = document.getElementById('modalEasyExplain');
+    const modalWhenToUse = document.getElementById('modalWhenToUse');
+    const modalTip = document.getElementById('modalTip');
+    const modalSelectApplyBtn = document.getElementById('modalSelectApplyBtn');
+    let currentModalShotKey = 'fullBody';
+
+    function openHelpForShot(shotKey) {
+      const info = EASY_SHOT_GUIDES[shotKey] || EASY_SHOT_GUIDES['fullBody'];
+      currentModalShotKey = shotKey;
+      modalIcon.textContent = info.icon;
+      modalTitle.textContent = info.title;
+      modalSubtitle.textContent = `초등학생도 1분이면 이해하는 만화 속 카메라 연출!`;
+      modalEasyExplain.textContent = info.easy;
+      modalWhenToUse.textContent = info.when;
+      modalTip.textContent = info.tip;
+      guideModal.classList.remove('hidden');
+    }
+
+    function closeGuideModal() {
+      guideModal.classList.add('hidden');
+    }
+
+    openGuideBtn.addEventListener('click', () => {
+      // Open with currently selected or first shot
+      const firstSelected = Array.from(state.selectedShots)[0] || 'fullBody';
+      openHelpForShot(firstSelected);
+    });
+
+    closeModalBtn.addEventListener('click', closeGuideModal);
+    guideModal.addEventListener('click', (e) => {
+      if (e.target === guideModal) closeGuideModal();
+    });
+
+    modalSelectApplyBtn.addEventListener('click', () => {
+      if (currentModalShotKey) {
+        state.selectedShots.add(currentModalShotKey);
+        const btn = document.querySelector(`button[data-shot="${currentModalShotKey}"]`);
+        if (btn) btn.classList.add('active');
+        state.manualEdited[state.currentLang] = false;
+        updatePrompts('force');
+        showToast(`'${EASY_SHOT_GUIDES[currentModalShotKey].title}' 구도가 추가되었습니다!`);
+      }
+      closeGuideModal();
+    });
+
+    // Category Tabs Logic
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => {
+          b.classList.remove('border-indigo-600', 'text-indigo-600', 'font-semibold');
+          b.classList.add('border-transparent', 'text-slate-500');
+        });
+        btn.classList.add('border-indigo-600', 'text-indigo-600', 'font-semibold');
+        btn.classList.remove('border-transparent', 'text-slate-500');
+
+        const cat = btn.getAttribute('data-cat');
+        document.querySelectorAll('#shotGrid button[data-shot]').forEach(card => {
+          if (cat === 'all' || card.getAttribute('data-cat') === cat) {
+            card.classList.remove('hidden');
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+      });
+    });
+
+    function generatePromptText(targetLang) {
+      const parts = [];
+
+      // 1. Reference Image Prompt Instruction (Requested feature)
+      if (state.includeRefPrompt) {
+        if (targetLang === 'en') {
+          let refText = "[Reference Image: Please strictly follow the character design, facial features, hairstyle, and wardrobe of the uploaded reference image]";
+          if (state.refIntensity === 'strict') {
+            refText = "[Reference Image: Strict 1:1 match with uploaded reference image, preserve exact face structure, eyes, hair color and outfit]";
+          } else if (state.refIntensity === 'creative') {
+            refText = "[Reference Image: Based on uploaded image design as aesthetic motif, maintain character persona]";
+          }
+          parts.push(refText);
+        } else {
+          let refText = "[참조 이미지 반영: 업로드된 참조 이미지의 캐릭터 외모, 이목구비, 헤어스타일, 의상 설정을 정밀하게 준수하여 일관성 있게 생성]";
+          if (state.refIntensity === 'strict') {
+            refText = "[참조 이미지 반영: 업로드된 이미지와 1:1 완벽 일치, 얼굴 구조, 눈빛, 머리색, 복장 완벽 유지]";
+          } else if (state.refIntensity === 'creative') {
+            refText = "[참조 이미지 반영: 업로드된 이미지의 분위기와 모티브를 계승하며 캐릭터 개성 유지]";
+          }
+          parts.push(refText);
+        }
+      }
+
+      // 2. Custom subject if provided
+      if (state.customSubject.trim() !== '') {
+        parts.push(state.customSubject.trim());
+      } else {
+        if (targetLang === 'en') {
+          parts.push("webtoon character protagonist");
+        } else {
+          parts.push("웹툰 캐릭터 주인공");
+        }
+      }
+
+      // 3. Camera Shots & Composition OR Character Sheet
+      if (state.isCharacterSheet) {
+        if (targetLang === 'en') {
+          let sheetDesc = "comprehensive character design model sheet, concept art reference sheet";
+          const subFeatures = [];
+          state.sheetOptions.forEach(opt => {
+            if (SHEET_DEFINITIONS[opt]) subFeatures.push(SHEET_DEFINITIONS[opt].en);
+          });
+          if (subFeatures.length > 0) {
+            sheetDesc += `, featuring ${subFeatures.join(', ')}`;
+          }
+
+          if (state.sheetBg === 'white') sheetDesc += ", solid plain white background, isolated cleanly";
+          else if (state.sheetBg === 'neutral') sheetDesc += ", neutral studio gray backdrop";
+          else if (state.sheetBg === 'grid') sheetDesc += ", subtle architectural perspective grid background";
+
+          parts.push(sheetDesc);
+        } else {
+          let sheetDesc = "종합 캐릭터 디자인 모델 시트, 설정 원화 레퍼런스 시트";
+          const subFeatures = [];
+          state.sheetOptions.forEach(opt => {
+            if (SHEET_DEFINITIONS[opt]) subFeatures.push(SHEET_DEFINITIONS[opt].ko);
+          });
+          if (subFeatures.length > 0) {
+            sheetDesc += ` (${subFeatures.join(' + ')})`;
+          }
+
+          if (state.sheetBg === 'white') sheetDesc += ", 깔끔한 단색 화이트 배경, 외곽 분리";
+          else if (state.sheetBg === 'neutral') sheetDesc += ", 중립적인 스튜디오 그레이 배경";
+          else if (state.sheetBg === 'grid') sheetDesc += ", 투시 그리드 배경선 포함";
+
+          parts.push(sheetDesc);
+        }
+      } else {
+        // Normal Shot Compositions
+        const shotPhrases = [];
+        state.selectedShots.forEach(shotKey => {
+          if (SHOT_DEFINITIONS[shotKey]) {
+            shotPhrases.push(SHOT_DEFINITIONS[shotKey][targetLang]);
+          }
+        });
+
+        if (shotPhrases.length > 0) {
+          parts.push(shotPhrases.join(", "));
+        }
+      }
+
+      // 4. Style & Lighting
+      const styleObj = STYLES[state.webtoonStyle];
+      if (styleObj) {
+        parts.push(styleObj[targetLang]);
+      }
+
+      const lightObj = LIGHTINGS[state.lightingStyle];
+      if (lightObj) {
+        parts.push(lightObj[targetLang]);
+      }
+
+      // 5. High-fidelity webtoon quality tags
+      if (targetLang === 'en') {
+        parts.push("highest quality, sharp focus, 8k resolution webtoon masterwork, vibrant colors, expressive line work");
+      } else {
+        parts.push("최고 화질, 선명한 초점, 8k 해상도 웹툰 마스터피스, 생동감 있는 배색, 감각적인 펜선");
+      }
+
+      return parts.join(targetLang === 'en' ? ", " : ", \n");
+    }
+
+    // Update active prompt display
+    function updatePrompts(trigger = 'auto') {
+      if (!state.manualEdited[state.currentLang] || trigger === 'force') {
+        state.prompts.en = generatePromptText('en');
+        state.prompts.ko = generatePromptText('ko');
+        promptTextarea.value = state.prompts[state.currentLang];
+      }
+      charCount.textContent = `${promptTextarea.value.length}자`;
+    }
+
+    // Shot Selection Clicking
+    shotGrid.addEventListener('click', (e) => {
+      // Check if clicked the question mark help button
+      const helpBtn = e.target.closest('[data-shot-help]');
+      if (helpBtn) {
+        e.stopPropagation();
+        e.preventDefault();
+        const shotKey = helpBtn.getAttribute('data-shot-help');
+        openHelpForShot(shotKey);
+        return;
+      }
+
+      const button = e.target.closest('button[data-shot]');
+      if (!button) return;
+
+      const shotKey = button.getAttribute('data-shot');
+
+      if (state.selectedShots.has(shotKey)) {
+        // Don't allow empty selection if it's the last one
+        if (state.selectedShots.size > 1) {
+          state.selectedShots.delete(shotKey);
+          button.classList.remove('active');
+        }
+      } else {
+        state.selectedShots.add(shotKey);
+        button.classList.add('active');
+      }
+
+      state.manualEdited[state.currentLang] = false;
+      updatePrompts('force');
+    });
+
+    // Character Sheet Toggle
+    characterSheetToggle.addEventListener('change', (e) => {
+      state.isCharacterSheet = e.target.checked;
+      if (state.isCharacterSheet) {
+        characterSheetOptions.classList.remove('hidden');
+      } else {
+        characterSheetOptions.classList.add('hidden');
+      }
+      state.manualEdited[state.currentLang] = false;
+      updatePrompts('force');
+    });
+
+    // Character Sheet Sub-options
+    document.querySelectorAll('input[name="sheetAngle"]').forEach(cb => {
+      cb.addEventListener('change', (e) => {
+        if (e.target.checked) {
+          state.sheetOptions.add(e.target.value);
+        } else {
+          state.sheetOptions.delete(e.target.value);
+        }
+        state.manualEdited[state.currentLang] = false;
+        updatePrompts('force');
+      });
+    });
+
+    sheetBackground.addEventListener('change', (e) => {
+      state.sheetBg = e.target.value;
+      state.manualEdited[state.currentLang] = false;
+      updatePrompts('force');
+    });
+
+    // Style & Lighting Selects
+    webtoonStyle.addEventListener('change', (e) => {
+      state.webtoonStyle = e.target.value;
+      state.manualEdited[state.currentLang] = false;
+      updatePrompts('force');
+    });
+
+    lightingStyle.addEventListener('change', (e) => {
+      state.lightingStyle = e.target.value;
+      state.manualEdited[state.currentLang] = false;
+      updatePrompts('force');
+    });
+
+    // Custom Subject Input (live sync)
+    customSubjectInput.addEventListener('input', (e) => {
+      state.customSubject = e.target.value;
+      state.manualEdited[state.currentLang] = false;
+      updatePrompts('force');
+    });
+
+    // Reference Toggle & Intensity
+    includeRefToggle.addEventListener('change', (e) => {
+      state.includeRefPrompt = e.target.checked;
+      state.manualEdited[state.currentLang] = false;
+      updatePrompts('force');
+    });
+
+    refIntensity.addEventListener('change', (e) => {
+      state.refIntensity = e.target.value;
+      state.manualEdited[state.currentLang] = false;
+      updatePrompts('force');
+    });
+
+    dropZone.addEventListener('click', () => imageInput.click());
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        dropZone.classList.add('border-indigo-500', 'bg-indigo-50');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('border-indigo-500', 'bg-indigo-50');
+      });
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      const files = e.dataTransfer.files;
+      if (files.length > 0 && files[0].type.startsWith('image/')) {
+        handleImageFile(files[0]);
+      }
+    });
+
+    imageInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        handleImageFile(e.target.files[0]);
+      }
+    });
+
+    function handleImageFile(file) {
+      state.hasUploadedImage = true;
+      state.uploadedFileName = file.name;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        imagePreview.src = event.target.result;
+        imageFileName.textContent = file.name;
+        uploadPlaceholder.classList.add('hidden');
+        uploadPreviewWrapper.classList.remove('hidden');
+        uploadPreviewWrapper.classList.add('flex');
+        
+        // Ensure reference toggle is on
+        includeRefToggle.checked = true;
+        state.includeRefPrompt = true;
+        updatePrompts('force');
+        showToast(`이미지 "${file.name}"가 등록되어 프롬프트에 반영되었습니다.`);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    removeImgBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      state.hasUploadedImage = false;
+      state.uploadedFileName = '';
+      imageInput.value = '';
+      imagePreview.src = '';
+      uploadPlaceholder.classList.remove('hidden');
+      uploadPreviewWrapper.classList.add('hidden');
+      uploadPreviewWrapper.classList.remove('flex');
+      updatePrompts('force');
+      showToast('참조 이미지가 해제되었습니다.');
+    });
+
+    // Live editing inside textarea
+    promptTextarea.addEventListener('input', (e) => {
+      state.manualEdited[state.currentLang] = true;
+      state.prompts[state.currentLang] = e.target.value;
+      charCount.textContent = `${e.target.value.length}자`;
+    });
+
+    // Language Toggle buttons
+    function setLanguage(lang) {
+      if (state.currentLang === lang) return;
+      state.currentLang = lang;
+
+      if (lang === 'en') {
+        langEnBtn.classList.add('bg-white', 'text-indigo-600', 'shadow-xs');
+        langEnBtn.classList.remove('text-slate-500');
+        langKoBtn.classList.remove('bg-white', 'text-indigo-600', 'shadow-xs');
+        langKoBtn.classList.add('text-slate-500');
+      } else {
+        langKoBtn.classList.add('bg-white', 'text-indigo-600', 'shadow-xs');
+        langKoBtn.classList.remove('text-slate-500');
+        langEnBtn.classList.remove('bg-white', 'text-indigo-600', 'shadow-xs');
+        langEnBtn.classList.add('text-slate-500');
+      }
+
+      // If other language wasn't manually edited, make sure it is updated
+      if (!state.manualEdited[lang]) {
+        state.prompts[lang] = generatePromptText(lang);
+      }
+
+      promptTextarea.value = state.prompts[lang];
+      charCount.textContent = `${promptTextarea.value.length}자`;
+    }
+
+    langEnBtn.addEventListener('click', () => setLanguage('en'));
+    langKoBtn.addEventListener('click', () => setLanguage('ko'));
+
+    toggleLangActionBtn.addEventListener('click', () => {
+      setLanguage(state.currentLang === 'en' ? 'ko' : 'en');
+    });
+
+    function safeCopy(text) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      let success = false;
+      try {
+        success = document.execCommand('copy');
+      } catch (err) {
+        success = false;
+      }
+      document.body.removeChild(textarea);
+      return success;
+    }
+
+    function showToast(msg) {
+      toastText.textContent = msg;
+      toastMessage.classList.remove('hidden');
+      setTimeout(() => {
+        toastMessage.classList.add('hidden');
+      }, 2500);
+    }
+
+    copyPromptBtn.addEventListener('click', () => {
+      const textToCopy = promptTextarea.value;
+      if (!textToCopy) return;
+
+      const success = safeCopy(textToCopy);
+      if (success) {
+        showToast(`[${state.currentLang === 'en' ? '영어' : '한국어'}] 프롬프트가 복사되었습니다!`);
+      } else {
+        showToast('복사 권한을 확인해주세요.');
+      }
+    });
+
+    copyNegBtn.addEventListener('click', () => {
+      const negText = document.getElementById('negativePromptText').textContent;
+      const success = safeCopy(negText);
+      if (success) {
+        showToast('네거티브 프롬프트가 복사되었습니다!');
+      }
+    });
+
+    resetAllBtn.addEventListener('click', () => {
+      state.selectedShots = new Set(['fullBody']);
+      document.querySelectorAll('.shot-card').forEach(card => {
+        if (card.getAttribute('data-shot') === 'fullBody') {
+          card.classList.add('active');
+        } else {
+          card.classList.remove('active');
+        }
+      });
+
+      characterSheetToggle.checked = false;
+      state.isCharacterSheet = false;
+      characterSheetOptions.classList.add('hidden');
+
+      customSubjectInput.value = '';
+      state.customSubject = '';
+
+      webtoonStyle.value = 'koreanWebtoon';
+      state.webtoonStyle = 'koreanWebtoon';
+
+      lightingStyle.value = 'dramatic';
+      state.lightingStyle = 'dramatic';
+
+      state.manualEdited.en = false;
+      state.manualEdited.ko = false;
+
+      updatePrompts('force');
+      showToast('모든 설정이 기본값으로 초기화되었습니다.');
+    });
+
+    // Run first initialization
+    updatePrompts('force');
+  </script>
+</body>
+</html>
