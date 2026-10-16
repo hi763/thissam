@@ -96,11 +96,22 @@
       .notice{font-size:10px}
     }
     @media(max-width:700px) and (orientation:portrait){
-      .app-shell{min-height:calc(100 * min(var(--vh,1vh),1vh))}
-      .arena{min-height:480px}
-      .stick{width:104px;height:104px}
-      .controls{padding:0 10px 25px}
-      .mission-brief{max-width:65%}
+      html,body{height:100%;overflow:hidden}
+      .app-shell{height:calc(100 * min(var(--vh,1vh),1vh));min-height:0;padding:6px;gap:5px}
+      .topline{min-height:38px;padding-bottom:4px}
+      .brand-mark{width:28px;height:28px;font-size:17px}
+      .game-title{font-size:20px}
+      main{min-height:0;gap:5px}
+      .arena{min-height:0;height:calc(100 * min(var(--vh,1vh),1vh) - 119px);border-radius:14px}
+      .stick{width:78px;height:78px}
+      .glyph{font-size:16px}
+      .controls{padding:0 9px 13px}
+      .mission-brief{max-width:70%;padding:6px 8px}
+      .mission-name{font-size:12px}.mission-status{font-size:9px}
+      .bottom-strip{min-height:36px;padding:5px 8px;gap:6px;font-size:10px}
+      .progress{width:52px}.notice{max-width:70px}
+      .info-card{top:48px;max-height:calc(100% - 55px);padding:10px}
+      .overlay{padding:7px}.dialog{padding:10px 13px}
     }
     @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
   </style>
@@ -124,7 +135,8 @@
       <h1 data-template-id="game-title" class="canva-text font-extrabold">드론 탐험대</h1>
      </div>
     </div>
-    <div class="top-actions"><span id="levelPill" class="pill" aria-live="polite">01 / 20 · 준비</span> <button id="soundButton" class="icon-btn" type="button" aria-label="드론 소리 끄기" aria-pressed="false">♪ 켜짐</button>
+    <div class="top-actions">
+     <span id="levelPill" class="pill" aria-live="polite">01 / 20 · 준비</span> <button id="soundButton" class="icon-btn" type="button" aria-label="드론 소리 끄기" aria-pressed="false">♪ 켜짐</button>
     </div>
    </header>
    <main>
@@ -142,7 +154,8 @@
         시작할 준비를 해요
        </div>
       </div>
-      <div class="mini-actions"><button id="infoButton" data-template-id="info-button" class="canva-button" type="button" aria-expanded="false" aria-controls="infoCard">ⓘ 안내</button> <button id="retryButton" data-template-id="retry-button" class="canva-button" type="button">↺ 다시</button>
+      <div class="mini-actions">
+       <button id="infoButton" data-template-id="info-button" class="canva-button" type="button" aria-expanded="false" aria-controls="infoCard">ⓘ 안내</button> <button id="retryButton" data-template-id="retry-button" class="canva-button" type="button">↺ 다시</button>
       </div>
      </div>
      <aside id="infoCard" data-template-id="info-card" class="canva-card info-card hidden" aria-label="조종 및 미션 안내">
@@ -153,12 +166,14 @@
      </aside>
      <div class="controls">
       <div class="stick-wrap">
-       <div id="leftStick" class="stick" role="group" aria-label="왼쪽 조종기: 위쪽 상승, 아래쪽 하강, 좌우 회전"><span class="glyph up" aria-hidden="true">⌃</span><span class="glyph down" aria-hidden="true">⌄</span> <span class="glyph left" aria-hidden="true">↶</span><span class="glyph right" aria-hidden="true">↷</span>
+       <div id="leftStick" class="stick" role="group" aria-label="왼쪽 조종기: 위쪽 상승, 아래쪽 하강, 좌우 회전">
+        <span class="glyph up" aria-hidden="true">⌃</span><span class="glyph down" aria-hidden="true">⌄</span> <span class="glyph left" aria-hidden="true">↶</span><span class="glyph right" aria-hidden="true">↷</span>
         <div class="knob"></div>
        </div>
       </div>
       <div class="stick-wrap">
-       <div id="rightStick" class="stick" role="group" aria-label="오른쪽 조종기: 화살표 방향으로 이동"><span class="glyph up" aria-hidden="true">▴</span><span class="glyph down" aria-hidden="true">▾</span> <span class="glyph left" aria-hidden="true">◂</span><span class="glyph right" aria-hidden="true">▸</span>
+       <div id="rightStick" class="stick" role="group" aria-label="오른쪽 조종기: 화살표 방향으로 이동">
+        <span class="glyph up" aria-hidden="true">▴</span><span class="glyph down" aria-hidden="true">▾</span> <span class="glyph left" aria-hidden="true">◂</span><span class="glyph right" aria-hidden="true">▸</span>
         <div class="knob"></div>
        </div>
       </div>
@@ -167,7 +182,8 @@
       <form id="startForm" class="dialog">
        <h2 data-template-id="start-title" class="canva-text font-extrabold">이륙하시겠습니까?</h2>
        <p data-template-id="start-description" class="canva-text">기본 10단계와 도전 10단계! 경로를 따라 비행하고 착륙까지 해 보세요.</p><label data-template-id="name-label" class="canva-text form-label" for="playerName">조종자 이름</label> <input id="playerName" class="name-input" maxlength="16" autocomplete="nickname" required> <label class="safety-line" for="safetyCheck"><input id="safetyCheck" type="checkbox" required><span data-template-id="safety-checkbox-text" class="canva-text">실제 드론은 안전한 장소에서 보호자와 함께 날릴게요.</span></label>
-       <div id="slideTrack" class="slide-track" role="slider" tabindex="0" aria-label="오른쪽으로 밀어 시작하기. Enter 키로도 시작할 수 있습니다" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span data-template-id="slide-text" class="canva-text slide-text">밀어서 이륙 →</span>
+       <div id="slideTrack" class="slide-track" role="slider" tabindex="0" aria-label="오른쪽으로 밀어 시작하기. Enter 키로도 시작할 수 있습니다" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <span data-template-id="slide-text" class="canva-text slide-text">밀어서 이륙 →</span>
         <div id="slideThumb" class="slide-thumb"></div>
        </div>
        <p id="startError" class="notice" role="status"></p>
@@ -183,7 +199,8 @@
       </div>
      </div>
     </section>
-    <section data-template-id="controller-panel" class="canva-panel bottom-strip" aria-label="비행 상태"><span><small data-template-id="altitude-label" class="canva-text">고도 </small><strong id="altitudeValue">0.0 m</strong></span> <span id="waypointValue" aria-live="polite">경로 0 / 0</span>
+    <section data-template-id="controller-panel" class="canva-panel bottom-strip" aria-label="비행 상태">
+     <span><small data-template-id="altitude-label" class="canva-text">고도 </small><strong id="altitudeValue">0.0 m</strong></span> <span id="waypointValue" aria-live="polite">경로 0 / 0</span>
      <div class="progress" role="progressbar" id="progressMeter" aria-label="미션 진행률" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
       <div id="progressFill"></div>
      </div><span id="starsValue" aria-label="별 세 개">★★★</span> <span id="gameNotice" class="notice" role="status" aria-live="polite"></span>
@@ -283,7 +300,7 @@
     $('starsValue').textContent='★'.repeat(3-collisions)+'☆'.repeat(collisions);
     $('progressFill').style.width=n+'%';
     $('progressMeter').setAttribute('aria-valuenow',String(n));
-    $('missionStatus').textContent=phase==='landing'?'경로 완료 · H에서 하강해 착륙':phase==='hover'?'위치 유지 · 호버링 중':m.kind==='climb'&&!climbed?'고도 1.0 m까지 상승':`경유점 ${Math.min(passed+1,(m.points||[]).length)} / ${(m.points||[]).length}`;
+    $('missionStatus').textContent=phase==='landing'?'경로 완료 · H 착륙장 위에서 고도를 낮춰 착륙':phase==='hover'?`호버링 중 · ${m.seconds}초 유지 (${Math.min(m.seconds,Math.floor(hoverTime))}/${m.seconds}초)`:m.kind==='hover'?`목표 지점에서 ${m.seconds}초 호버링 후 착륙`:m.kind==='climb'&&!climbed?`고도 ${m.alt.toFixed(1)} m까지 상승 후 출발점 착륙`:`경유점 ${Math.min(passed+1,(m.points||[]).length)} / ${(m.points||[]).length} · ${m.help}`;
   }
   function finish(){
     if(complete)return;
@@ -369,7 +386,7 @@
       const vz=Math.max(-1,Math.min(1,-input.left.y+(keys.has('KeyW')?1:0)-(keys.has('KeyS')?1:0)));
       drone.z=Math.max(0,Math.min(2,drone.z+vz*dt*.85));
       drone.angle+=Math.max(-1,Math.min(1,input.left.x+(keys.has('KeyD')?1:0)-(keys.has('KeyA')?1:0)))*dt*2;
-      if(drone.z>.18){drone.x+=vx*dt*.34;drone.y+=vy*dt*.43}
+      if(drone.z>.18){const forward=-vy,strafe=vx;drone.x+=(Math.sin(drone.angle)*forward+Math.cos(drone.angle)*strafe)*dt*.43;drone.y+=(-Math.cos(drone.angle)*forward+Math.sin(drone.angle)*strafe)*dt*.43}
       if(audioCtx&&motorGain&&!muted&&!document.hidden){
         motorGain.gain.setTargetAtTime(drone.z>.18?.015+Math.abs(vz)*.006:0,audioCtx.currentTime,.08);
         motor.frequency.setTargetAtTime(100+drone.z*23+Math.abs(vz)*28,audioCtx.currentTime,.08);
