@@ -38,7 +38,7 @@
 
     /* Sci-fi Glassmorphism Panels */
     .cyber-panel {
-      background: rgba(10, 16, 30, 0.88);
+      background: rgba(10, 16, 30, 0.92);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       border: 1px solid rgba(0, 240, 255, 0.35);
@@ -108,7 +108,7 @@
 
     /* Scrollbar */
     .custom-scroll::-webkit-scrollbar {
-      width: 6px;
+      width: 5px;
     }
     .custom-scroll::-webkit-scrollbar-track {
       background: rgba(15, 23, 42, 0.6);
@@ -129,6 +129,20 @@
     @media screen and (orientation: portrait) {
       #portrait-warning {
         display: flex !important;
+      }
+    }
+
+    /* Compact landscape styling for short mobile heights */
+    @media screen and (max-height: 520px) {
+      .compact-landscape-hide {
+        display: none !important;
+      }
+      .compact-py {
+        padding-top: 0.35rem !important;
+        padding-bottom: 0.35rem !important;
+      }
+      .compact-text {
+        font-size: 0.75rem !important;
       }
     }
   </style>
@@ -155,7 +169,7 @@
     <!-- Top HUD Bar -->
     <div class="flex justify-between items-start w-full pointer-events-auto">
       <!-- Player Tag -->
-      <div class="cyber-panel px-3.5 py-2 rounded-xl flex items-center gap-3">
+      <div class="cyber-panel px-3 py-1.5 md:px-3.5 md:py-2 rounded-xl flex items-center gap-2 md:gap-3">
         <div class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></div>
         <div>
           <div id="hud-player-name" class="text-xs text-cyan-300 font-bold uppercase tracking-wider">PILOT</div>
@@ -164,28 +178,28 @@
       </div>
 
       <!-- Distance & Score -->
-      <div class="flex gap-3">
-        <div class="cyber-panel px-4 py-2 rounded-xl text-center min-w-[95px]">
-          <div class="text-[10px] text-cyan-400 font-orbitron uppercase tracking-wider">DISTANCE</div>
-          <div id="hud-distance" class="text-lg md:text-xl font-black font-orbitron text-white">0 <span class="text-xs text-gray-400 font-normal">m</span></div>
+      <div class="flex gap-2 md:gap-3">
+        <div class="cyber-panel px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-center min-w-[85px] md:min-w-[95px]">
+          <div class="text-[9px] md:text-[10px] text-cyan-400 font-orbitron uppercase tracking-wider">DISTANCE</div>
+          <div id="hud-distance" class="text-base md:text-xl font-black font-orbitron text-white">0 <span class="text-xs text-gray-400 font-normal">m</span></div>
         </div>
-        <div class="cyber-panel px-4 py-2 rounded-xl text-center min-w-[95px] border-amber-500/40 shadow-amber-500/10">
-          <div class="text-[10px] text-amber-400 font-orbitron uppercase tracking-wider">SCORE</div>
-          <div id="hud-score" class="text-lg md:text-xl font-black font-orbitron text-amber-300">0</div>
+        <div class="cyber-panel px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-center min-w-[85px] md:min-w-[95px] border-amber-500/40 shadow-amber-500/10">
+          <div class="text-[9px] md:text-[10px] text-amber-400 font-orbitron uppercase tracking-wider">SCORE</div>
+          <div id="hud-score" class="text-base md:text-xl font-black font-orbitron text-amber-300">0</div>
         </div>
       </div>
 
       <!-- Speed & Gyro Zero Button -->
-      <div class="cyber-panel px-3.5 py-2 rounded-xl flex items-center gap-3 text-right">
+      <div class="cyber-panel px-3 py-1.5 md:px-3.5 md:py-2 rounded-xl flex items-center gap-2 md:gap-3 text-right">
         <div>
-          <div class="text-[10px] text-cyan-400 font-orbitron uppercase">SPEED</div>
-          <div id="hud-speed" class="text-base md:text-lg font-black font-orbitron text-white">120 <span class="text-xs text-gray-400">KM/H</span></div>
+          <div class="text-[9px] md:text-[10px] text-cyan-400 font-orbitron uppercase">SPEED</div>
+          <div id="hud-speed" class="text-sm md:text-lg font-black font-orbitron text-white">120 <span class="text-[10px] md:text-xs text-gray-400">KM/H</span></div>
         </div>
-        <button id="btn-gyro-recalibrate" title="자이로 영점 맞추기" class="hidden px-2.5 py-1.5 rounded-lg border border-cyan-400/40 bg-cyan-950/50 text-cyan-300 text-xs font-bold hover:text-white transition flex items-center gap-1 active:scale-95">
+        <button id="btn-gyro-recalibrate" title="자이로 영점 맞추기" class="hidden px-2 py-1 md:px-2.5 md:py-1.5 rounded-lg border border-cyan-400/40 bg-cyan-950/50 text-cyan-300 text-xs font-bold hover:text-white transition flex items-center gap-1 active:scale-95">
           <i class="fa-solid fa-crosshairs"></i> 영점
         </button>
-        <button id="btn-sound-toggle" class="p-2 text-cyan-300 hover:text-white transition active:scale-95">
-          <i id="icon-sound" class="fa-solid fa-volume-high"></i>
+        <button id="btn-sound-toggle" class="p-1.5 md:p-2 text-cyan-300 hover:text-white transition active:scale-95">
+          <i id="icon-sound" class="fa-solid fa-volume-high text-sm md:text-base"></i>
         </button>
       </div>
     </div>
@@ -203,20 +217,20 @@
       <!-- LEFT CONTROLS -->
       <div class="pointer-events-auto flex items-end ml-1 md:ml-4 mb-1">
         <!-- Gyro Mode Left: Altitude Buttons -->
-        <div id="gyro-left-controls" class="hidden flex-col gap-3">
-          <button id="btn-gyro-up" class="touch-btn cyber-panel w-16 h-16 md:w-20 md:h-20 rounded-full flex flex-col items-center justify-center text-cyan-300 shadow-lg border-2 border-cyan-400/50">
-            <i class="fa-solid fa-chevron-up text-xl md:text-2xl"></i>
-            <span class="text-[10px] font-bold mt-0.5">상승</span>
+        <div id="gyro-left-controls" class="hidden flex-col gap-2 md:gap-3">
+          <button id="btn-gyro-up" class="touch-btn cyber-panel w-14 h-14 md:w-20 md:h-20 rounded-full flex flex-col items-center justify-center text-cyan-300 shadow-lg border-2 border-cyan-400/50">
+            <i class="fa-solid fa-chevron-up text-lg md:text-2xl"></i>
+            <span class="text-[9px] md:text-[10px] font-bold mt-0.5">상승</span>
           </button>
-          <button id="btn-gyro-down" class="touch-btn cyber-panel w-16 h-16 md:w-20 md:h-20 rounded-full flex flex-col items-center justify-center text-cyan-300 shadow-lg border-2 border-cyan-400/50">
-            <i class="fa-solid fa-chevron-down text-xl md:text-2xl"></i>
-            <span class="text-[10px] font-bold mt-0.5">하강</span>
+          <button id="btn-gyro-down" class="touch-btn cyber-panel w-14 h-14 md:w-20 md:h-20 rounded-full flex flex-col items-center justify-center text-cyan-300 shadow-lg border-2 border-cyan-400/50">
+            <i class="fa-solid fa-chevron-down text-lg md:text-2xl"></i>
+            <span class="text-[9px] md:text-[10px] font-bold mt-0.5">하강</span>
           </button>
         </div>
 
         <!-- Button Mode Left: Circular Joystick (Altitude & Yaw) -->
         <div id="btn-mode-left-controls" class="hidden flex-col items-center gap-1">
-          <div class="text-[10px] font-orbitron text-cyan-400/90 font-bold tracking-wide">고도 / 회전 (L-STICK)</div>
+          <div class="text-[9px] md:text-[10px] font-orbitron text-cyan-400/90 font-bold tracking-wide">고도 / 회전 (L-STICK)</div>
           <div id="joystick-left" class="joystick-base">
             <span class="joystick-axis-marker top-1.5 left-1/2 -translate-x-1/2">상승</span>
             <span class="joystick-axis-marker bottom-1.5 left-1/2 -translate-x-1/2">하강</span>
@@ -228,14 +242,14 @@
       </div>
 
       <!-- Gyro status hint text -->
-      <div id="gyro-status-indicator" class="hidden text-center pb-2 text-xs text-cyan-400/80 font-mono tracking-wide">
+      <div id="gyro-status-indicator" class="hidden text-center pb-2 text-[11px] md:text-xs text-cyan-400/80 font-mono tracking-wide">
         <i class="fa-solid fa-compass animate-spin mr-1 text-cyan-300"></i> 자이로 제어 활성 (기기를 기울이세요)
       </div>
 
       <!-- RIGHT CONTROLS: Circular Joystick (Forward/Back/Left/Right Strafe) -->
       <div class="pointer-events-auto mr-1 md:mr-4 mb-1">
         <div id="btn-mode-right-controls" class="hidden flex-col items-center gap-1">
-          <div class="text-[10px] font-orbitron text-emerald-400/90 font-bold tracking-wide">전후좌우 이동 (R-STICK)</div>
+          <div class="text-[9px] md:text-[10px] font-orbitron text-emerald-400/90 font-bold tracking-wide">전후좌우 이동 (R-STICK)</div>
           <div id="joystick-right" class="joystick-base border-emerald-400/40">
             <span class="joystick-axis-marker top-1.5 left-1/2 -translate-x-1/2 text-emerald-300/80">전진</span>
             <span class="joystick-axis-marker bottom-1.5 left-1/2 -translate-x-1/2 text-emerald-300/80">후진</span>
@@ -249,78 +263,93 @@
     </div>
   </div>
 
-  <!-- SCREEN 1: START SCREEN & PILOT SETUP -->
-  <div id="screen-start" class="absolute inset-0 z-30 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md">
-    <div class="cyber-panel w-full max-w-xl rounded-3xl p-6 md:p-8 flex flex-col gap-5 border border-cyan-500/40 shadow-2xl">
+  <!-- SCREEN 1: START SCREEN & PILOT SETUP (Responsive Landscape Optimized) -->
+  <div id="screen-start" class="absolute inset-0 z-30 flex items-center justify-center p-2 md:p-4 bg-slate-950/85 backdrop-blur-md">
+    <div class="cyber-panel w-full max-w-2xl max-h-[96vh] md:max-h-[90vh] rounded-2xl md:rounded-3xl p-3 sm:p-5 md:p-7 flex flex-col gap-2.5 md:gap-4 border border-cyan-500/40 shadow-2xl overflow-y-auto custom-scroll">
       
       <!-- Title & Header -->
       <div class="text-center">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-cyan-400 text-xs font-orbitron tracking-widest mb-1.5">
+        <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-cyan-400 text-[10px] md:text-xs font-orbitron tracking-widest mb-0.5">
           <i class="fa-solid fa-plane-up"></i> 3D DRONE SIMULATION
         </div>
-        <h1 class="text-3xl md:text-4xl font-black font-orbitron tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-500">
+        <h1 class="text-2xl sm:text-3xl md:text-4xl font-black font-orbitron tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-500">
           CYBER X-RACER
         </h1>
-        <p class="text-xs md:text-sm text-gray-400 mt-1">자이로 센서 & 모바일 듀얼 원형 스틱으로 즐기는 고속 비행 레이서</p>
+        <p class="compact-landscape-hide text-[11px] md:text-xs text-gray-400 mt-0.5">자이로 센서 & 모바일 듀얼 원형 스틱으로 즐기는 고속 비행 레이서</p>
       </div>
 
-      <!-- Pilot Name Input -->
-      <div>
-        <label class="block text-xs font-semibold text-cyan-300 uppercase tracking-wider mb-1.5">
-          <i class="fa-solid fa-id-badge mr-1.5"></i> 조종사 이름 (파일럿 명패)
-        </label>
-        <div class="relative">
-          <input type="text" id="input-pilot-name" maxlength="12" placeholder="이름을 입력하세요 (예: Falcon77)"
-            class="w-full bg-slate-900/80 border border-cyan-500/30 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 font-semibold text-sm">
+      <!-- Controls Form: 2 Column on Landscape / Mobile Wide -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 md:gap-3.5 text-left">
+        
+        <!-- Left Column: Name & Controls Mode -->
+        <div class="flex flex-col gap-2 md:gap-2.5">
+          <!-- Pilot Name Input -->
+          <div>
+            <label class="block text-[11px] md:text-xs font-semibold text-cyan-300 uppercase tracking-wider mb-1">
+              <i class="fa-solid fa-id-badge mr-1"></i> 파일럿 이름
+            </label>
+            <input type="text" id="input-pilot-name" maxlength="12" placeholder="이름 입력 (예: Falcon77)"
+              class="w-full bg-slate-900/80 border border-cyan-500/30 rounded-xl px-3 py-2 md:py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 font-semibold text-xs md:text-sm">
+          </div>
+
+          <!-- Control Mode Selection -->
+          <div>
+            <label class="block text-[11px] md:text-xs font-semibold text-cyan-300 uppercase tracking-wider mb-1">
+              <i class="fa-solid fa-gamepad mr-1"></i> 조작 모드
+            </label>
+            <div class="grid grid-cols-2 gap-2">
+              <button type="button" id="opt-mode-gyro" class="mode-select-btn cyber-btn py-2 md:py-2.5 px-2 rounded-xl flex flex-col items-center justify-center gap-0.5 border-2 border-cyan-400 bg-cyan-950/40 text-white font-bold">
+                <i class="fa-solid fa-arrows-spin text-base text-cyan-400"></i>
+                <span class="text-xs">자이로 센서</span>
+                <span class="text-[9px] text-cyan-200/70 font-normal">기울임+고도버튼</span>
+              </button>
+              <button type="button" id="opt-mode-button" class="mode-select-btn cyber-btn py-2 md:py-2.5 px-2 rounded-xl flex flex-col items-center justify-center gap-0.5 border-2 border-transparent bg-slate-900/60 text-gray-300 hover:text-white">
+                <i class="fa-solid fa-circle-dot text-base text-sky-400"></i>
+                <span class="text-xs">원형 조이스틱</span>
+                <span class="text-[9px] text-gray-400 font-normal">좌(고도) 우(이동)</span>
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <!-- Control Mode Selection -->
-      <div>
-        <label class="block text-xs font-semibold text-cyan-300 uppercase tracking-wider mb-1.5">
-          <i class="fa-solid fa-gamepad mr-1.5"></i> 조작 모드 선택
-        </label>
-        <div class="grid grid-cols-2 gap-3">
-          <button type="button" id="opt-mode-gyro" class="mode-select-btn cyber-btn py-3 px-3 rounded-2xl flex flex-col items-center justify-center gap-1 border-2 border-cyan-400 bg-cyan-950/40 text-white font-bold">
-            <i class="fa-solid fa-arrows-spin text-xl text-cyan-400"></i>
-            <span class="text-sm">자이로 센서</span>
-            <span class="text-[10px] text-cyan-200/70 font-normal">기기 기울임 + 상승/하강</span>
-          </button>
-          <button type="button" id="opt-mode-button" class="mode-select-btn cyber-btn py-3 px-3 rounded-2xl flex flex-col items-center justify-center gap-1 border-2 border-transparent bg-slate-900/60 text-gray-300 hover:text-white">
-            <i class="fa-solid fa-circle-dot text-xl text-sky-400"></i>
-            <span class="text-sm">원형 조이스틱</span>
-            <span class="text-[10px] text-gray-400 font-normal">좌측(고도/회전) 우측(이동)</span>
-          </button>
+        <!-- Right Column: Difficulty & Game Rules Preview -->
+        <div class="flex flex-col gap-2 md:gap-2.5 justify-between">
+          <!-- Difficulty Level Selection -->
+          <div>
+            <label class="block text-[11px] md:text-xs font-semibold text-cyan-300 uppercase tracking-wider mb-1">
+              <i class="fa-solid fa-gauge-high mr-1"></i> 비행 난이도
+            </label>
+            <div class="grid grid-cols-3 gap-1.5 md:gap-2">
+              <button type="button" data-diff="easy" class="diff-btn py-2 md:py-2.5 rounded-xl border border-slate-700 bg-slate-900/60 text-gray-400 font-bold text-xs">
+                쉬움 (Easy)
+              </button>
+              <button type="button" data-diff="normal" class="diff-btn py-2 md:py-2.5 rounded-xl border-2 border-cyan-400 bg-cyan-950/40 text-cyan-300 font-bold text-xs">
+                보통 (Normal)
+              </button>
+              <button type="button" data-diff="hard" class="diff-btn py-2 md:py-2.5 rounded-xl border border-slate-700 bg-slate-900/60 text-gray-400 font-bold text-xs">
+                어려움 (Hard)
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Tip Box -->
+          <div class="compact-landscape-hide p-2 rounded-xl bg-slate-900/60 border border-cyan-500/20 text-[11px] text-gray-300 flex items-center gap-2">
+            <i class="fa-solid fa-circle-info text-cyan-400 text-sm"></i>
+            <span>골든 링을 통과하면 대량의 보너스 점수를 획득합니다!</span>
+          </div>
         </div>
+
       </div>
 
-      <!-- Difficulty Level Selection -->
-      <div>
-        <label class="block text-xs font-semibold text-cyan-300 uppercase tracking-wider mb-1.5">
-          <i class="fa-solid fa-gauge-high mr-1.5"></i> 난이도 설정
-        </label>
-        <div class="grid grid-cols-3 gap-2">
-          <button type="button" data-diff="easy" class="diff-btn py-2.5 rounded-xl border border-slate-700 bg-slate-900/60 text-gray-400 font-bold text-xs md:text-sm">
-            쉬움 (Easy)
-          </button>
-          <button type="button" data-diff="normal" class="diff-btn py-2.5 rounded-xl border-2 border-cyan-400 bg-cyan-950/40 text-cyan-300 font-bold text-xs md:text-sm">
-            보통 (Normal)
-          </button>
-          <button type="button" data-diff="hard" class="diff-btn py-2.5 rounded-xl border border-slate-700 bg-slate-900/60 text-gray-400 font-bold text-xs md:text-sm">
-            어려움 (Hard)
-          </button>
-        </div>
-      </div>
-
-      <!-- Action Buttons -->
-      <div class="flex gap-2.5 pt-1">
-        <button id="btn-open-how-to" class="w-1/4 cyber-btn py-3.5 rounded-2xl font-bold text-amber-300 text-xs md:text-sm flex items-center justify-center gap-1.5 border border-amber-500/40 hover:bg-amber-500/20 active:scale-95">
+      <!-- Action Buttons Row (Always Visible) -->
+      <div class="flex gap-2 pt-1 mt-auto">
+        <button id="btn-open-how-to" class="w-1/4 cyber-btn py-2.5 md:py-3 rounded-xl font-bold text-amber-300 text-xs md:text-sm flex items-center justify-center gap-1 border border-amber-500/40 hover:bg-amber-500/20 active:scale-95">
           <i class="fa-solid fa-circle-question"></i> 게임 방법
         </button>
-        <button id="btn-view-leaderboard" class="w-1/4 cyber-btn py-3.5 rounded-2xl font-bold text-cyan-300 text-xs md:text-sm flex items-center justify-center gap-1.5 active:scale-95">
+        <button id="btn-view-leaderboard" class="w-1/4 cyber-btn py-2.5 md:py-3 rounded-xl font-bold text-cyan-300 text-xs md:text-sm flex items-center justify-center gap-1 active:scale-95">
           <i class="fa-solid fa-trophy"></i> 랭킹
         </button>
-        <button id="btn-start-game" class="w-2/4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black py-3.5 rounded-2xl text-sm md:text-base shadow-lg shadow-cyan-500/30 active:scale-95 transition flex items-center justify-center gap-2">
+        <button id="btn-start-game" class="w-2/4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black py-2.5 md:py-3 rounded-xl text-xs md:text-base shadow-lg shadow-cyan-500/30 active:scale-95 transition flex items-center justify-center gap-2">
           <i class="fa-solid fa-play"></i> 비행 시작
         </button>
       </div>
@@ -329,12 +358,12 @@
   </div>
 
   <!-- MODAL: HOW TO PLAY -->
-  <div id="modal-how-to-play" class="hidden fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
-    <div class="cyber-panel w-full max-w-lg rounded-3xl p-6 flex flex-col gap-4 border border-cyan-400/50 shadow-2xl">
+  <div id="modal-how-to-play" class="hidden fixed inset-0 z-40 flex items-center justify-center p-3 md:p-4 bg-black/85 backdrop-blur-md">
+    <div class="cyber-panel w-full max-w-lg rounded-2xl md:rounded-3xl p-4 md:p-6 flex flex-col gap-3 md:gap-4 border border-cyan-400/50 shadow-2xl max-h-[92vh]">
       
       <!-- Modal Header -->
-      <div class="flex justify-between items-center border-b border-cyan-500/30 pb-3">
-        <div class="flex items-center gap-2 text-cyan-300 font-orbitron font-bold text-lg">
+      <div class="flex justify-between items-center border-b border-cyan-500/30 pb-2 md:pb-3">
+        <div class="flex items-center gap-2 text-cyan-300 font-orbitron font-bold text-base md:text-lg">
           <i class="fa-solid fa-gamepad text-amber-400"></i> 비행 가이드 및 게임 방법
         </div>
         <button id="btn-close-how-to" class="text-gray-400 hover:text-white text-xl p-1">
@@ -343,14 +372,14 @@
       </div>
 
       <!-- Content Body -->
-      <div class="space-y-3.5 text-xs md:text-sm text-gray-300 overflow-y-auto max-h-[60vh] pr-1 custom-scroll">
+      <div class="space-y-2.5 md:space-y-3.5 text-xs md:text-sm text-gray-300 overflow-y-auto max-h-[60vh] pr-1 custom-scroll">
         
         <!-- Control 1: Gyro -->
-        <div class="bg-slate-900/80 p-3 rounded-2xl border border-cyan-500/20">
-          <div class="font-bold text-cyan-300 flex items-center gap-2 text-sm mb-1.5">
+        <div class="bg-slate-900/80 p-2.5 md:p-3 rounded-xl md:rounded-2xl border border-cyan-500/20">
+          <div class="font-bold text-cyan-300 flex items-center gap-1.5 text-xs md:text-sm mb-1">
             <i class="fa-solid fa-arrows-spin text-cyan-400"></i> 1. 자이로 센서 모드
           </div>
-          <ul class="list-disc list-inside space-y-1 text-gray-300 pl-1">
+          <ul class="list-disc list-inside space-y-0.5 text-gray-300 pl-1 text-[11px] md:text-xs">
             <li><span class="text-white font-semibold">기기 좌우 기울임</span>: 해당 방향으로 즉시 회피 기동합니다.</li>
             <li><span class="text-white font-semibold">좌측 하단 [상승 / 하강] 버튼</span>: 터치하는 동안 고도를 변경합니다.</li>
             <li><span class="text-amber-300 font-semibold">영점 맞추기</span>: 비행 시작 시 손에 쥔 각도가 자동으로 영점이 되며, 상단의 [영점] 버튼으로 언제든 다시 기준을 잡을 수 있습니다.</li>
@@ -358,11 +387,11 @@
         </div>
 
         <!-- Control 2: Circular Joysticks -->
-        <div class="bg-slate-900/80 p-3 rounded-2xl border border-cyan-500/20">
-          <div class="font-bold text-emerald-300 flex items-center gap-2 text-sm mb-1.5">
+        <div class="bg-slate-900/80 p-2.5 md:p-3 rounded-xl md:rounded-2xl border border-cyan-500/20">
+          <div class="font-bold text-emerald-300 flex items-center gap-1.5 text-xs md:text-sm mb-1">
             <i class="fa-solid fa-circle-dot text-emerald-400"></i> 2. 원형 조이스틱 모드
           </div>
-          <ul class="list-disc list-inside space-y-1 text-gray-300 pl-1">
+          <ul class="list-disc list-inside space-y-0.5 text-gray-300 pl-1 text-[11px] md:text-xs">
             <li><span class="text-cyan-300 font-semibold">좌측 조이스틱</span>: 위(상승), 아래(하강), 좌(좌회전), 우(우회전)</li>
             <li><span class="text-emerald-300 font-semibold">우측 조이스틱</span>: 앞(가속), 뒤(감속), 좌(좌 이동), 우(우 이동)</li>
             <li>손가락을 터치해 원 안에서 미는 강도에 따라 부드럽게 비례 제어됩니다.</li>
@@ -370,14 +399,14 @@
         </div>
 
         <!-- Rule & Scoring -->
-        <div class="bg-slate-900/80 p-3 rounded-2xl border border-amber-500/20">
-          <div class="font-bold text-amber-300 flex items-center gap-2 text-sm mb-1.5">
+        <div class="bg-slate-900/80 p-2.5 md:p-3 rounded-xl md:rounded-2xl border border-amber-500/20">
+          <div class="font-bold text-amber-300 flex items-center gap-1.5 text-xs md:text-sm mb-1">
             <i class="fa-solid fa-trophy text-amber-400"></i> 3. 득점 & 순위 규칙
           </div>
-          <p class="mb-1 text-gray-300">
+          <p class="mb-0.5 text-gray-300 text-[11px] md:text-xs">
             비행 거리에 따라 기본 점수가 올라가며, 코스에 배치된 <span class="text-amber-300 font-bold">골든 링</span>을 관통하면 큰 보너스 점수를 획득합니다!
           </p>
-          <p class="text-rose-300">
+          <p class="text-rose-300 text-[11px] md:text-xs">
             * 붉은색 기둥 및 큐브 장애물에 닿으면 기체가 즉시 파괴되므로 주의하세요.
           </p>
         </div>
@@ -385,7 +414,7 @@
       </div>
 
       <!-- Modal Footer Close -->
-      <button id="btn-close-how-to-bottom" class="w-full py-3 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm shadow-md transition">
+      <button id="btn-close-how-to-bottom" class="w-full py-2.5 md:py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs md:text-sm shadow-md transition">
         확인했습니다. 비행 준비 완료!
       </button>
 
@@ -393,59 +422,59 @@
   </div>
 
   <!-- SCREEN 2: GAME OVER & LEADERBOARD SCREEN -->
-  <div id="screen-gameover" class="hidden absolute inset-0 z-30 flex items-center justify-center p-3 md:p-6 bg-slate-950/90 backdrop-blur-md">
-    <div class="cyber-panel w-full max-w-2xl rounded-3xl p-5 md:p-7 flex flex-col max-h-[92vh] border border-cyan-500/40 shadow-2xl">
+  <div id="screen-gameover" class="hidden absolute inset-0 z-30 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-slate-950/90 backdrop-blur-md">
+    <div class="cyber-panel w-full max-w-2xl rounded-2xl md:rounded-3xl p-3 sm:p-5 md:p-7 flex flex-col max-h-[94vh] border border-cyan-500/40 shadow-2xl overflow-y-auto custom-scroll">
       
       <!-- Top Title & Result Summary -->
-      <div class="flex flex-wrap items-center justify-between border-b border-cyan-500/20 pb-4 mb-3">
+      <div class="flex flex-wrap items-center justify-between border-b border-cyan-500/20 pb-2 md:pb-4 mb-2 md:mb-3">
         <div>
-          <span id="gameover-status-tag" class="text-xs font-orbitron font-bold text-rose-400 tracking-wider uppercase">DRONE STATUS: CRASHED</span>
-          <h2 class="text-2xl md:text-3xl font-black font-orbitron text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-amber-400">MISSION REPORT</h2>
+          <span id="gameover-status-tag" class="text-[10px] md:text-xs font-orbitron font-bold text-rose-400 tracking-wider uppercase">DRONE STATUS: CRASHED</span>
+          <h2 class="text-xl md:text-3xl font-black font-orbitron text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-amber-400">MISSION REPORT</h2>
         </div>
-        <div class="flex items-center gap-3 mt-2 sm:mt-0">
+        <div class="flex items-center gap-3 mt-1 sm:mt-0">
           <div class="text-right">
-            <span class="text-[10px] text-gray-400 block uppercase font-orbitron">FINAL SCORE</span>
-            <span id="final-score-val" class="text-2xl font-black font-orbitron text-amber-300">0</span>
+            <span class="text-[9px] md:text-[10px] text-gray-400 block uppercase font-orbitron">FINAL SCORE</span>
+            <span id="final-score-val" class="text-lg md:text-2xl font-black font-orbitron text-amber-300">0</span>
           </div>
           <div class="text-right pl-3 border-l border-gray-700">
-            <span class="text-[10px] text-gray-400 block uppercase font-orbitron">DISTANCE</span>
-            <span id="final-distance-val" class="text-lg font-bold font-orbitron text-cyan-300">0 m</span>
+            <span class="text-[9px] md:text-[10px] text-gray-400 block uppercase font-orbitron">DISTANCE</span>
+            <span id="final-distance-val" class="text-sm md:text-lg font-bold font-orbitron text-cyan-300">0 m</span>
           </div>
         </div>
       </div>
 
       <!-- Leaderboard Header -->
-      <div class="flex items-center justify-between text-xs font-semibold text-cyan-400 px-3 py-1.5 bg-slate-900/60 rounded-t-xl">
-        <div class="w-12 text-center">순위</div>
+      <div class="flex items-center justify-between text-[11px] md:text-xs font-semibold text-cyan-400 px-3 py-1 bg-slate-900/60 rounded-t-xl">
+        <div class="w-10 md:w-12 text-center">순위</div>
         <div class="flex-1 pl-2">파일럿</div>
-        <div class="w-20 text-center">난이도</div>
-        <div class="w-28 text-right">점수 (거리)</div>
+        <div class="w-16 md:w-20 text-center">난이도</div>
+        <div class="w-24 md:w-28 text-right">점수 (거리)</div>
       </div>
 
       <!-- Top 10 Leaderboard List -->
-      <div id="leaderboard-list" class="custom-scroll overflow-y-auto max-h-[35vh] flex flex-col gap-1.5 py-1.5 pr-1">
+      <div id="leaderboard-list" class="custom-scroll overflow-y-auto max-h-[32vh] flex flex-col gap-1.5 py-1.5 pr-1">
         <!-- Dynamic items injected here -->
       </div>
 
       <!-- Outside Top 10 Notice Banner -->
-      <div id="out-of-rank-banner" class="hidden mt-2 p-2.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-cyan-500/20 border border-amber-400/40 flex items-center justify-between text-sm">
-        <div class="flex items-center gap-2">
-          <span class="p-1.5 bg-amber-400/20 rounded-lg text-amber-300 text-xs font-bold">
+      <div id="out-of-rank-banner" class="hidden mt-1.5 p-2 rounded-xl bg-gradient-to-r from-amber-500/20 to-cyan-500/20 border border-amber-400/40 flex items-center justify-between text-xs md:text-sm">
+        <div class="flex items-center gap-1.5">
+          <span class="p-1 bg-amber-400/20 rounded-lg text-amber-300 text-[10px] md:text-xs font-bold">
             <i class="fa-solid fa-flag-checkered"></i> 내 순위
           </span>
           <span class="text-gray-200 font-medium">상위 10위 밖입니다. 현재 순위:</span>
         </div>
-        <div id="my-out-rank-text" class="font-orbitron font-extrabold text-amber-300 text-base">
+        <div id="my-out-rank-text" class="font-orbitron font-extrabold text-amber-300 text-sm md:text-base">
           14위
         </div>
       </div>
 
       <!-- Action Buttons -->
-      <div class="flex gap-3 pt-4 mt-auto border-t border-cyan-500/20">
-        <button id="btn-restart-game" class="flex-1 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black py-3.5 rounded-2xl text-sm md:text-base shadow-lg shadow-cyan-500/25 active:scale-95 transition flex items-center justify-center gap-2">
+      <div class="flex gap-2.5 pt-3 mt-auto border-t border-cyan-500/20">
+        <button id="btn-restart-game" class="flex-1 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black py-2.5 md:py-3.5 rounded-xl md:rounded-2xl text-xs md:text-base shadow-lg shadow-cyan-500/25 active:scale-95 transition flex items-center justify-center gap-1.5">
           <i class="fa-solid fa-rotate-right"></i> 다시하기 (점수 초기화)
         </button>
-        <button id="btn-goto-start" class="flex-1 cyber-panel cyber-btn hover:text-white py-3.5 rounded-2xl font-bold text-gray-300 text-sm md:text-base active:scale-95 transition flex items-center justify-center gap-2">
+        <button id="btn-goto-start" class="flex-1 cyber-panel cyber-btn hover:text-white py-2.5 md:py-3.5 rounded-xl md:rounded-2xl font-bold text-gray-300 text-xs md:text-base active:scale-95 transition flex items-center justify-center gap-1.5">
           <i class="fa-solid fa-house"></i> 처음으로 (이름/모드 재설정)
         </button>
       </div>
@@ -454,7 +483,7 @@
   </div>
 
   <!-- Custom Alert / Toast Modal -->
-  <div id="toast-modal" class="hidden fixed top-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-2xl cyber-panel border border-cyan-400 text-cyan-300 text-sm font-semibold shadow-2xl flex items-center gap-2 animate-pulse">
+  <div id="toast-modal" class="hidden fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-50 px-4 py-2 md:px-5 md:py-3 rounded-2xl cyber-panel border border-cyan-400 text-cyan-300 text-xs md:text-sm font-semibold shadow-2xl flex items-center gap-2 animate-pulse">
     <i class="fa-solid fa-circle-info"></i>
     <span id="toast-msg">메시지</span>
   </div>
