@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Cyber Drone X-Racer 3D</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Three.js 3D Engine -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Tone.js for dynamic procedural audio -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Noto+Sans+KR:wght@400;600;800&display=swap');
+
+    * {
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      overflow: hidden;
+      background-color: #030712;
+      color: #f3f4f6;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .font-orbitron {
+      font-family: 'Orbitron', monospace;
+    }
+
+    /* Sci-fi Glassmorphism Panels */
+    .cyber-panel {
+      background: rgba(10, 16, 30, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.15), inset 0 0 15px rgba(0, 240, 255, 0.08);
+    }
+
+    .cyber-btn {
+      transition: all 0.15s ease;
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(59, 130, 246, 0.3));
+      border: 1px solid rgba(56, 189, 248, 0.4);
+    }
+
+    .cyber-btn:active {
+      transform: scale(0.95);
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.6), rgba(59, 130, 246, 0.7));
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.6);
+    }
+
+    /* Circular Virtual Thumbsticks */
+    .joystick-base {
+      width: 125px;
+      height: 125px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(15, 23, 42, 0.75) 0%, rgba(8, 47, 73, 0.5) 100%);
+      border: 2px solid rgba(0, 240, 255, 0.5);
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.25), inset 0 0 15px rgba(0, 240, 255, 0.15);
+      position: relative;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .joystick-knob {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, rgba(56, 189, 248, 0.95), rgba(2, 132, 199, 0.85));
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.9), inset 0 0 8px rgba(255, 255, 255, 0.6);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .joystick-axis-marker {
+      position: absolute;
+      font-size: 9px;
+      font-family: 'Orbitron', monospace;
+      color: rgba(0, 240, 255, 0.75);
+      pointer-events: none;
+    }
+
+    /* Touch Control Buttons */
+    .touch-btn {
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: background-color 0.1s, transform 0.1s, box-shadow 0.1s;
+    }
+    .touch-btn:active, .touch-btn.active {
+      background-color: rgba(6, 182, 212, 0.6) !important;
+      transform: scale(0.92);
+      box-shadow: 0 0 18px rgba(6, 182, 212, 0.8) !important;
+    }
+
+    /* Scrollbar */
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 9999px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: rgba(56, 189, 248, 0.5);
+      border-radius: 9999px;
+    }
+
+    /* Scanlines Overlay */
+    .scanlines {
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+      background-size: 100% 4px;
+      pointer-events: none;
+    }
+
+    @media screen and (orientation: portrait) {
+      #portrait-warning {
+        display: flex !important;
+      }
+    }
+  </style>
+</head>
+<body class="w-screen h-screen relative overflow-hidden bg-black select-none">
+
+  <!-- 3D WebGL Canvas Container -->
+  <div id="game-canvas-container" class="absolute inset-0 z-0"></div>
+
+  <!-- Scanline Overlay -->
+  <div class="absolute inset-0 scanlines z-10 pointer-events-none opacity-30"></div>
+
+  <!-- Portrait Orientation Warning Overlay -->
+  <div id="portrait-warning" class="hidden fixed inset-0 z-50 bg-black/95 flex-col items-center justify-center p-6 text-center text-cyan-400">
+    <div class="animate-bounce text-6xl mb-4 text-cyan-400">
+      <i class="fa-solid fa-mobile-screen-button transform rotate-90"></i>
+    </div>
+    <h2 class="text-2xl font-bold font-orbitron tracking-wider mb-2 text-white">가로 모드 권장</h2>
+    <p class="text-gray-300 text-sm max-w-xs">원활한 비행 시뮬레이션을 위해 기기를 <span class="text-cyan-300 font-semibold">가로 방향</span>으로 회전해 주세요.</p>
+  </div>
+
+  <!-- HUD Overlay -->
+  <div id="hud" class="hidden absolute inset-0 z-20 pointer-events-none flex flex-col justify-between p-3 md:p-5">
+    <!-- Top HUD Bar -->
+    <div class="flex justify-between items-start w-full pointer-events-auto">
+      <!-- Player Tag -->
+      <div class="cyber-panel px-3.5 py-2 rounded-xl flex items-center gap-3">
+        <div class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></div>
+        <div>
+          <div id="hud-player-name" class="text-xs text-cyan-300 font-bold uppercase tracking-wider">PILOT</div>
+          <div id="hud-difficulty-badge" class="text-[10px] text-gray-400 font-orbitron">NORMAL</div>
+        </div>
+      </div>
+
+      <!-- Distance & Score -->
+      <div class="flex gap-3">
+        <div class="cyber-panel px-4 py-2 rounded-xl text-center min-w-[95px]">
+          <div class="text-[10px] text-cyan-400 font-orbitron uppercase tracking-wider">DISTANCE</div>
+          <div id="hud-distance" class="text-lg md:text-xl font-black font-orbitron text-white">0 <span class="text-xs text-gray-400 font-normal">m</span></div>
+        </div>
+        <div class="cyber-panel px-4 py-2 rounded-xl text-center min-w-[95px] border-amber-500/40 shadow-amber-500/10">
+          <div class="text-[10px] text-amber-400 font-orbitron uppercase tracking-wider">SCORE</div>
+          <div id="hud-score" class="text-lg md:text-xl font-black font-orbitron text-amber-300">0</div>
+        </div>
+      </div>
+
+      <!-- Speed & Gyro Zero Button -->
+      <div class="cyber-panel px-3.5 py-2 rounded-xl flex items-center gap-3 text-right">
+        <div>
+          <div class="text-[10px] text-cyan-400 font-orbitron uppercase">SPEED</div>
+          <div id="hud-speed" class="text-base md:text-lg font-black font-orbitron text-white">120 <span class="text-xs text-gray-400">KM/H</span></div>
+        </div>
+        <button id="btn-gyro-recalibrate" title="자이로 영점 맞추기" class="hidden px-2.5 py-1.5 rounded-lg border border-cyan-400/40 bg-cyan-950/50 text-cyan-300 text-xs font-bold hover:text-white transition flex items-center gap-1 active:scale-95">
+          <i class="fa-solid fa-crosshairs"></i> 영점
+        </button>
+        <button id="btn-sound-toggle" class="p-2 text-cyan-300 hover:text-white transition active:scale-95">
+          <i id="icon-sound" class="fa-solid fa-volume-high"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Center Reticle -->
+    <div class="self-center my-auto pointer-events-none opacity-30">
+      <div class="w-12 h-12 border-2 border-cyan-400/50 rounded-full flex items-center justify-center">
+        <div class="w-1.5 h-1.5 bg-cyan-300 rounded-full"></div>
+      </div>
+    </div>
+
+    <!-- Touch Controls Container -->
+    <div id="touch-controls" class="w-full flex justify-between items-end pb-1 pointer-events-none">
+      
+      <!-- LEFT CONTROLS -->
+      <div class="pointer-events-auto flex items-end ml-1 md:ml-4 mb-1">
+        <!-- Gyro Mode Left: Altitude Buttons -->
+        <div id="gyro-left-controls" class="hidden flex-col gap-3">
+          <button id="btn-gyro-up" class="touch-btn cyber-panel w-16 h-16 md:w-20 md:h-20 rounded-full flex flex-col items-center justify-center text-cyan-300 shadow-lg border-2 border-cyan-400/50">
+            <i class="fa-solid fa-chevron-up text-xl md:text-2xl"></i>
+            <span class="text-[10px] font-bold mt-0.5">상승</span>
+          </button>
+          <button id="btn-gyro-down" class="touch-btn cyber-panel w-16 h-16 md:w-20 md:h-20 rounded-full flex flex-col items-center justify-center text-cyan-300 shadow-lg border-2 border-cyan-400/50">
+            <i class="fa-solid fa-chevron-down text-xl md:text-2xl"></i>
+            <span class="text-[10px] font-bold mt-0.5">하강</span>
+          </button>
+        </div>
+
+        <!-- Button Mode Left: Circular Joystick (Altitude & Yaw) -->
+        <div id="btn-mode-left-controls" class="hidden flex-col items-center gap-1">
+          <div class="text-[10px] font-orbitron text-cyan-400/90 font-bold tracking-wide">고도 / 회전 (L-STICK)</div>
+          <div id="joystick-left" class="joystick-base">
+            <span class="joystick-axis-marker top-1.5 left-1/2 -translate-x-1/2">상승</span>
+            <span class="joystick-axis-marker bottom-1.5 left-1/2 -translate-x-1/2">하강</span>
+            <span class="joystick-axis-marker left-1.5 top-1/2 -translate-y-1/2">좌회전</span>
+            <span class="joystick-axis-marker right-1.5 top-1/2 -translate-y-1/2">우회전</span>
+            <div id="joystick-left-knob" class="joystick-knob"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gyro status hint text -->
+      <div id="gyro-status-indicator" class="hidden text-center pb-2 text-xs text-cyan-400/80 font-mono tracking-wide">
+        <i class="fa-solid fa-compass animate-spin mr-1 text-cyan-300"></i> 자이로 제어 활성 (기기를 기울이세요)
+      </div>
+
+      <!-- RIGHT CONTROLS: Circular Joystick (Forward/Back/Left/Right Strafe) -->
+      <div class="pointer-events-auto mr-1 md:mr-4 mb-1">
+        <div id="btn-mode-right-controls" class="hidden flex-col items-center gap-1">
+          <div class="text-[10px] font-orbitron text-emerald-400/90 font-bold tracking-wide">전후좌우 이동 (R-STICK)</div>
+          <div id="joystick-right" class="joystick-base border-emerald-400/40">
+            <span class="joystick-axis-marker top-1.5 left-1/2 -translate-x-1/2 text-emerald-300/80">전진</span>
+            <span class="joystick-axis-marker bottom-1.5 left-1/2 -translate-x-1/2 text-emerald-300/80">후진</span>
+            <span class="joystick-axis-marker left-2 top-1/2 -translate-y-1/2 text-emerald-300/80">좌</span>
+            <span class="joystick-axis-marker right-2 top-1/2 -translate-y-1/2 text-emerald-300/80">우</span>
+            <div id="joystick-right-knob" class="joystick-knob !bg-[radial-gradient(circle_at_35%_35%,rgba(52,211,153,0.95),rgba(5,150,105,0.85))] !border-emerald-200 !shadow-[0_0_18px_rgba(52,211,153,0.9)]"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SCREEN 1: START SCREEN & PILOT SETUP -->
+  <div id="screen-start" class="absolute inset-0 z-30 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md">
+    <div class="cyber-panel w-full max-w-xl rounded-3xl p-6 md:p-8 flex flex-col gap-5 border border-cyan-500/40 shadow-2xl">
+      
+      <!-- Title & Header -->
+      <div class="text-center">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-cyan-400 text-xs font-orbitron tracking-widest mb-1.5">
+          <i class="fa-solid fa-plane-up"></i> 3D DRONE SIMULATION
+        </div>
+        <h1 class="text-3xl md:text-4xl font-black font-orbitron tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-500">
+          CYBER X-RACER
+        </h1>
+        <p class="text-xs md:text-sm text-gray-400 mt-1">자이로 센서 & 모바일 듀얼 원형 스틱으로 즐기는 고속 비행 레이서</p>
+      </div>
+
+      <!-- Pilot Name Input -->
+      <div>
+        <label class="block text-xs font-semibold text-cyan-300 uppercase tracking-wider mb-1.5">
+          <i class="fa-solid fa-id-badge mr-1.5"></i> 조종사 이름 (파일럿 명패)
+        </label>
+        <div class="relative">
+          <input type="text" id="input-pilot-name" maxlength="12" placeholder="이름을 입력하세요 (예: Falcon77)"
+            class="w-full bg-slate-900/80 border border-cyan-500/30 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 font-semibold text-sm">
+        </div>
+      </div>
+
+      <!-- Control Mode Selection -->
+      <div>
+        <label class="block text-xs font-semibold text-cyan-300 uppercase tracking-wider mb-1.5">
+          <i class="fa-solid fa-gamepad mr-1.5"></i> 조작 모드 선택
+        </label>
+        <div class="grid grid-cols-2 gap-3">
+          <button type="button" id="opt-mode-gyro" class="mode-select-btn cyber-btn py-3 px-3 rounded-2xl flex flex-col items-center justify-center gap-1 border-2 border-cyan-400 bg-cyan-950/40 text-white font-bold">
+            <i class="fa-solid fa-arrows-spin text-xl text-cyan-400"></i>
+            <span class="text-sm">자이로 센서</span>
+            <span class="text-[10px] text-cyan-200/70 font-normal">기기 기울임 + 상승/하강</span>
+          </button>
+          <button type="button" id="opt-mode-button" class="mode-select-btn cyber-btn py-3 px-3 rounded-2xl flex flex-col items-center justify-center gap-1 border-2 border-transparent bg-slate-900/60 text-gray-300 hover:text-white">
+            <i class="fa-solid fa-circle-dot text-xl text-sky-400"></i>
+            <span class="text-sm">원형 조이스틱</span>
+            <span class="text-[10px] text-gray-400 font-normal">좌측(고도/회전) 우측(이동)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Difficulty Level Selection -->
+      <div>
+        <label class="block text-xs font-semibold text-cyan-300 uppercase tracking-wider mb-1.5">
+          <i class="fa-solid fa-gauge-high mr-1.5"></i> 난이도 설정
+        </label>
+        <div class="grid grid-cols-3 gap-2">
+          <button type="button" data-diff="easy" class="diff-btn py-2.5 rounded-xl border border-slate-700 bg-slate-900/60 text-gray-400 font-bold text-xs md:text-sm">
+            쉬움 (Easy)
+          </button>
+          <button type="button" data-diff="normal" class="diff-btn py-2.5 rounded-xl border-2 border-cyan-400 bg-cyan-950/40 text-cyan-300 font-bold text-xs md:text-sm">
+            보통 (Normal)
+          </button>
+          <button type="button" data-diff="hard" class="diff-btn py-2.5 rounded-xl border border-slate-700 bg-slate-900/60 text-gray-400 font-bold text-xs md:text-sm">
+            어려움 (Hard)
+          </button>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex gap-2.5 pt-1">
+        <button id="btn-open-how-to" class="w-1/4 cyber-btn py-3.5 rounded-2xl font-bold text-amber-300 text-xs md:text-sm flex items-center justify-center gap-1.5 border border-amber-500/40 hover:bg-amber-500/20 active:scale-95">
+          <i class="fa-solid fa-circle-question"></i> 게임 방법
+        </button>
+        <button id="btn-view-leaderboard" class="w-1/4 cyber-btn py-3.5 rounded-2xl font-bold text-cyan-300 text-xs md:text-sm flex items-center justify-center gap-1.5 active:scale-95">
+          <i class="fa-solid fa-trophy"></i> 랭킹
+        </button>
+        <button id="btn-start-game" class="w-2/4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black py-3.5 rounded-2xl text-sm md:text-base shadow-lg shadow-cyan-500/30 active:scale-95 transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-play"></i> 비행 시작
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: HOW TO PLAY -->
+  <div id="modal-how-to-play" class="hidden fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+    <div class="cyber-panel w-full max-w-lg rounded-3xl p-6 flex flex-col gap-4 border border-cyan-400/50 shadow-2xl">
+      
+      <!-- Modal Header -->
+      <div class="flex justify-between items-center border-b border-cyan-500/30 pb-3">
+        <div class="flex items-center gap-2 text-cyan-300 font-orbitron font-bold text-lg">
+          <i class="fa-solid fa-gamepad text-amber-400"></i> 비행 가이드 및 게임 방법
+        </div>
+        <button id="btn-close-how-to" class="text-gray-400 hover:text-white text-xl p-1">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Content Body -->
+      <div class="space-y-3.5 text-xs md:text-sm text-gray-300 overflow-y-auto max-h-[60vh] pr-1 custom-scroll">
+        
+        <!-- Control 1: Gyro -->
+        <div class="bg-slate-900/80 p-3 rounded-2xl border border-cyan-500/20">
+          <div class="font-bold text-cyan-300 flex items-center gap-2 text-sm mb-1.5">
+            <i class="fa-solid fa-arrows-spin text-cyan-400"></i> 1. 자이로 센서 모드
+          </div>
+          <ul class="list-disc list-inside space-y-1 text-gray-300 pl-1">
+            <li><span class="text-white font-semibold">기기 좌우 기울임</span>: 해당 방향으로 즉시 회피 기동합니다.</li>
+            <li><span class="text-white font-semibold">좌측 하단 [상승 / 하강] 버튼</span>: 터치하는 동안 고도를 변경합니다.</li>
+            <li><span class="text-amber-300 font-semibold">영점 맞추기</span>: 비행 시작 시 손에 쥔 각도가 자동으로 영점이 되며, 상단의 [영점] 버튼으로 언제든 다시 기준을 잡을 수 있습니다.</li>
+          </ul>
+        </div>
+
+        <!-- Control 2: Circular Joysticks -->
+        <div class="bg-slate-900/80 p-3 rounded-2xl border border-cyan-500/20">
+          <div class="font-bold text-emerald-300 flex items-center gap-2 text-sm mb-1.5">
+            <i class="fa-solid fa-circle-dot text-emerald-400"></i> 2. 원형 조이스틱 모드
+          </div>
+          <ul class="list-disc list-inside space-y-1 text-gray-300 pl-1">
+            <li><span class="text-cyan-300 font-semibold">좌측 조이스틱</span>: 위(상승), 아래(하강), 좌(좌회전), 우(우회전)</li>
+            <li><span class="text-emerald-300 font-semibold">우측 조이스틱</span>: 앞(가속), 뒤(감속), 좌(좌 이동), 우(우 이동)</li>
+            <li>손가락을 터치해 원 안에서 미는 강도에 따라 부드럽게 비례 제어됩니다.</li>
+          </ul>
+        </div>
+
+        <!-- Rule & Scoring -->
+        <div class="bg-slate-900/80 p-3 rounded-2xl border border-amber-500/20">
+          <div class="font-bold text-amber-300 flex items-center gap-2 text-sm mb-1.5">
+            <i class="fa-solid fa-trophy text-amber-400"></i> 3. 득점 & 순위 규칙
+          </div>
+          <p class="mb-1 text-gray-300">
+            비행 거리에 따라 기본 점수가 올라가며, 코스에 배치된 <span class="text-amber-300 font-bold">골든 링</span>을 관통하면 큰 보너스 점수를 획득합니다!
+          </p>
+          <p class="text-rose-300">
+            * 붉은색 기둥 및 큐브 장애물에 닿으면 기체가 즉시 파괴되므로 주의하세요.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer Close -->
+      <button id="btn-close-how-to-bottom" class="w-full py-3 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm shadow-md transition">
+        확인했습니다. 비행 준비 완료!
+      </button>
+
+    </div>
+  </div>
+
+  <!-- SCREEN 2: GAME OVER & LEADERBOARD SCREEN -->
+  <div id="screen-gameover" class="hidden absolute inset-0 z-30 flex items-center justify-center p-3 md:p-6 bg-slate-950/90 backdrop-blur-md">
+    <div class="cyber-panel w-full max-w-2xl rounded-3xl p-5 md:p-7 flex flex-col max-h-[92vh] border border-cyan-500/40 shadow-2xl">
+      
+      <!-- Top Title & Result Summary -->
+      <div class="flex flex-wrap items-center justify-between border-b border-cyan-500/20 pb-4 mb-3">
+        <div>
+          <span id="gameover-status-tag" class="text-xs font-orbitron font-bold text-rose-400 tracking-wider uppercase">DRONE STATUS: CRASHED</span>
+          <h2 class="text-2xl md:text-3xl font-black font-orbitron text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-amber-400">MISSION REPORT</h2>
+        </div>
+        <div class="flex items-center gap-3 mt-2 sm:mt-0">
+          <div class="text-right">
+            <span class="text-[10px] text-gray-400 block uppercase font-orbitron">FINAL SCORE</span>
+            <span id="final-score-val" class="text-2xl font-black font-orbitron text-amber-300">0</span>
+          </div>
+          <div class="text-right pl-3 border-l border-gray-700">
+            <span class="text-[10px] text-gray-400 block uppercase font-orbitron">DISTANCE</span>
+            <span id="final-distance-val" class="text-lg font-bold font-orbitron text-cyan-300">0 m</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Leaderboard Header -->
+      <div class="flex items-center justify-between text-xs font-semibold text-cyan-400 px-3 py-1.5 bg-slate-900/60 rounded-t-xl">
+        <div class="w-12 text-center">순위</div>
+        <div class="flex-1 pl-2">파일럿</div>
+        <div class="w-20 text-center">난이도</div>
+        <div class="w-28 text-right">점수 (거리)</div>
+      </div>
+
+      <!-- Top 10 Leaderboard List -->
+      <div id="leaderboard-list" class="custom-scroll overflow-y-auto max-h-[35vh] flex flex-col gap-1.5 py-1.5 pr-1">
+        <!-- Dynamic items injected here -->
+      </div>
+
+      <!-- Outside Top 10 Notice Banner -->
+      <div id="out-of-rank-banner" class="hidden mt-2 p-2.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-cyan-500/20 border border-amber-400/40 flex items-center justify-between text-sm">
+        <div class="flex items-center gap-2">
+          <span class="p-1.5 bg-amber-400/20 rounded-lg text-amber-300 text-xs font-bold">
+            <i class="fa-solid fa-flag-checkered"></i> 내 순위
+          </span>
+          <span class="text-gray-200 font-medium">상위 10위 밖입니다. 현재 순위:</span>
+        </div>
+        <div id="my-out-rank-text" class="font-orbitron font-extrabold text-amber-300 text-base">
+          14위
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex gap-3 pt-4 mt-auto border-t border-cyan-500/20">
+        <button id="btn-restart-game" class="flex-1 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black py-3.5 rounded-2xl text-sm md:text-base shadow-lg shadow-cyan-500/25 active:scale-95 transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-rotate-right"></i> 다시하기 (점수 초기화)
+        </button>
+        <button id="btn-goto-start" class="flex-1 cyber-panel cyber-btn hover:text-white py-3.5 rounded-2xl font-bold text-gray-300 text-sm md:text-base active:scale-95 transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-house"></i> 처음으로 (이름/모드 재설정)
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Custom Alert / Toast Modal -->
+  <div id="toast-modal" class="hidden fixed top-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-2xl cyber-panel border border-cyan-400 text-cyan-300 text-sm font-semibold shadow-2xl flex items-center gap-2 animate-pulse">
+    <i class="fa-solid fa-circle-info"></i>
+    <span id="toast-msg">메시지</span>
+  </div>
+
+  <script>
+  (function () {
+    'use strict';
+
+    const GAME_CONFIG = {
+      easy:   { speed: 55,  spawnRate: 140, obstacleSpeed: 0,  ringBonus: 300, multiplier: 1.0, label: 'EASY' },
+      normal: { speed: 85,  spawnRate: 110, obstacleSpeed: 6,  ringBonus: 500, multiplier: 1.5, label: 'NORMAL' },
+      hard:   { speed: 120, spawnRate: 85,  obstacleSpeed: 14, ringBonus: 800, multiplier: 2.2, label: 'HARD' }
+    };
+
+    const state = {
+      playerName: '',
+      controlMode: 'gyro', // 'gyro' or 'button'
+      difficulty: 'normal',
+      isPlaying: false,
+      isPaused: false,
+      score: 0,
+      distance: 0,
+      bonusScore: 0,
+      audioEnabled: true,
+      
+      controls: {
+        analogLX: 0,
+        analogLY: 0,
+        analogRX: 0,
+        analogRY: 0,
+        altUp: false,
+        altDown: false,
+        gyroBeta: 0,
+        gyroGamma: 0
+      },
+
+      rawBeta: 0,
+      rawGamma: 0,
+      gyroZeroBeta: null,
+      gyroZeroGamma: null,
+      gyroAvailable: false
+    };
+
+    // Leaderboard storage
+    let leaderboard = [
+      { name: "SkyRacer_KR", score: 18450, distance: 4120, diff: "hard" },
+      { name: "AeroViper",   score: 15200, distance: 3600, diff: "hard" },
+      { name: "NeoPulse",    score: 13900, distance: 3400, diff: "normal" },
+      { name: "Falcon_9",    score: 11500, distance: 3100, diff: "normal" },
+      { name: "CyberWing",   score: 9800,  distance: 2800, diff: "normal" },
+      { name: "SpeedDemon",  score: 8400,  distance: 2500, diff: "easy" },
+      { name: "GhostRider",  score: 7200,  distance: 2200, diff: "easy" },
+      { name: "AlphaDrone",  score: 6100,  distance: 1950, diff: "easy" },
+      { name: "Horizon01",   score: 5200,  distance: 1700, diff: "easy" },
+      { name: "VortexKR",    score: 4300,  distance: 1500, diff: "easy" },
+      { name: "RookiePilot", score: 2900,  distance: 1100, diff: "easy" },
+      { name: "DroneTrainee",score: 1800,  distance: 800,  diff: "easy" }
+    ];
+
+    let synthCrash = null;
+    let synthRing = null;
+    let synthEngine = null;
+
+    function initAudio() {
+      try {
+        if (!synthCrash && typeof Tone !== 'undefined') {
+          synthCrash = new Tone.NoiseSynth({
+            noise: { type: 'white' },
+            envelope: { attack: 0.005, decay: 0.45, sustain: 0.01, release: 0.3 }
+          }).toDestination();
+          synthCrash.volume.value = -6;
+
+          synthRing = new Tone.PolySynth(Tone.Synth, {
+            oscillator: { type: 'sine' },
+            envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 0.3 }
+          }).toDestination();
+          synthRing.volume.value = -8;
+
+          synthEngine = new Tone.Oscillator(90, "sawtooth").toDestination();
+          synthEngine.volume.value = -24;
+        }
+      } catch (e) {
+        console.warn("Audio initialization deferred:", e);
+      }
+    }
+
+    function playSound(type) {
+      if (!state.audioEnabled || typeof Tone === 'undefined') return;
+      try {
+        if (Tone.context.state !== 'running') {
+          Tone.context.resume();
+        }
+        if (type === 'ring' && synthRing) {
+          synthRing.triggerAttackRelease(["E5", "B5"], "16n");
+        } else if (type === 'crash' && synthCrash) {
+          synthCrash.triggerAttackRelease("8n");
+        }
+      } catch (err) {}
+    }
+
+    let scene, camera, renderer, clock;
+    let droneGroup, droneRotorMeshes = [];
+    const obstacles = [];
+    const bonusRings = [];
+    const tunnelSegments = [];
+    let speedLines = null;
+    const TUNNEL_LENGTH = 700;
+    const TUNNEL_RADIUS = 28;
+
+    function init3D() {
+      const container = document.getElementById('game-canvas-container');
+      scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x040814, 0.0045);
+
+      camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.5, 1200);
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      container.appendChild(renderer.domElement);
+
+      clock = new THREE.Clock();
+
+      const ambientLight = new THREE.AmbientLight(0x223344, 1.4);
+      scene.add(ambientLight);
+
+      const dirLight = new THREE.DirectionalLight(0x00ffff, 1.2);
+      dirLight.position.set(20, 60, 40);
+      scene.add(dirLight);
+
+      const droneSpot = new THREE.PointLight(0x00f0ff, 2.5, 60);
+      droneSpot.position.set(0, 0, -2);
+      scene.add(droneSpot);
+
+      createDrone();
+      createTunnelMesh();
+      createSpeedLines();
+
+      window.addEventListener('resize', onWindowResize);
+    }
+
+    function createDrone() {
+      droneGroup = new THREE.Group();
+
+      const bodyGeo = new THREE.ConeGeometry(1.2, 3.2, 6);
+      bodyGeo.rotateX(Math.PI / 2);
+      const bodyMat = new THREE.MeshStandardMaterial({
+        color: 0x111e2e,
+        metalness: 0.85,
+        roughness: 0.25,
+        emissive: 0x003344,
+        emissiveIntensity: 0.4
+      });
+      const body = new THREE.Mesh(bodyGeo, bodyMat);
+      droneGroup.add(body);
+
+      const glassGeo = new THREE.SphereGeometry(0.7, 16, 12);
+      glassGeo.scale(1, 0.5, 1.6);
+      const glassMat = new THREE.MeshBasicMaterial({ color: 0x00ffff });
+      const glass = new THREE.Mesh(glassGeo, glassMat);
+      glass.position.set(0, 0.35, -0.2);
+      droneGroup.add(glass);
+
+      const armMat = new THREE.MeshStandardMaterial({ color: 0x222a35, metalness: 0.7, roughness: 0.3 });
+      const armGeo = new THREE.CylinderGeometry(0.12, 0.12, 3.8);
+      armGeo.rotateZ(Math.PI / 4);
+      const arm1 = new THREE.Mesh(armGeo, armMat);
+      droneGroup.add(arm1);
+
+      const arm2 = arm1.clone();
+      arm2.rotation.z = -Math.PI / 2;
+      droneGroup.add(arm2);
+
+      const rotorGeo = new THREE.BoxGeometry(2.0, 0.04, 0.22);
+      const rotorMat = new THREE.MeshBasicMaterial({ color: 0x00e1ff, transparent: true, opacity: 0.85 });
+      droneRotorMeshes = [];
+
+      const rotorPositions = [
+        [ 1.35, 0.2, -1.35],
+        [-1.35, 0.2, -1.35],
+        [ 1.35, 0.2,  1.35],
+        [-1.35, 0.2,  1.35]
+      ];
+
+      rotorPositions.forEach(pos => {
+        const motorGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.4, 8);
+        const motorMat = new THREE.MeshStandardMaterial({ color: 0x0a101d });
+        const motor = new THREE.Mesh(motorGeo, motorMat);
+        motor.position.set(pos[0], pos[1] - 0.2, pos[2]);
+        droneGroup.add(motor);
+
+        const rotor = new THREE.Mesh(rotorGeo, rotorMat);
+        rotor.position.set(pos[0], pos[1], pos[2]);
+        droneGroup.add(rotor);
+        droneRotorMeshes.push(rotor);
+      });
+
+      const thrusterGeo = new THREE.CylinderGeometry(0.35, 0.1, 1.2, 8);
+      thrusterGeo.rotateX(Math.PI / 2);
+      const thrusterMat = new THREE.MeshBasicMaterial({ color: 0x00f7ff });
+      const thruster = new THREE.Mesh(thrusterGeo, thrusterMat);
+      thruster.position.set(0, 0, 1.8);
+      droneGroup.add(thruster);
+
+      droneGroup.position.set(0, 0, 0);
+      scene.add(droneGroup);
+    }
+
+    function createTunnelMesh() {
+      const ringGeo = new THREE.RingGeometry(TUNNEL_RADIUS - 0.5, TUNNEL_RADIUS, 6);
+      const ringMat = new THREE.MeshBasicMaterial({
+        color: 0x003b5c,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.4
+      });
+
+      for (let z = -TUNNEL_LENGTH; z <= 100; z += 25) {
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.position.set(0, 0, z);
+        scene.add(ring);
+        tunnelSegments.push(ring);
+      }
+
+      const gridHelper = new THREE.GridHelper(TUNNEL_LENGTH * 2, 80, 0x00ffff, 0x072b42);
+      gridHelper.position.set(0, -TUNNEL_RADIUS + 3, -TUNNEL_LENGTH / 2);
+      scene.add(gridHelper);
+    }
+
+    function createSpeedLines() {
+      const lineCount = 350;
+      const geometry = new THREE.BufferGeometry();
+      const positions = new Float32Array(lineCount * 6);
+
+      for (let i = 0; i < lineCount; i++) {
+        const x = (Math.random() - 0.5) * (TUNNEL_RADIUS * 1.8);
+        const y = (Math.random() - 0.5) * (TUNNEL_RADIUS * 1.8);
+        const z = -Math.random() * TUNNEL_LENGTH;
+        const len = 15 + Math.random() * 25;
+
+        positions[i * 6] = x;
+        positions[i * 6 + 1] = y;
+        positions[i * 6 + 2] = z;
+        positions[i * 6 + 3] = x;
+        positions[i * 6 + 4] = y;
+        positions[i * 6 + 5] = z - len;
+      }
+
+      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      const material = new THREE.LineBasicMaterial({
+        color: 0x00f0ff,
+        transparent: true,
+        opacity: 0.35
+      });
+
+      speedLines = new THREE.LineSegments(geometry, material);
+      scene.add(speedLines);
+    }
+
+    function spawnObstacleCluster(zPos) {
+      const cfg = GAME_CONFIG[state.difficulty];
+      const types = ['cube', 'pillar'];
+      const type = types[Math.floor(Math.random() * types.length)];
+
+      if (type === 'cube') {
+        const size = 5 + Math.random() * 5;
+        const geo = new THREE.BoxGeometry(size, size, size);
+        const mat = new THREE.MeshStandardMaterial({
+          color: 0x0f172a,
+          roughness: 0.3,
+          metalness: 0.8,
+          emissive: 0xff0055,
+          emissiveIntensity: 0.65
+        });
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.position.set(
+          (Math.random() - 0.5) * (TUNNEL_RADIUS * 1.2),
+          (Math.random() - 0.5) * (TUNNEL_RADIUS * 1.2),
+          zPos
+        );
+        mesh.userData = {
+          type: 'obstacle',
+          size: size * 0.55,
+          rotSpeed: (Math.random() - 0.5) * 2,
+          oscillate: Math.random() > 0.4 ? (Math.random() - 0.5) * cfg.obstacleSpeed : 0
+        };
+        scene.add(mesh);
+        obstacles.push(mesh);
+      } else if (type === 'pillar') {
+        const height = TUNNEL_RADIUS * 1.7;
+        const geo = new THREE.CylinderGeometry(2.4, 2.4, height, 12);
+        const mat = new THREE.MeshStandardMaterial({
+          color: 0x1e1b4b,
+          emissive: 0x6366f1,
+          emissiveIntensity: 0.55
+        });
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.position.set((Math.random() - 0.5) * (TUNNEL_RADIUS * 0.9), 0, zPos);
+        mesh.userData = {
+          type: 'obstacle',
+          size: 3.2,
+          rotSpeed: 0,
+          oscillate: (Math.random() - 0.5) * cfg.obstacleSpeed
+        };
+        scene.add(mesh);
+        obstacles.push(mesh);
+      }
+
+      if (Math.random() < 0.45) {
+        const ringGeo = new THREE.TorusGeometry(3.5, 0.35, 12, 24);
+        const ringMat = new THREE.MeshBasicMaterial({ color: 0xffd700, wireframe: true });
+        const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+        ringMesh.position.set(
+          (Math.random() - 0.5) * (TUNNEL_RADIUS * 0.8),
+          (Math.random() - 0.5) * (TUNNEL_RADIUS * 0.8),
+          zPos + 25
+        );
+        ringMesh.userData = { type: 'bonus_ring', collected: false };
+        scene.add(ringMesh);
+        bonusRings.push(ringMesh);
+      }
+    }
+
+    function clearTrackEntities() {
+      obstacles.forEach(o => scene.remove(o));
+      obstacles.length = 0;
+      bonusRings.forEach(r => scene.remove(r));
+      bonusRings.length = 0;
+    }
+
+    function createVirtualJoystick(baseElId, knobElId, onMove) {
+      const base = document.getElementById(baseElId);
+      const knob = document.getElementById(knobElId);
+      if (!base || !knob) return;
+
+      const maxRadius = 42;
+      let activeTouchId = null;
+      let isDragging = false;
+      let baseRect = null;
+
+      function updateKnob(deltaX, deltaY) {
+        const distance = Math.hypot(deltaX, deltaY);
+        let clampedX = deltaX;
+        let clampedY = deltaY;
+
+        if (distance > maxRadius) {
+          clampedX = (deltaX / distance) * maxRadius;
+          clampedY = (deltaY / distance) * maxRadius;
+        }
+
+        knob.style.transform = `translate(calc(-50% + ${clampedX}px), calc(-50% + ${clampedY}px))`;
+        const normX = clampedX / maxRadius;
+        const normY = clampedY / maxRadius;
+        onMove(normX, normY);
+      }
+
+      function resetKnob() {
+        knob.style.transform = `translate(-50%, -50%)`;
+        onMove(0, 0);
+        isDragging = false;
+        activeTouchId = null;
+      }
+
+      function handleStart(clientX, clientY) {
+        baseRect = base.getBoundingClientRect();
+        isDragging = true;
+        const centerX = baseRect.left + baseRect.width / 2;
+        const centerY = baseRect.top + baseRect.height / 2;
+        updateKnob(clientX - centerX, clientY - centerY);
+      }
+
+      function handleMove(clientX, clientY) {
+        if (!isDragging || !baseRect) return;
+        const centerX = baseRect.left + baseRect.width / 2;
+        const centerY = baseRect.top + baseRect.height / 2;
+        updateKnob(clientX - centerX, clientY - centerY);
+      }
+
+      base.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        if (activeTouchId !== null) return;
+        const touch = e.changedTouches[0];
+        activeTouchId = touch.identifier;
+        handleStart(touch.clientX, touch.clientY);
+      }, { passive: false });
+
+      window.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        for (let i = 0; i < e.changedTouches.length; i++) {
+          if (e.changedTouches[i].identifier === activeTouchId) {
+            handleMove(e.changedTouches[i].clientX, e.changedTouches[i].clientY);
+            break;
+          }
+        }
+      }, { passive: false });
+
+      const onTouchEnd = (e) => {
+        for (let i = 0; i < e.changedTouches.length; i++) {
+          if (e.changedTouches[i].identifier === activeTouchId) {
+            resetKnob();
+            break;
+          }
+        }
+      };
+      window.addEventListener('touchend', onTouchEnd);
+      window.addEventListener('touchcancel', resetKnob);
+
+      base.addEventListener('mousedown', (e) => {
+        handleStart(e.clientX, e.clientY);
+        const onMouseMove = (ev) => handleMove(ev.clientX, ev.clientY);
+        const onMouseUp = () => {
+          resetKnob();
+          window.removeEventListener('mousemove', onMouseMove);
+          window.removeEventListener('mouseup', onMouseUp);
+        };
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+      });
+    }
+
+    function setupControls() {
+      function handleOrientation(e) {
+        if (e.beta === null && e.gamma === null) return;
+        state.gyroAvailable = true;
+        state.rawBeta = e.beta || 0;
+        state.rawGamma = e.gamma || 0;
+
+        let orientationAngle = 90;
+        if (window.screen && window.screen.orientation && window.screen.orientation.angle !== undefined) {
+          orientationAngle = window.screen.orientation.angle;
+        } else if (typeof window.orientation !== 'undefined') {
+          orientationAngle = window.orientation;
+        }
+
+        let pitch = 0;
+        let roll = 0;
+
+        if (Math.abs(orientationAngle) === 90 || orientationAngle === 270) {
+          if (orientationAngle === 90) {
+            pitch = -state.rawGamma;
+            roll = state.rawBeta;
+          } else {
+            pitch = state.rawGamma;
+            roll = -state.rawBeta;
+          }
+        } else {
+          pitch = state.rawBeta - 45;
+          roll = state.rawGamma;
+        }
+
+        if (state.gyroZeroBeta === null) {
+          state.gyroZeroBeta = pitch;
+          state.gyroZeroGamma = roll;
+        }
+
+        const relPitch = pitch - state.gyroZeroBeta;
+        const relRoll = roll - state.gyroZeroGamma;
+
+        state.controls.gyroBeta = Math.max(-45, Math.min(45, relPitch));
+        state.controls.gyroGamma = Math.max(-45, Math.min(45, relRoll));
+      }
+
+      if (window.DeviceOrientationEvent) {
+        window.addEventListener('deviceorientation', handleOrientation, true);
+      }
+
+      async function requestGyroPermission() {
+        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+          try {
+            const response = await DeviceOrientationEvent.requestPermission();
+            if (response === 'granted') {
+              window.addEventListener('deviceorientation', handleOrientation, true);
+              state.gyroAvailable = true;
+              calibrateGyro();
+              showToast("자이로 센서 활성화 완료!");
+              return true;
+            } else {
+              showToast("센서 권한 거부: 원형 조이스틱 모드로 전환합니다.");
+              setControlMode('button');
+              return false;
+            }
+          } catch (e) {
+            console.error("Gyro permission error:", e);
+            return false;
+          }
+        }
+        return true;
+      }
+
+      function calibrateGyro() {
+        state.gyroZeroBeta = null;
+        state.gyroZeroGamma = null;
+        showToast("자이로 영점이 현재 각도로 재설정되었습니다.");
+      }
+
+      document.getElementById('btn-gyro-recalibrate').addEventListener('click', calibrateGyro);
+
+      createVirtualJoystick('joystick-left', 'joystick-left-knob', (normX, normY) => {
+        state.controls.analogLX = normX;
+        state.controls.analogLY = -normY;
+      });
+
+      createVirtualJoystick('joystick-right', 'joystick-right-knob', (normX, normY) => {
+        state.controls.analogRX = normX;
+        state.controls.analogRY = -normY;
+      });
+
+      function bindAltitudeButton(btnId, stateKey) {
+        const btn = document.getElementById(btnId);
+        if (!btn) return;
+        const press = (e) => { e.preventDefault(); state.controls[stateKey] = true; btn.classList.add('active'); };
+        const release = (e) => { e.preventDefault(); state.controls[stateKey] = false; btn.classList.remove('active'); };
+        btn.addEventListener('touchstart', press, { passive: false });
+        btn.addEventListener('touchend', release, { passive: false });
+        btn.addEventListener('touchcancel', release, { passive: false });
+        btn.addEventListener('mousedown', press);
+        btn.addEventListener('mouseup', release);
+        btn.addEventListener('mouseleave', release);
+      }
+      bindAltitudeButton('btn-gyro-up', 'altUp');
+      bindAltitudeButton('btn-gyro-down', 'altDown');
+
+      // Desktop keyboard fallback
+      window.addEventListener('keydown', (e) => {
+        if (!state.isPlaying) return;
+        switch (e.code) {
+          case 'KeyW': state.controls.analogRY = 1; break;
+          case 'KeyS': state.controls.analogRY = -1; break;
+          case 'KeyA': state.controls.analogRX = -1; break;
+          case 'KeyD': state.controls.analogRX = 1; break;
+          case 'ArrowUp': state.controls.analogLY = 1; state.controls.altUp = true; break;
+          case 'ArrowDown': state.controls.analogLY = -1; state.controls.altDown = true; break;
+          case 'KeyQ': case 'ArrowLeft': state.controls.analogLX = -1; break;
+          case 'KeyE': case 'ArrowRight': state.controls.analogLX = 1; break;
+        }
+      });
+
+      window.addEventListener('keyup', (e) => {
+        switch (e.code) {
+          case 'KeyW': case 'KeyS': state.controls.analogRY = 0; break;
+          case 'KeyA': case 'KeyD': state.controls.analogRX = 0; break;
+          case 'ArrowUp': case 'ArrowDown': state.controls.analogLY = 0; state.controls.altUp = false; state.controls.altDown = false; break;
+          case 'KeyQ': case 'KeyE': case 'ArrowLeft': case 'ArrowRight': state.controls.analogLX = 0; break;
+        }
+      });
+
+      document.getElementById('btn-sound-toggle').addEventListener('click', () => {
+        state.audioEnabled = !state.audioEnabled;
+        const icon = document.getElementById('icon-sound');
+        icon.className = state.audioEnabled ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark text-rose-400';
+      });
+
+      return { requestGyroPermission, calibrateGyro };
+    }
+
+    let droneVelocity = { x: 0, y: 0, z: 0 };
+    let droneRotation = { pitch: 0, roll: 0, yaw: 0 };
+    let currentForwardSpeed = 0;
+    let nextObstacleZ = -100;
+
+    function resetDroneFlightState() {
+      if (!droneGroup) return;
+      droneGroup.position.set(0, 0, 0);
+      droneGroup.rotation.set(0, 0, 0);
+      droneVelocity = { x: 0, y: 0, z: 0 };
+      droneRotation = { pitch: 0, roll: 0, yaw: 0 };
+      currentForwardSpeed = GAME_CONFIG[state.difficulty].speed;
+      nextObstacleZ = -120;
+    }
+
+    function updateSimulation(delta) {
+      if (!state.isPlaying || state.isPaused) return;
+
+      const cfg = GAME_CONFIG[state.difficulty];
+      const ctrl = state.controls;
+
+      droneRotorMeshes.forEach(rotor => {
+        rotor.rotation.y += 35 * delta;
+      });
+
+      currentForwardSpeed = Math.min(cfg.speed * 2.2, currentForwardSpeed + delta * 2.5);
+      const speedKmH = Math.round(currentForwardSpeed * 1.4);
+      document.getElementById('hud-speed').innerHTML = `${speedKmH} <span class="text-xs text-gray-400">KM/H</span>`;
+
+      const distTraveled = currentForwardSpeed * delta;
+      state.distance += distTraveled;
+      state.score = Math.floor(state.distance * cfg.multiplier + state.bonusScore);
+
+      document.getElementById('hud-distance').innerHTML = `${Math.floor(state.distance)} <span class="text-xs text-gray-400 font-normal">m</span>`;
+      document.getElementById('hud-score').innerText = state.score.toLocaleString();
+
+      let targetVelX = 0;
+      let targetVelY = 0;
+      let targetPitch = 0;
+      let targetRoll = 0;
+      let targetYaw = 0;
+
+      if (state.controlMode === 'gyro') {
+        const rollRatio = Math.max(-1, Math.min(1, ctrl.gyroGamma / 24));
+        targetVelX = rollRatio * 34;
+        targetRoll = -rollRatio * 0.75;
+
+        if (ctrl.altUp) targetVelY += 25;
+        if (ctrl.altDown) targetVelY -= 25;
+
+        const pitchRatio = Math.max(-1, Math.min(1, ctrl.gyroBeta / 25));
+        targetPitch = pitchRatio * 0.45;
+        targetVelY += -pitchRatio * 14;
+      } else {
+        targetVelY += ctrl.analogLY * 28;
+        targetYaw += -ctrl.analogLX * 1.1;
+
+        targetVelX += ctrl.analogRX * 34;
+        targetRoll += -ctrl.analogRX * 0.65;
+        targetPitch += -ctrl.analogRY * 0.35;
+        targetVelY += ctrl.analogRY * 10;
+      }
+
+      droneVelocity.x += (targetVelX - droneVelocity.x) * 0.12;
+      droneVelocity.y += (targetVelY - droneVelocity.y) * 0.12;
+
+      droneGroup.position.x += droneVelocity.x * delta;
+      droneGroup.position.y += droneVelocity.y * delta;
+      droneGroup.position.z -= currentForwardSpeed * delta;
+
+      const distFromCenter = Math.hypot(droneGroup.position.x, droneGroup.position.y);
+      const maxRadius = TUNNEL_RADIUS - 3.5;
+      if (distFromCenter > maxRadius) {
+        const angle = Math.atan2(droneGroup.position.y, droneGroup.position.x);
+        droneGroup.position.x = Math.cos(angle) * maxRadius;
+        droneGroup.position.y = Math.sin(angle) * maxRadius;
+        droneVelocity.x *= -0.3;
+        droneVelocity.y *= -0.3;
+      }
+
+      droneRotation.pitch += (targetPitch - droneRotation.pitch) * 0.15;
+      droneRotation.roll += (targetRoll - droneRotation.roll) * 0.15;
+      droneRotation.yaw += (targetYaw - droneRotation.yaw) * 0.1;
+
+      droneGroup.rotation.x = droneRotation.pitch;
+      droneGroup.rotation.z = droneRotation.roll;
+      droneGroup.rotation.y = droneRotation.yaw;
+
+      const targetCamX = droneGroup.position.x * 0.45;
+      const targetCamY = droneGroup.position.y * 0.45 + 3.2;
+      const targetCamZ = droneGroup.position.z + 10.5;
+
+      camera.position.x += (targetCamX - camera.position.x) * 0.1;
+      camera.position.y += (targetCamY - camera.position.y) * 0.1;
+      camera.position.z += (targetCamZ - camera.position.z) * 0.2;
+      camera.lookAt(droneGroup.position.x * 0.7, droneGroup.position.y * 0.7, droneGroup.position.z - 20);
+
+      tunnelSegments.forEach(ring => {
+        if (ring.position.z > droneGroup.position.z + 50) {
+          ring.position.z -= TUNNEL_LENGTH;
+        }
+      });
+
+      if (speedLines) {
+        speedLines.position.z = droneGroup.position.z;
+      }
+
+      while (droneGroup.position.z - nextObstacleZ < 450) {
+        spawnObstacleCluster(nextObstacleZ);
+        nextObstacleZ -= cfg.spawnRate;
+      }
+
+      updateObstaclesAndCollisions(delta);
+    }
+
+    function updateObstaclesAndCollisions(delta) {
+      const dronePos = droneGroup.position;
+      const droneRadius = 1.4;
+
+      for (let i = obstacles.length - 1; i >= 0; i--) {
+        const obs = obstacles[i];
+        
+        if (obs.userData.rotSpeed) {
+          obs.rotation.y += obs.userData.rotSpeed * delta;
+          obs.rotation.x += obs.userData.rotSpeed * 0.5 * delta;
+        }
+        if (obs.userData.oscillate) {
+          obs.position.x += Math.sin(clock.getElapsedTime() * 3) * obs.userData.oscillate * delta;
+        }
+
+        const dz = obs.position.z - dronePos.z;
+        if (Math.abs(dz) < (obs.userData.size + droneRadius)) {
+          const dx = obs.position.x - dronePos.x;
+          const dy = obs.position.y - dronePos.y;
+          const distance2D = Math.hypot(dx, dy);
+
+          if (distance2D < (obs.userData.size + droneRadius)) {
+            triggerGameOver("충돌 발생! 장애물과 부딪혔습니다.");
+            return;
+          }
+        }
+
+        if (obs.position.z > dronePos.z + 60) {
+          scene.remove(obs);
+          obstacles.splice(i, 1);
+        }
+      }
+
+      for (let j = bonusRings.length - 1; j >= 0; j--) {
+        const ring = bonusRings[j];
+        ring.rotation.z += 1.8 * delta;
+
+        if (!ring.userData.collected) {
+          const dz = ring.position.z - dronePos.z;
+          if (Math.abs(dz) < 2.5) {
+            const dist2D = Math.hypot(ring.position.x - dronePos.x, ring.position.y - dronePos.y);
+            if (dist2D < 3.8) {
+              ring.userData.collected = true;
+              state.bonusScore += GAME_CONFIG[state.difficulty].ringBonus;
+              playSound('ring');
+              showToast(`+${GAME_CONFIG[state.difficulty].ringBonus} 링 보너스 통과!`);
+              scene.remove(ring);
+              bonusRings.splice(j, 1);
+              continue;
+            }
+          }
+        }
+
+        if (ring.position.z > dronePos.z + 40) {
+          scene.remove(ring);
+          bonusRings.splice(j, 1);
+        }
+      }
+    }
+
+    function registerScore(name, finalScore, finalDistance, difficulty) {
+      const entry = {
+        name: name.trim() || 'Anonymous',
+        score: finalScore,
+        distance: Math.floor(finalDistance),
+        diff: difficulty
+      };
+
+      leaderboard.push(entry);
+      leaderboard.sort((a, b) => b.score - a.score);
+
+      const myRankIndex = leaderboard.indexOf(entry);
+      const myRank = myRankIndex + 1;
+
+      renderLeaderboard(myRank);
+    }
+
+    function renderLeaderboard(currentMyRank) {
+      const listContainer = document.getElementById('leaderboard-list');
+      const outOfRankBanner = document.getElementById('out-of-rank-banner');
+      const outRankText = document.getElementById('my-out-rank-text');
+      listContainer.innerHTML = '';
+
+      const top10 = leaderboard.slice(0, 10);
+      top10.forEach((item, idx) => {
+        const rank = idx + 1;
+        const isCurrentPlayer = (rank === currentMyRank);
+
+        const row = document.createElement('div');
+        row.className = `flex items-center justify-between px-3 py-2 rounded-xl text-xs transition border ${
+          isCurrentPlayer 
+            ? 'bg-cyan-500/25 border-cyan-400 font-bold shadow-md shadow-cyan-500/20' 
+            : 'bg-slate-900/40 border-slate-800 text-gray-300'
+        }`;
+
+        let rankBadge = `<span class="w-8 text-center font-orbitron font-extrabold text-sm text-gray-400">${rank}</span>`;
+        if (rank === 1) rankBadge = `<span class="w-8 text-center text-amber-400 font-extrabold text-base"><i class="fa-solid fa-crown"></i> 1</span>`;
+        else if (rank === 2) rankBadge = `<span class="w-8 text-center text-slate-300 font-extrabold text-base">2</span>`;
+        else if (rank === 3) rankBadge = `<span class="w-8 text-center text-amber-600 font-extrabold text-base">3</span>`;
+
+        let diffBadgeColor = 'text-emerald-400 border-emerald-500/30';
+        if (item.diff === 'normal') diffBadgeColor = 'text-cyan-400 border-cyan-500/30';
+        if (item.diff === 'hard') diffBadgeColor = 'text-rose-400 border-rose-500/30';
+
+        row.innerHTML = `
+          <div class="flex items-center gap-1.5 flex-1 min-w-0 pr-2">
+            ${rankBadge}
+            <span class="truncate ${isCurrentPlayer ? 'text-cyan-300 font-black' : 'text-gray-200'}">
+              ${escapeHtml(item.name)} ${isCurrentPlayer ? '<span class="text-[10px] bg-cyan-400 text-black px-1.5 py-0.2 rounded-md ml-1">YOU</span>' : ''}
+            </span>
+          </div>
+          <div class="w-20 text-center">
+            <span class="px-2 py-0.5 rounded-full border text-[10px] font-orbitron ${diffBadgeColor} uppercase">${item.diff}</span>
+          </div>
+          <div class="w-28 text-right font-orbitron">
+            <div class="text-amber-300 font-bold">${item.score.toLocaleString()}</div>
+            <div class="text-[10px] text-gray-500">${item.distance}m</div>
+          </div>
+        `;
+        listContainer.appendChild(row);
+      });
+
+      if (currentMyRank && currentMyRank > 10) {
+        outOfRankBanner.classList.remove('hidden');
+        outRankText.innerText = `${currentMyRank}위 / ${leaderboard.length}명`;
+      } else {
+        outOfRankBanner.classList.add('hidden');
+      }
+    }
+
+    function escapeHtml(string) {
+      const entityMap = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+      return String(string).replace(/[&<>"']/g, s => entityMap[s]);
+    }
+
+    function startGame() {
+      const nameInput = document.getElementById('input-pilot-name');
+      const pilotName = nameInput.value.trim() || `Pilot_${Math.floor(100 + Math.random() * 900)}`;
+      state.playerName = pilotName;
+
+      document.getElementById('hud-player-name').innerText = state.playerName;
+      document.getElementById('hud-difficulty-badge').innerText = GAME_CONFIG[state.difficulty].label;
+
+      initAudio();
+      if (typeof Tone !== 'undefined' && Tone.context && Tone.context.state !== 'running') {
+        Tone.context.resume();
+      }
+
+      state.score = 0;
+      state.distance = 0;
+      state.bonusScore = 0;
+      state.isPlaying = true;
+      state.isPaused = false;
+      clearTrackEntities();
+      resetDroneFlightState();
+
+      configureTouchControlsLayout();
+
+      document.getElementById('screen-start').classList.add('hidden');
+      document.getElementById('screen-gameover').classList.add('hidden');
+      document.getElementById('hud').classList.remove('hidden');
+
+      showToast(`출격 완료! 행운을 빕니다, ${state.playerName}`);
+    }
+
+    function triggerGameOver(reason) {
+      if (!state.isPlaying) return;
+      state.isPlaying = false;
+      playSound('crash');
+
+      document.getElementById('final-score-val').innerText = state.score.toLocaleString();
+      document.getElementById('final-distance-val').innerText = `${Math.floor(state.distance)} m`;
+      document.getElementById('gameover-status-tag').innerText = reason || "DRONE STATUS: DESTROYED";
+
+      registerScore(state.playerName, state.score, state.distance, state.difficulty);
+
+      document.getElementById('hud').classList.add('hidden');
+      document.getElementById('screen-gameover').classList.remove('hidden');
+    }
+
+    function configureTouchControlsLayout() {
+      const gyroLeft = document.getElementById('gyro-left-controls');
+      const btnLeft = document.getElementById('btn-mode-left-controls');
+      const btnRight = document.getElementById('btn-mode-right-controls');
+      const gyroIndicator = document.getElementById('gyro-status-indicator');
+      const gyroRecalibrateBtn = document.getElementById('btn-gyro-recalibrate');
+
+      if (state.controlMode === 'gyro') {
+        gyroLeft.classList.remove('hidden');
+        gyroLeft.classList.add('flex');
+        btnLeft.classList.add('hidden');
+        btnLeft.classList.remove('flex');
+        btnRight.classList.add('hidden');
+        btnRight.classList.remove('flex');
+        gyroIndicator.classList.remove('hidden');
+        gyroRecalibrateBtn.classList.remove('hidden');
+      } else {
+        gyroLeft.classList.add('hidden');
+        gyroLeft.classList.remove('flex');
+        btnLeft.classList.remove('hidden');
+        btnLeft.classList.add('flex');
+        btnRight.classList.remove('hidden');
+        btnRight.classList.add('flex');
+        gyroIndicator.classList.add('hidden');
+        gyroRecalibrateBtn.classList.add('hidden');
+      }
+    }
+
+    function setControlMode(mode) {
+      state.controlMode = mode;
+      const btnGyro = document.getElementById('opt-mode-gyro');
+      const btnButton = document.getElementById('opt-mode-button');
+
+      if (mode === 'gyro') {
+        btnGyro.className = "mode-select-btn cyber-btn py-3 px-3 rounded-2xl flex flex-col items-center justify-center gap-1 border-2 border-cyan-400 bg-cyan-950/40 text-white font-bold";
+        btnButton.className = "mode-select-btn cyber-btn py-3 px-3 rounded-2xl flex flex-col items-center justify-center gap-1 border-2 border-transparent bg-slate-900/60 text-gray-300 hover:text-white";
+      } else {
+        btnButton.className = "mode-select-btn cyber-btn py-3 px-3 rounded-2xl flex flex-col items-center justify-center gap-1 border-2 border-cyan-400 bg-cyan-950/40 text-white font-bold";
+        btnGyro.className = "mode-select-btn cyber-btn py-3 px-3 rounded-2xl flex flex-col items-center justify-center gap-1 border-2 border-transparent bg-slate-900/60 text-gray-300 hover:text-white";
+      }
+    }
+
+    function setDifficulty(diff) {
+      state.difficulty = diff;
+      document.querySelectorAll('.diff-btn').forEach(btn => {
+        if (btn.dataset.diff === diff) {
+          btn.className = "diff-btn py-2.5 rounded-xl border-2 border-cyan-400 bg-cyan-950/40 text-cyan-300 font-bold text-xs md:text-sm";
+        } else {
+          btn.className = "diff-btn py-2.5 rounded-xl border border-slate-700 bg-slate-900/60 text-gray-400 font-bold text-xs md:text-sm";
+        }
+      });
+    }
+
+    function showToast(message) {
+      const modal = document.getElementById('toast-modal');
+      document.getElementById('toast-msg').innerText = message;
+      modal.classList.remove('hidden');
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 2600);
+    }
+
+    function onWindowResize() {
+      if (!camera || !renderer) return;
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function initApp() {
+      init3D();
+      const controlUtils = setupControls();
+
+      document.getElementById('opt-mode-gyro').addEventListener('click', async () => {
+        setControlMode('gyro');
+        if (controlUtils && controlUtils.requestGyroPermission) {
+          await controlUtils.requestGyroPermission();
+        }
+      });
+      document.getElementById('opt-mode-button').addEventListener('click', () => {
+        setControlMode('button');
+      });
+
+      document.querySelectorAll('.diff-btn').forEach(btn => {
+        btn.addEventListener('click', () => setDifficulty(btn.dataset.diff));
+      });
+
+      const modalHowTo = document.getElementById('modal-how-to-play');
+      document.getElementById('btn-open-how-to').addEventListener('click', () => {
+        modalHowTo.classList.remove('hidden');
+      });
+      const closeHowTo = () => modalHowTo.classList.add('hidden');
+      document.getElementById('btn-close-how-to').addEventListener('click', closeHowTo);
+      document.getElementById('btn-close-how-to-bottom').addEventListener('click', closeHowTo);
+
+      document.getElementById('btn-start-game').addEventListener('click', async () => {
+        if (state.controlMode === 'gyro' && controlUtils && controlUtils.requestGyroPermission) {
+          await controlUtils.requestGyroPermission();
+          controlUtils.calibrateGyro();
+        }
+        startGame();
+      });
+
+      document.getElementById('btn-view-leaderboard').addEventListener('click', () => {
+        renderLeaderboard(null);
+        document.getElementById('screen-start').classList.add('hidden');
+        document.getElementById('gameover-status-tag').innerText = "HALL OF FAME";
+        document.getElementById('final-score-val').innerText = "-";
+        document.getElementById('final-distance-val').innerText = "-";
+        document.getElementById('screen-gameover').classList.remove('hidden');
+      });
+
+      document.getElementById('btn-restart-game').addEventListener('click', () => {
+        startGame();
+      });
+
+      document.getElementById('btn-goto-start').addEventListener('click', () => {
+        document.getElementById('screen-gameover').classList.add('hidden');
+        document.getElementById('hud').classList.add('hidden');
+        document.getElementById('screen-start').classList.remove('hidden');
+      });
+
+      function animate() {
+        requestAnimationFrame(animate);
+        const delta = Math.min(clock.getDelta(), 0.1);
+        updateSimulation(delta);
+        renderer.render(scene, camera);
+      }
+
+      animate();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initApp);
+    } else {
+      initApp();
+    }
+
+  })();
+  </script>
+</body>
+</html>
