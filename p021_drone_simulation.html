@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="ko">
+ <head><script>window["__codeletBootstrap__"]=JSON.parse('{"A":"A","B":"20261016-04-d5e3a25","C":{"Abril Fatface":"YACgEZbkUVE,0","Albert Sans":"YAHO2HRfeh4,0","Alfa Slab One":"YACgEYS9sJU,0","Anton":"YACgEcYqQ-A,0","Archivo Black":"YACgEZulLoA,0","Archivo":"YAHO2-t-jNE,0","Arial":"YAGyDvJ_4Ts,0","Baloo 2":"YAHO2IcQUcM,0","Barlow Condensed":"YAFdJljEuFc,0","Barlow":"YAFdJsyuOPM,1","Bebas Neue":"YACgESME5ew,0","Bricolage Grotesque":"YAFyMcdwzpc,0","Cairo":"YAFdtXpDzlQ,0","Canva Sans":"YAFdJjTk5UU,1","Caveat":"YALBs2ploWQ,0","Cinzel":"YACgEeV8bIQ,0","Cormorant Garamond":"YAFdJhX-538,0","Courier New":"YAGzXiGs0_8,0","Courier Prime":"YAD1aFjegN8,0","DM Sans":"YAD1aU3sLnI,0","DM Serif Display":"YAD1aYG82rc,0","Figtree":"YAHO2b-mV7A,0","Forum":"YACgEcnnqB4,0","Fraunces":"YAFdJpU7Kkk,0","Fredoka":"YACgEZml080,0","Georgia":"YAGzXkO0pEM,0","Hanken Grotesk":"YAHO2VB9G0I,0","Helvetica":"YAFcf7zkXN0,0","IBM Plex Mono":"YAFdJkmvhGI,0","IBM Plex Sans":"YAFdJgT0SHI,0","Impact":"YAFcfnjI7Vk,0","Instrument Sans":"YAHO2bKyaSQ,0","Instrument Serif":"YAHFeOnZNEk,0","Inter":"YAFdJvSyp_k,3","Italiana":"YAHO2Toik_w,0","Jacques Francois":"YAHO2a5g66Q,0","JetBrains Mono":"YAFdJksXcAk,0","Josefin Sans":"YAFdJjvw9Ps,0","Karla":"YAHO2V2NSXM,0","Lato":"YAFdJuFCnaw,0","Libre Baskerville":"YACgEUFdPdA,0","Libre Caslon Display":"YAHO2XhLmt0,0","Lobster":"YAD8SnSjSFI,0","Lora":"YACgEXvxf8Q,0","Manrope":"YAHO2b2feC4,0","Merriweather":"YACgEXvHxxs,0","Montserrat":"YAFdtQi73Xs,0","Noto Sans JP":"YAFdJiHXlcI,0","Noto Sans KR":"YAGsojZj-RQ,0","Nunito Sans":"YAFdtQJYB9w,1","Nunito":"YAFdJoNRMmU,1","Oleo Script":"YACgEQQ14jI,0","Open Sans":"YAFdJt8dAY0,1","Oswald":"YACgEQY10lw,0","Outfit":"YAHO2nVlg14,0","Pacifico":"YADLjORQ1u4,0","Playfair Display":"YAFdJhem5V8,1","Plus Jakarta Sans":"YAHO2gdhi18,0","Poppins":"YAFdJjbTu24,1","Press Start 2P":"YAFyGr-8pmQ,0","Public Sans":"YAFdJj8NdaU,1","Quicksand":"YAFdJpYtCxE,1","Raleway":"YAFdJhmxbVQ,1","Roboto Slab":"YAFdJswIKAg,0","Rockwell":"YAFcfyVZnN0,0","Rye":"YACgEdQP21k,0","STIX Two Text":"YAHO2joycuk,0","Sarabun":"YAFdJssSnME,0","Schibsted Grotesk":"YAHO2sWydRk,0","Segoe UI":"YAHNdRD1Klw,0","Source Sans 3":"YAG4lO1Mj10,0","Space Grotesk":"YAHO2sjPCSM,0","Space Mono":"YADW1-vpsoc,0","Spectral":"YAHO2rVUHIM,0","Times New Roman":"YAGzXW3gftg,0","Trebuchet MS":"YAFcfrglpVA,0","Ubuntu":"YACgERDU--Q,0","Verdana":"YAGzXTctYtQ,0","Work Sans":"YAGXhLOKv44,0","Yellowtail":"YACgEYG4kG4,0"}}');</script><script src="/_sdk/05db820ba1544614.telemetry_sdk.js" integrity="sha512-a7JzkQDDcioSXpM61nxTfeRW7PcxWQy5+BrhyeTFmQFsXJ+Gncm0y50u7fTA7qOPegFnRgqCfa0mGUOK1yjDWQ=="></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>드론 탐험대</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&amp;family=Work+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    :root { --night:#090e18; --panel:#151e2c; --line:#344153; --lime:#c8f35b; --cyan:#71dce7; --muted:#9cabbc; }
+    * { box-sizing:border-box; }
+    body { margin:0; width:100%; min-width:320px; color:#f5f8fa; font-family:'Work Sans',sans-serif; }
+    button,input { font:inherit; }
+    button:focus-visible,input:focus-visible,[tabindex]:focus-visible { outline:3px solid var(--lime); outline-offset:3px; }
+    .app-shell { width:100%; max-width:1500px; margin:auto; padding:14px clamp(12px,2.6vw,36px) 18px; }
+    .topline { display:flex; align-items:center; justify-content:space-between; gap:12px; padding-bottom:12px; border-bottom:1px solid #314052; }
+    .brand { display:flex; align-items:center; gap:11px; }
+    .brand-mark { display:grid; place-items:center; width:34px; height:34px; border:2px solid var(--lime); border-radius:10px; color:var(--lime); font-size:20px; font-weight:800; transform:rotate(-8deg); }
+    .eyebrow { color:var(--lime); font-size:10px; font-weight:800; letter-spacing:.17em; }
+    .status-pill { border:1px solid #425167; border-radius:99px; padding:7px 12px; color:#d5e4ed; font-size:12px; white-space:nowrap; }
+    .board { display:grid; grid-template-columns:minmax(0,1fr) minmax(240px,29%); gap:14px; margin-top:14px; }
+    .flight-panel { position:relative; overflow:hidden; min-height:290px; border:1px solid #3b5261; border-radius:22px; background:#122333; }
+    #field { display:block; width:100%; height:100%; min-height:290px; }
+    .field-corner { position:absolute; left:15px; top:14px; display:flex; gap:6px; pointer-events:none; }
+    .field-chip { padding:6px 9px; border-radius:7px; background:#09131ddc; border:1px solid #375263; font-size:11px; font-weight:700; }
+    .mission-panel { border:1px solid #354456; border-radius:22px; padding:19px; background:#151e2c; display:flex; flex-direction:column; gap:12px; }
+    .mission-number { color:var(--lime); font-weight:800; font-size:12px; letter-spacing:.13em; }
+    .mission-title { margin:0; font-weight:800; line-height:1.2; }
+    .mission-help { color:#b7c6d1; line-height:1.55; font-size:13px; min-height:40px; }
+    .meter { height:9px; background:#303e4c; border-radius:20px; overflow:hidden; }
+    .meter-fill { height:100%; width:0; background:linear-gradient(90deg,#74dce0,#c8f35b); border-radius:20px; transition:width .12s; }
+    .readouts { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .readout { background:#0e1723; border:1px solid #344252; border-radius:12px; padding:10px; }
+    .readout small { display:block; color:#9bafbc; font-size:11px; margin-bottom:5px; }
+    .readout strong { color:#f2fbff; font-size:20px; }
+    .safety-note { margin-top:auto; border-left:3px solid var(--lime); padding-left:10px; color:#b9c7ca; font-size:11px; line-height:1.5; }
+    .controller-panel { margin-top:14px; border:1px solid #354456; border-radius:22px; background:#101722; padding:12px 20px 14px; }
+    .controller-grid { display:grid; grid-template-columns:1fr minmax(140px,1.15fr) 1fr; align-items:center; gap:10px; }
+    .stick-unit { display:flex; flex-direction:column; align-items:center; gap:5px; }
+    .stick-label { font-size:11px; letter-spacing:.08em; color:#c6d3dd; font-weight:700; }
+    .stick { width:clamp(112px,13vw,160px); height:clamp(112px,13vw,160px); border-radius:50%; position:relative; touch-action:none; user-select:none; cursor:grab; background:radial-gradient(circle at 50% 49%,#202a36 0 14%,#05080e 15% 60%,#a0a8ae 68%,#333d48 75%,#080b10 82%); box-shadow:inset 0 0 12px #fff5,0 6px 18px #0009; border:2px solid #656d75; }
+    .stick:active { cursor:grabbing; }
+    .stick:before,.stick:after { position:absolute; left:50%; transform:translateX(-50%); color:#d9e1e7; font-size:20px; pointer-events:none; line-height:1; }
+    .stick:before { content:'⌃'; top:5px; } .stick:after { content:'⌄'; bottom:5px; }
+    .stick .side-l,.stick .side-r { position:absolute; top:45%; color:#d9e1e7; pointer-events:none; }
+    .side-l { left:8px; } .side-r { right:8px; }
+    .knob { position:absolute; left:50%; top:50%; width:32%; height:32%; border-radius:50%; transform:translate(-50%,-50%); background:radial-gradient(circle at 42% 35%,#29333d,#06080c 55%); box-shadow:0 0 0 4px #616b75,inset 0 2px 7px #000,0 3px 8px #000; pointer-events:none; }
+    .center-controls { text-align:center; display:flex; flex-direction:column; align-items:center; gap:8px; min-width:0; }
+    .center-controls p { margin:0; color:#93a9b8; font-size:11px; line-height:1.4; }
+    .action-btn { border:0; border-radius:10px; background:var(--lime); color:#14200e; padding:9px 15px; font-weight:800; cursor:pointer; }
+    .action-btn:hover { filter:brightness(1.08); }
+    .action-btn:disabled { opacity:.5; cursor:wait; }
+    .quiet-btn { border:1px solid #516272; background:#1b2937; color:#eaf3f7; border-radius:9px; padding:7px 12px; cursor:pointer; font-size:12px; }
+    .notice { min-height:18px; color:#ffbf9b; font-size:11px; text-align:center; }
+    .overlay { position:absolute; inset:0; z-index:3; display:grid; place-items:center; padding:16px; background:#07121bdc; backdrop-filter:blur(4px); }
+    .overlay.hidden { display:none; }
+    .dialog { width:min(100%,410px); max-height:100%; overflow:auto; border:1px solid #617583; border-radius:19px; background:#192634; box-shadow:0 22px 60px #000a; padding:20px; }
+    .dialog h2 { margin:0 0 7px; line-height:1.2; }
+    .dialog p { color:#c5d5df; font-size:13px; line-height:1.5; }
+    .name-label { display:block; margin:10px 0 5px; font-size:12px; font-weight:700; }
+    .name-input { width:100%; border:1px solid #657887; border-radius:9px; background:#0c1824; color:white; padding:9px 11px; }
+    .safety-line { display:flex; gap:8px; align-items:flex-start; margin:10px 0; color:#e2ebee; font-size:12px; }
+    .safety-line input { accent-color:var(--lime); margin-top:2px; }
+    .slide-track { position:relative; height:48px; border-radius:30px; background:#a0a4ac; margin-top:12px; touch-action:none; user-select:none; }
+    .slide-track .slide-text { position:absolute; inset:0; display:grid; place-items:center; color:white; font-size:12px; font-weight:800; pointer-events:none; }
+    .slide-thumb { position:absolute; top:4px; left:4px; width:40px; height:40px; border-radius:50%; background:#f8faf9; box-shadow:0 2px 8px #0005; touch-action:none; cursor:grab; }
+    .hidden { display:none !important; }
+    @media(max-width:720px) {
+      .app-shell { padding:8px 10px 12px; }
+      .topline { padding-bottom:7px; }
+      .board { grid-template-columns:minmax(0,1fr) minmax(150px,30%); gap:8px; margin-top:8px; }
+      .flight-panel,#field { min-height:190px; }
+      .mission-panel { padding:10px; gap:6px; }
+      .mission-help { font-size:11px; min-height:0; }
+      .readout { padding:5px; } .readout strong { font-size:15px; }
+      .safety-note { display:none; }
+      .controller-panel { margin-top:8px; padding:7px 9px; }
+      .stick { width:clamp(80px,16vw,116px); height:clamp(80px,16vw,116px); }
+      .controller-grid { gap:4px; }
+      .center-controls p { font-size:10px; }
+    }
+    @media(max-width:570px) and (orientation:portrait) {
+      .board { grid-template-columns:1fr; }
+      .flight-panel,#field { min-height:250px; }
+      .mission-panel { display:grid; grid-template-columns:1fr 1fr; }
+      .mission-help,.safety-note { grid-column:1/-1; }
+      .controller-grid { grid-template-columns:1fr 1fr; }
+      .center-controls { grid-column:1/-1; grid-row:2; }
+      .stick { width:112px; height:112px; }
+    }
+  </style>
+  <script src="https://cdn.tailwindcss.com/3.4.17" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js" type="text/javascript"></script>
+  <script src="/_sdk/570d53629f0b998d.data_sdk.js" type="text/javascript" integrity="sha512-JEN39+V+Nvv9ZZOVS8vNk1iA9ErZJHTdgOw9KzPuMiK7m0I+KPEr/wmTnCFIQVsDjCZgJWfGnFi1IQh2Io2qyA=="></script>
+  <script src="/_sdk/7825871aa95c503d.editing_sdk.js" type="text/javascript" integrity="sha512-2lFhP7fVLyI/xh1XVD1wGvcEUDBQxBW40AsWL6PQ5RZg0/hxM41hBHE/wQF1zqhE8vvzASF/osL1pnlucLWnaQ=="></script>
+  <script src="/_sdk/f195026a424c1f85.resizing_sdk.js" type="text/javascript" integrity="sha512-8On4Z+AXh1abEzZJ9Dbn9wOvFg+k1LsAaAzKGQ7LlfgXajZ9xEmZaZ1QVzv0AWhCZtCsEpWSOG9DgLri06TS7A=="></script>
+ </head>
+ <body data-template-id="__page-root" class="w-full min-h-screen">
+  <div class="app-shell">
+   <header data-template-id="top-bar" class="canva-header topline">
+    <div class="brand">
+     <div class="brand-mark" aria-hidden="true">
+      ✦
+     </div>
+     <div>
+      <div data-template-id="brand-kicker" class="canva-text eyebrow">
+       FLIGHT ACADEMY · JUNIOR
+      </div>
+      <h1 data-template-id="game-title" class="canva-text m-0 font-extrabold leading-tight"></h1>
+     </div>
+    </div><span id="levelPill" class="status-pill" aria-live="polite">01 / 10 · 준비 중</span>
+   </header>
+   <main>
+    <div class="board">
+     <section data-template-id="flight-panel" class="canva-panel flight-panel" aria-label="드론 비행장">
+      <canvas id="field" aria-label="드론과 목표 지점이 표시되는 비행장"></canvas>
+      <div class="field-corner" aria-hidden="true">
+       <span class="field-chip">● LIVE SIM</span><span class="field-chip">TOP VIEW</span>
+      </div>
+      <div id="startOverlay" class="overlay">
+       <form id="startForm" class="dialog">
+        <h2 data-template-id="start-title" class="canva-text font-extrabold"></h2>
+        <p data-template-id="start-description" class="canva-text"></p><label data-template-id="name-label" class="canva-text name-label" for="playerName"></label> <input id="playerName" class="name-input" maxlength="16" autocomplete="nickname" required> <label class="safety-line" for="safetyCheck"> <input id="safetyCheck" type="checkbox" required> <span data-template-id="safety-checkbox-text" class="canva-text"></span> </label>
+        <div id="slideTrack" class="slide-track" role="slider" tabindex="0" aria-label="오른쪽으로 밀어 이륙" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span data-template-id="slide-text" class="canva-text slide-text"></span>
+         <div id="slideThumb" class="slide-thumb"></div>
+        </div>
+        <p id="startError" class="notice" role="status"></p>
+       </form>
+      </div>
+      <div id="completeOverlay" class="overlay hidden">
+       <div class="dialog text-center">
+        <div style="font-size:34px;color:#c8f35b" aria-hidden="true">
+         ✦ ✦ ✦
+        </div>
+        <h2 data-template-id="complete-title" class="canva-text font-extrabold"></h2>
+        <p id="completeDetails" aria-live="polite"></p><button id="nextButton" data-template-id="next-button" class="canva-button action-btn" type="button"></button>
+       </div>
+      </div>
+     </section>
+     <aside data-template-id="mission-panel" class="canva-panel mission-panel" aria-label="미션 정보">
+      <div id="missionNumber" class="mission-number">
+       MISSION 01 / 10
+      </div>
+      <h2 id="missionTitle" class="mission-title"></h2>
+      <p id="missionHelp" class="mission-help"></p>
+      <div>
+       <div class="flex justify-between text-xs mb-2">
+        <span data-template-id="progress-label" class="canva-text"></span><strong id="progressText">0%</strong>
+       </div>
+       <div class="meter" role="progressbar" aria-label="미션 진행률" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressMeter">
+        <div id="progressFill" class="meter-fill"></div>
+       </div>
+      </div>
+      <div class="readouts">
+       <div class="readout">
+        <small data-template-id="altitude-label" class="canva-text"></small><strong id="altitudeValue">0.0 m</strong>
+       </div>
+       <div class="readout">
+        <small data-template-id="stars-label" class="canva-text"></small><strong id="starsValue">★★★</strong>
+       </div>
+      </div>
+      <p data-template-id="safety-note" class="canva-text safety-note"></p>
+     </aside>
+    </div>
+    <section data-template-id="controller-panel" class="canva-panel controller-panel" aria-label="드론 조종기">
+     <div class="controller-grid">
+      <div class="stick-unit"><span data-template-id="left-stick-label" class="canva-text stick-label"></span>
+       <div id="leftStick" class="stick" role="group" aria-label="왼쪽 스틱: 위아래는 고도, 좌우는 회전"><span class="side-l">↶</span><span class="side-r">↷</span>
+        <div class="knob"></div>
+       </div>
+      </div>
+      <div class="center-controls">
+       <p data-template-id="controller-hint" class="canva-text"></p><button id="retryButton" data-template-id="retry-button" class="canva-button quiet-btn" type="button"></button>
+       <div id="gameNotice" class="notice" role="status" aria-live="polite"></div>
+      </div>
+      <div class="stick-unit"><span data-template-id="right-stick-label" class="canva-text stick-label"></span>
+       <div id="rightStick" class="stick" role="group" aria-label="오른쪽 스틱: 드래그한 방향으로 이동"><span class="side-l">‹</span><span class="side-r">›</span>
+        <div class="knob"></div>
+       </div>
+      </div>
+     </div>
+    </section>
+   </main>
+  </div>
+  <script>
+    const missions = [
+      {title:'안전하게 이륙!', help:'왼쪽 스틱을 위로 밀어 고도 1 m에 도달해요.', type:'climb', altitude:1},
+      {title:'제자리 호버링', help:'고도 1 m 근처에서 3초 동안 차분히 머물러요.', type:'hover', altitude:1, seconds:3},
+      {title:'첫 번째 별', help:'오른쪽 스틱으로 빛나는 별까지 이동해요.', type:'target', x:.73,y:.38,altitude:.6},
+      {title:'왼쪽으로 출발', help:'왼쪽 목표 지점으로 드론을 옮겨요.', type:'target', x:.23,y:.38,altitude:.6},
+      {title:'앞으로 전진', help:'비행장 위쪽의 별까지 날아가요.', type:'target', x:.50,y:.19,altitude:.6},
+      {title:'안전한 착륙', help:'착륙장 위로 이동한 뒤 고도를 0.2 m 아래로 내려요.', type:'land', x:.68,y:.72},
+      {title:'콘 사이 지나가기', help:'주황색 콘을 피해 별까지 날아가요.', type:'target', x:.77,y:.23,altitude:.6, obstacles:[{x:.46,y:.52,r:.075},{x:.62,y:.44,r:.075}]},
+      {title:'지그재그 비행', help:'콘을 피해 왼쪽 위 목표에 도착해요.', type:'target', x:.22,y:.22,altitude:.6, obstacles:[{x:.45,y:.38,r:.075},{x:.65,y:.62,r:.075}]},
+      {title:'정밀 호버링', help:'표시된 원 안에서 고도 1 m로 4초 동안 머물러요.', type:'hoverTarget', x:.70,y:.31,altitude:1,seconds:4,obstacles:[{x:.49,y:.53,r:.07}]},
+      {title:'마지막 착륙', help:'장애물을 피해 착륙장에 부드럽게 내려요!', type:'land', x:.75,y:.24,obstacles:[{x:.43,y:.47,r:.075},{x:.63,y:.59,r:.075}]}
+    ];
+    const $ = id => document.getElementById(id);
+    let level=0, running=false, complete=false, collisions=0, hoverTime=0, lastTime=0, player='', records=[], record=null, saving=false, sdkReady=false;
+    let drone={x:.3,y:.68,z:0,angle:0};
+    const input={left:{x:0,y:0},right:{x:0,y:0}};
+    const canvas=$('field'), ctx=canvas.getContext('2d');
+    let cw=600,ch=360;
+
+    function resize(){
+      const bounds=canvas.getBoundingClientRect();
+      cw=Math.max(1,bounds.width); ch=Math.max(1,bounds.height);
+      const dpr=Math.min(window.devicePixelRatio||1,2);
+      canvas.width=Math.round(cw*dpr); canvas.height=Math.round(ch*dpr);
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+    }
+    window.addEventListener('resize',resize);
+    resize();
+
+    function resetLevel(){
+      drone={x:.3,y:.68,z:0,angle:0};
+      hoverTime=0; collisions=0; complete=false; running=true;
+      $('completeOverlay').classList.add('hidden');
+      $('gameNotice').textContent='';
+      const m=missions[level];
+      $('missionNumber').textContent=`MISSION ${String(level+1).padStart(2,'0')} / 10`;
+      $('missionTitle').textContent=m.title;
+      $('missionHelp').textContent=m.help;
+      $('levelPill').textContent=`${String(level+1).padStart(2,'0')} / 10 · 비행 중`;
+      updateReadouts(0);
+    }
+    function updateReadouts(progress){
+      const value=Math.round(Math.max(0,Math.min(100,progress)));
+      $('altitudeValue').textContent=drone.z.toFixed(1)+' m';
+      $('starsValue').textContent='★'.repeat(Math.max(1,3-collisions))+'☆'.repeat(Math.min(2,collisions));
+      $('progressText').textContent=value+'%';
+      $('progressFill').style.width=value+'%';
+      $('progressMeter').setAttribute('aria-valuenow',String(value));
+    }
+    function setupStick(id,key){
+      const stick=$(id), knob=stick.querySelector('.knob');
+      function move(e){
+        const rect=stick.getBoundingClientRect(), radius=rect.width*.28;
+        let dx=e.clientX-(rect.left+rect.width/2), dy=e.clientY-(rect.top+rect.height/2);
+        const length=Math.hypot(dx,dy);
+        if(length>radius){dx*=radius/length;dy*=radius/length;}
+        input[key].x=dx/radius; input[key].y=dy/radius;
+        knob.style.transform=`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px))`;
+      }
+      stick.addEventListener('pointerdown',e=>{stick.setPointerCapture(e.pointerId);move(e);});
+      stick.addEventListener('pointermove',e=>{if(stick.hasPointerCapture(e.pointerId))move(e);});
+      function release(){input[key].x=0;input[key].y=0;knob.style.transform='translate(-50%,-50%)';}
+      stick.addEventListener('pointerup',release);
+      stick.addEventListener('pointercancel',release);
+      stick.addEventListener('lostpointercapture',release);
+    }
+    setupStick('leftStick','left'); setupStick('rightStick','right');
+    const keys=new Set();
+    window.addEventListener('keydown',e=>{
+      if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','KeyW','KeyS','KeyA','KeyD'].includes(e.code) && e.target.tagName!=='INPUT'){
+        e.preventDefault();keys.add(e.code);
+      }
+    });
+    window.addEventListener('keyup',e=>keys.delete(e.code));
+    window.addEventListener('blur',()=>keys.clear());
+
+    function findPlayer(){
+      record=records.find(r=>r.player_name.trim().toLocaleLowerCase()===player.toLocaleLowerCase())||null;
+    }
+    const handler={onDataChanged(data){records=data;findPlayer();}};
+    (async()=>{
+      try {
+        const result=await window.dataSdk.init(handler);
+        sdkReady=result.isOk;
+        if(!result.isOk) $('startError').textContent='진행 기록 연결에 실패했어요. 잠시 후 다시 열어 주세요.';
+      } catch(e){$('startError').textContent='진행 기록 연결에 실패했어요. 잠시 후 다시 열어 주세요.';}
+    })();
+
+    async function finish(){
+      if(complete)return;
+      complete=true;running=false;
+      updateReadouts(100);
+      const earned=Math.max(1,3-collisions);
+      $('completeOverlay').classList.remove('hidden');
+      $('levelPill').textContent=`${String(level+1).padStart(2,'0')} / 10 · 성공!`;
+      $('completeDetails').textContent=`${player} 조종사, ${level+1}단계 성공! 별 ${earned}개를 획득했어요. 기록을 저장하는 중…`;
+      $('nextButton').disabled=true;
+      $('nextButton').textContent=level===9?'처음부터 다시 도전':'다음 미션';
+      if(!sdkReady){
+        $('completeDetails').textContent=`${level+1}단계 성공! 기록 연결이 안 되어 저장하지 못했어요. 아래 버튼으로 다시 시도해 주세요.`;
+        $('nextButton').textContent='저장 다시 시도';
+        $('nextButton').disabled=false;
+        return;
+      }
+      saving=true;
+      try{
+        if(!record && records.length>=999) throw new Error('기록이 999개로 가득 찼어요.');
+        const payload=record
+          ? {...record,highest_level:Math.max(Number(record.highest_level)||0,level+1),total_stars:(Number(record.total_stars)||0)+earned,completed_at:new Date().toISOString()}
+          : {player_name:player,highest_level:level+1,total_stars:earned,completed_at:new Date().toISOString()};
+        const result=record?await window.dataSdk.update(payload):await window.dataSdk.create(payload);
+        if(!result.isOk)throw result.error;
+        if(record) record=payload;
+        $('completeDetails').textContent=`${player} 조종사, ${level+1}단계 성공! 별 ${earned}개를 획득했고 Canva Sheet에 기록했어요.`;
+        $('nextButton').textContent=level===9?'처음부터 다시 도전':'다음 미션';
+      }catch(e){
+        $('completeDetails').textContent=`${level+1}단계 성공! 기록을 저장하지 못했어요. 다시 시도해 주세요.`;
+        $('nextButton').textContent='저장 다시 시도';
+      }finally{saving=false;$('nextButton').disabled=false;}
+    }
+    $('nextButton').addEventListener('click',()=>{
+      if(saving)return;
+      if($('nextButton').textContent==='저장 다시 시도'){complete=false;finish();return;}
+      level=level===9?0:level+1;
+      resetLevel();
+    });
+    $('retryButton').addEventListener('click',()=>{
+      if(!$('startOverlay').classList.contains('hidden') || saving)return;
+      resetLevel();
+    });
+
+    const track=$('slideTrack'), thumb=$('slideThumb');
+    let slidePointer=null;
+    function slideMove(e){
+      const rect=track.getBoundingClientRect(), max=rect.width-48;
+      const x=Math.max(0,Math.min(max,e.clientX-rect.left-24));
+      thumb.style.left=(4+x)+'px';
+      track.setAttribute('aria-valuenow',String(Math.round(x/max*100)));
+      return x/max;
+    }
+    function slideReset(){thumb.style.left='4px';track.setAttribute('aria-valuenow','0');}
+    function startGame(){
+      const form=$('startForm');
+      if(!form.reportValidity()){slideReset();return;}
+      if(!sdkReady){$('startError').textContent='기록 연결을 확인하고 다시 시도해 주세요.';slideReset();return;}
+      player=$('playerName').value.trim();
+      if(!player){$('startError').textContent='조종자 이름을 입력해 주세요.';slideReset();return;}
+      findPlayer();
+      level=Math.min(9,Math.max(0,Number(record?.highest_level)||0));
+      $('startOverlay').classList.add('hidden');
+      resetLevel();
+    }
+    $('startForm').addEventListener('submit',e=>e.preventDefault());
+    track.addEventListener('pointerdown',e=>{slidePointer=e.pointerId;track.setPointerCapture(e.pointerId);slideMove(e);});
+    track.addEventListener('pointermove',e=>{if(slidePointer===e.pointerId)slideMove(e);});
+    track.addEventListener('pointerup',e=>{
+      if(slidePointer!==e.pointerId)return;
+      const fraction=slideMove(e);slidePointer=null;
+      if(fraction>.88)startGame(); else slideReset();
+    });
+    track.addEventListener('pointercancel',()=>{slidePointer=null;slideReset();});
+    track.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '||e.key==='ArrowRight'){e.preventDefault();startGame();}});
+
+    function draw(){
+      ctx.clearRect(0,0,cw,ch);
+      ctx.fillStyle='#112536';ctx.fillRect(0,0,cw,ch);
+      const grid=Math.max(26,Math.min(cw,ch)/9);
+      ctx.strokeStyle='#ffffff0d';ctx.lineWidth=1;
+      for(let x=0;x<cw;x+=grid){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,ch);ctx.stroke();}
+      for(let y=0;y<ch;y+=grid){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(cw,y);ctx.stroke();}
+      const scale=Math.min(cw,ch), px=x=>x*cw,py=y=>y*ch;
+      ctx.strokeStyle='#4e7880';ctx.lineWidth=2;ctx.setLineDash([9,7]);
+      ctx.strokeRect(18,18,cw-36,ch-36);ctx.setLineDash([]);
+      // Persistent starting pad
+      ctx.beginPath();ctx.arc(px(.3),py(.68),scale*.082,0,Math.PI*2);
+      ctx.fillStyle='#244450';ctx.fill();ctx.strokeStyle='#74b4ad';ctx.lineWidth=2;ctx.stroke();
+      ctx.fillStyle='#a3d8d2';ctx.font=`700 ${Math.max(10,scale*.038)}px Work Sans`;
+      ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('H',px(.3),py(.68));
+      if(running||complete){
+        const m=missions[level];
+        if(m.x!==undefined){
+          const x=px(m.x),y=py(m.y),r=scale*.087;
+          ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle=m.type==='land'?'#bfe96729':'#c8f35b20';ctx.fill();
+          ctx.strokeStyle='#c8f35b';ctx.lineWidth=2;ctx.stroke();
+          ctx.fillStyle='#e5fb9c';ctx.font=`bold ${Math.max(13,scale*.06)}px Work Sans`;
+          ctx.fillText(m.type==='land'?'H':'★',x,y);
+        }
+        (m.obstacles||[]).forEach(o=>{
+          const x=px(o.x),y=py(o.y),r=scale*o.r;
+          ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle='#ff8b4d39';ctx.fill();
+          ctx.strokeStyle='#ff9b5f';ctx.lineWidth=3;ctx.stroke();
+          ctx.fillStyle='#ffbd82';ctx.font=`bold ${Math.max(13,r)}px Work Sans`;ctx.fillText('!',x,y);
+        });
+      }
+      const x=px(drone.x),y=py(drone.y),s=Math.max(12,scale*.048);
+      ctx.save();ctx.translate(x,y);
+      ctx.fillStyle='#0007';ctx.beginPath();ctx.ellipse(5,9+s*drone.z*.25,s*1.25,s*.62,0,0,Math.PI*2);ctx.fill();
+      ctx.rotate(drone.angle);
+      ctx.strokeStyle='#b7edf0';ctx.lineWidth=3;
+      ctx.beginPath();ctx.moveTo(-s*.78,-s*.78);ctx.lineTo(s*.78,s*.78);ctx.moveTo(s*.78,-s*.78);ctx.lineTo(-s*.78,s*.78);ctx.stroke();
+      for(const a of [-1,1])for(const b of [-1,1]){
+        ctx.beginPath();ctx.arc(a*s*.8,b*s*.8,s*.36,0,Math.PI*2);
+        ctx.strokeStyle='#8be2ea';ctx.lineWidth=2;ctx.stroke();
+      }
+      ctx.beginPath();ctx.arc(0,0,s*.5,0,Math.PI*2);ctx.fillStyle='#c8f35b';ctx.fill();
+      ctx.beginPath();ctx.moveTo(0,-s*.95);ctx.lineTo(-s*.22,-s*.39);ctx.lineTo(s*.22,-s*.39);ctx.fillStyle='#ffffff';ctx.fill();
+      ctx.restore();
+    }
+    function tick(time){
+      const dt=Math.min((time-lastTime)/1000||0,.05);lastTime=time;
+      if(running){
+        const m=missions[level];
+        const vx=input.right.x+(keys.has('ArrowRight')||keys.has('KeyD')?1:0)-(keys.has('ArrowLeft')||keys.has('KeyA')?1:0);
+        const vy=input.right.y+(keys.has('ArrowDown')?1:0)-(keys.has('ArrowUp')?1:0);
+        const vz=-input.left.y+(keys.has('KeyW')?1:0)-(keys.has('KeyS')?1:0);
+        drone.z=Math.max(0,Math.min(2,drone.z+vz*dt*.85));
+        drone.angle+=input.left.x*dt*2;
+        const oldX=drone.x,oldY=drone.y;
+        if(drone.z>.18){drone.x+=vx*dt*.32;drone.y+=vy*dt*.4;}
+        const boundary=drone.x<.05||drone.x>.95||drone.y<.08||drone.y>.92;
+        const hit=(m.obstacles||[]).some(o=>Math.hypot((drone.x-o.x)*cw,(drone.y-o.y)*ch)<Math.min(cw,ch)*(o.r+.035));
+        if(boundary||hit){
+          drone.x=oldX;drone.y=oldY;
+          collisions=Math.min(2,collisions+1);
+          drone.x=.3;drone.y=.68;drone.z=0;hoverTime=0;
+          $('gameNotice').textContent='앗! 안전하게 출발 지점에서 다시 해요.';
+        }
+        const near=m.x===undefined?true:Math.hypot((drone.x-m.x)*cw,(drone.y-m.y)*ch)<Math.min(cw,ch)*.09;
+        let progress=0, done=false;
+        if(m.type==='climb'){progress=drone.z/m.altitude*100;done=drone.z>=m.altitude;}
+        else if(m.type==='hover'||m.type==='hoverTarget'){
+          if(near&&Math.abs(drone.z-m.altitude)<.22 && Math.hypot(vx,vy)<.32) hoverTime+=dt;
+          else hoverTime=Math.max(0,hoverTime-dt*1.2);
+          progress=hoverTime/m.seconds*100;done=hoverTime>=m.seconds;
+        }else if(m.type==='land'){
+          progress=near?Math.max(15,(1-drone.z/1.5)*100):Math.max(0,65-Math.hypot((drone.x-m.x)*cw,(drone.y-m.y)*ch)/Math.min(cw,ch)*90);
+          done=near&&drone.z<.2;
+        }else{
+          const distance=Math.hypot((drone.x-m.x)*cw,(drone.y-m.y)*ch)/Math.min(cw,ch);
+          progress=Math.max(0,(1-distance/.8)*100);
+          done=near&&drone.z>=m.altitude;
+        }
+        updateReadouts(progress);
+        if(done)finish();
+      }
+      draw();requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  </script>
+ </body>
+</html>
