@@ -31,7 +31,7 @@
         }
     </script>
 </head>
-<body class="h-full bg-slate-950 text-slate-100 font-sans antialiased selection:bg-emerald-500 selection:text-white flex flex-col">
+<body class="h-full bg-slate-950 text-slate-100 font-sans antialiased selection:bg-emerald-500 selection:text-white flex flex-col overflow-x-hidden">
 
     <header class="border-b border-slate-800/80 bg-slate-900/90 backdrop-blur-md sticky top-0 z-30 px-4 md:px-8 py-3.5 flex items-center justify-between shadow-md">
         <div class="flex items-center space-x-3">
@@ -61,7 +61,7 @@
         </div>
     </header>
 
-    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 overflow-y-auto">
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
         <!-- Left Panel: Builder Controls (7 cols on lg) -->
         <div class="lg:col-span-7 space-y-6">
@@ -204,6 +204,7 @@
                     <div>
                         <div class="text-xs text-slate-400 mb-1.5 font-medium">[Cut Duration / Platform]</div>
                         <select id="selectPlatform" onchange="app.update()" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition">
+                            <option value="Google Veo (Cinematic 10s)">Google Veo (시네마틱 10초)</option>
                             <option value="Runway Gen-3 (5s)">Runway Gen-3 (5초)</option>
                             <option value="Luma Dream Machine (5s)">Luma Dream Machine (5초)</option>
                             <option value="Kling AI (10s)">Kling AI (10초)</option>
@@ -235,8 +236,8 @@
         </div>
 
         <!-- Right Panel: Live Prompt Preview (5 cols on lg) -->
-        <div class="lg:col-span-5 flex flex-col gap-4">
-            <div class="bg-slate-900/80 border border-emerald-500/30 rounded-2xl p-5 shadow-2xl sticky top-20 flex flex-col h-[calc(100vh-100px)] backdrop-blur-md">
+        <div class="lg:col-span-5 flex flex-col gap-4 lg:sticky lg:top-20">
+            <div class="bg-slate-900/80 border border-emerald-500/30 rounded-2xl p-5 shadow-2xl flex flex-col h-[calc(100vh-120px)] backdrop-blur-md">
                 
                 <div class="flex items-center justify-between pb-3 border-b border-slate-800">
                     <div class="flex items-center gap-2">
@@ -342,7 +343,7 @@
                 ]
             },
             {
-                category: "왜곡ㆍ초점",
+                category: "외곡ㆍ초점",
                 items: [
                     { id: "dutch_angle", name: "더치 앵글 (DUTCH ANGLE)", desc: "수평선을 20도쯤 기울입니다.", ex: "불안, 왜곡, 길게 쓰면 피로해집니다." },
                     { id: "rack_focus", name: "랙 포커스 (RACK FOCUS)", desc: "카메라는 고정, 초점만 앞뒤로 넘깁니다.", ex: "시선을 강제로 옮길 때, 숨어 있던 정보 공개, 관객의 시선을 강제로 옮김" },
@@ -391,7 +392,7 @@
                     speed: "normal",
                     framing: null,
                     shotType: null,
-                    platform: "Runway Gen-3 (5s)",
+                    platform: "Google Veo (Cinematic 10s)",
                     audio: "",
                     aspect: "--ar 16:9",
                     isEnglish: false,
@@ -583,7 +584,7 @@
 
                 try {
                     const promptText = type === 'env' 
-                        ? "Describe the environment and background of this image excluding main subjects, in cinematic English prompt keywords suitable for AI video generators (e.g. Runway, Sora)." 
+                        ? "Describe the environment and background of this image excluding main subjects, in cinematic English prompt keywords suitable for AI video generators (e.g. Google Veo, Runway, Sora)." 
                         : "Describe the visual style, lighting, film stock, color grading, and mood of this image in professional cinematic English prompt keywords.";
 
                     const apiKey = "";
@@ -642,7 +643,7 @@
                     const payload = {
                         contents: [{
                             role: "user",
-                            parts: [{ text: "Suggest a captivating, high-energy cinematic Subject + Action prompt in English for an AI video generator (like Runway or Sora). Return ONLY the prompt text, keep it under 20 words." }]
+                            parts: [{ text: "Suggest a captivating, high-energy cinematic Subject + Action prompt in English for an AI video generator (like Google Veo or Runway). Return ONLY the prompt text, keep it under 20 words." }]
                         }]
                     };
 
@@ -681,7 +682,7 @@
                     const payload = {
                         contents: [{
                             role: "user",
-                            parts: [{ text: `Act as a Hollywood cinematography director and AI prompt engineer. Take the following video generation prompt parameters and rewrite/enhance them into a professional, high-end cinematic AI prompt (in fluent English) optimized for state-of-the-art video models like Sora, Kling, and Runway Gen-3. Make it vivid, highly detailed with lighting and texture keywords:\n\n${currentPrompt}` }]
+                            parts: [{ text: `Act as a Hollywood cinematography director and AI prompt engineer. Take the following video generation prompt parameters and rewrite/enhance them into a professional, high-end cinematic AI prompt (in fluent English) optimized for state-of-the-art video models like Google Veo, Sora, Kling, and Runway Gen-3. Make it vivid, highly detailed with lighting and texture keywords:\n\n${currentPrompt}` }]
                         }]
                     };
 
