@@ -33,7 +33,7 @@
 </head>
 <body class="h-full bg-slate-950 text-slate-100 font-sans antialiased selection:bg-emerald-500 selection:text-white flex flex-col overflow-x-hidden">
 
-    <header class="border-b border-slate-800/80 bg-slate-900/90 backdrop-blur-md sticky top-0 z-30 px-4 md:px-8 py-3.5 flex items-center justify-between shadow-md">
+    <header class="border-b border-slate-800/80 bg-slate-900/95 backdrop-blur-md fixed top-0 left-0 right-0 z-50 px-4 md:px-8 py-3.5 flex items-center justify-between shadow-md">
         <div class="flex items-center space-x-3">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-500/20">
                 <i class="fa-solid fa-clapperboard text-white text-lg"></i>
@@ -46,20 +46,20 @@
             </div>
         </div>
         <div class="flex items-center gap-2">
-            <button onclick="app.enhancePromptWithAI()" class="bg-teal-600 hover:bg-teal-500 active:scale-95 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-lg shadow-teal-600/30 transition flex items-center gap-1.5 border border-teal-500/30">
+            <button onclick="app.enhancePromptWithAI()" class="bg-teal-600 hover:bg-teal-500 active:scale-95 text-white text-xs font-semibold px-3.5 py-2 rounded-lg shadow-lg shadow-teal-600/30 transition flex items-center gap-1.5 border border-teal-500/30">
                 <i class="fa-solid fa-wand-magic-sparkles"></i> <span>AI 강화</span>
             </button>
-            <button onclick="app.resetAll()" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5 border border-slate-800">
+            <button onclick="app.resetAll()" class="px-3 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5 border border-slate-800">
                 <i class="fa-solid fa-rotate-right"></i> <span class="hidden sm:inline">전체 초기화</span>
             </button>
         </div>
     </header>
 
-    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 pt-28 md:pt-32 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
-        <!-- Left Panel: Builder Controls (7 cols on lg) -->
         <div class="lg:col-span-7 space-y-6">
             
+            <!-- Section 1: Subject + Action & Locking -->
             <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 shadow-xl backdrop-blur-sm space-y-4">
                 <div class="flex items-center justify-between mb-3">
                     <label class="text-sm font-bold text-emerald-400 flex items-center gap-2">
@@ -79,12 +79,13 @@
                 </div>
             </div>
 
+            <!-- Section 2: Scene + Environment -->
             <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 shadow-xl backdrop-blur-sm">
                 <div class="flex items-center justify-between mb-3">
                     <label class="text-sm font-bold text-emerald-400 flex items-center gap-2">
                         <i class="fa-solid fa-mountain-sun text-emerald-500"></i> 2. [Scene + Environment]
                     </label>
-                    <span class="text-[11px] text-slate-400">배경 및 환경 분석 또는 직접 입력</span>
+                    <button onclick="app.clearEnvironment()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded transition">초기화</button>
                 </div>
                 <div class="space-y-3">
                     <div class="flex gap-2 items-center">
@@ -106,12 +107,13 @@
                 </div>
             </div>
 
+            <!-- Section 3: Visual Style -->
             <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 shadow-xl backdrop-blur-sm">
                 <div class="flex items-center justify-between mb-3">
                     <label class="text-sm font-bold text-emerald-400 flex items-center gap-2">
                         <i class="fa-solid fa-palette text-emerald-500"></i> 3. [Visual Style]
                     </label>
-                    <span class="text-[11px] text-slate-400">비주얼 스타일 분석</span>
+                    <button onclick="app.clearVisualStyle()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded transition">초기화</button>
                 </div>
                 <div class="space-y-3">
                     <div class="flex gap-2 items-center">
@@ -133,6 +135,7 @@
                 </div>
             </div>
 
+            <!-- Section 4: Camera Direction -->
             <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 shadow-xl backdrop-blur-sm space-y-6">
                 <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                     <label class="text-sm font-bold text-emerald-400 flex items-center gap-2">
@@ -141,12 +144,12 @@
                     <span class="text-[11px] text-slate-400">무브먼트 20종, 속도, 프레이밍</span>
                 </div>
 
-                <!-- 4.1 Movement (20 types categorized) -->
+                <!-- 4.1 Movement (20 types categorized with individual reset) -->
                 <div>
                     <div class="text-xs font-semibold text-slate-300 mb-3 flex items-center justify-between">
                         <div class="flex items-center gap-2">
                             <span>1) Camera Movement (20종 카테고리)</span>
-                            <button onclick="app.clearMovement()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded transition">선택 해제</button>
+                            <button onclick="app.clearMovement()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded transition">선택 해제</button>
                         </div>
                         <span id="selectedMovementName" class="text-emerald-400 font-normal">선택 안 함</span>
                     </div>
@@ -155,12 +158,12 @@
                     </div>
                 </div>
 
-                <!-- 4.2 Speed -->
+                <!-- 4.2 Speed with reset -->
                 <div class="border-t border-slate-800 pt-4">
                     <div class="text-xs font-semibold text-slate-300 mb-3 flex items-center justify-between">
                         <div class="flex items-center gap-2">
                             <span>2) Camera Speed (카메라 스피드)</span>
-                            <button onclick="app.clearSpeed()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded transition">기본값</button>
+                            <button onclick="app.clearSpeed()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded transition">기본값</button>
                         </div>
                         <span id="selectedSpeedName" class="text-emerald-400 font-normal">표준 속도</span>
                     </div>
@@ -169,12 +172,12 @@
                     </div>
                 </div>
 
-                <!-- 4.3 Framing & Shot Types -->
+                <!-- 4.3 Framing & Shot Types with individual resets -->
                 <div class="border-t border-slate-800 pt-4">
                     <div class="text-xs font-semibold text-slate-300 mb-3 flex items-center justify-between">
                         <div class="flex items-center gap-2">
                             <span>3) Framing & Composition (프레이밍 9종)</span>
-                            <button onclick="app.clearFraming()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded transition">선택 해제</button>
+                            <button onclick="app.clearFraming()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded transition">선택 해제</button>
                         </div>
                         <span id="selectedFramingName" class="text-emerald-400 font-normal">선택 안 함</span>
                     </div>
@@ -184,7 +187,7 @@
                     <div class="my-4 border-t border-slate-800/80"></div>
                     <div class="flex items-center justify-between mb-2">
                         <div class="text-[11px] text-slate-400 font-medium">인물 수 및 추가 샷 타입 (7종)</div>
-                        <button onclick="app.clearShotType()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded transition">선택 해제</button>
+                        <button onclick="app.clearShotType()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded transition">선택 해제</button>
                     </div>
                     <div id="shotTypesOptionsContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                         <!-- Populated via JS -->
@@ -192,6 +195,7 @@
                 </div>
             </div>
 
+            <!-- Section 5: Platform Guide, Cut Duration, Audio & Ratio -->
             <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 shadow-xl backdrop-blur-sm space-y-4">
                 <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                     <label class="text-sm font-bold text-emerald-400 flex items-center gap-2">
@@ -215,14 +219,17 @@
                     <div>
                         <div class="text-xs text-slate-400 mb-1.5 font-medium flex items-center justify-between">
                             <span>[Cut Duration / 컷 길이]</span>
-                            <span class="text-[10px] text-emerald-400">직접 입력 (예: 5s, 10s, 30초)</span>
+                            <button onclick="app.clearDuration()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded transition">초기화</button>
                         </div>
                         <input type="text" id="inputDuration" oninput="app.onUserInputChange()" placeholder="예: 5s, 10s 또는 30초 (옴니 호환)" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition">
                     </div>
 
                     <!-- Audio -->
                     <div>
-                        <div class="text-xs text-slate-400 mb-1.5 font-medium">[Audio / Sound FX]</div>
+                        <div class="text-xs text-slate-400 mb-1.5 font-medium flex items-center justify-between">
+                            <span>[Audio / Sound FX]</span>
+                            <button onclick="app.clearAudio()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded transition">초기화</button>
+                        </div>
                         <input type="text" id="inputAudio" oninput="app.onUserInputChange()" placeholder="예: Cinematic ambient drone, low bass hum" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition">
                     </div>
 
@@ -242,8 +249,8 @@
 
         </div>
 
-        <div class="lg:col-span-5 flex flex-col gap-4 lg:sticky lg:top-20">
-            <div class="bg-slate-900/80 border border-emerald-500/30 rounded-2xl p-5 shadow-2xl flex flex-col h-[calc(100vh-120px)] backdrop-blur-md">
+        <div class="lg:col-span-5 flex flex-col gap-4 lg:sticky lg:top-28">
+            <div class="bg-slate-900/80 border border-emerald-500/30 rounded-2xl p-5 shadow-2xl flex flex-col h-[calc(100vh-140px)] backdrop-blur-md">
                 
                 <div class="flex items-center justify-between pb-3 border-b border-slate-800">
                     <div class="flex items-center gap-2">
@@ -255,27 +262,27 @@
 
                 <!-- Action Controls Bar (Translate, Reset, Copy) -->
                 <div class="flex flex-wrap items-center gap-2 py-3 border-b border-slate-800/80">
-                    <button onclick="app.translateToggle()" id="langToggleBtn" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3.5 py-1.5 rounded-lg border border-slate-700 transition flex items-center gap-1.5">
+                    <button onclick="app.translateToggle()" id="langToggleBtn" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3 py-2 rounded-lg border border-slate-700 transition flex items-center gap-1.5">
                         <i class="fa-solid fa-globe text-emerald-400"></i> <span id="langToggleText">한 / 영</span>
                     </button>
-                    <button onclick="app.resetAll()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold px-3.5 py-1.5 rounded-lg border border-slate-700 transition flex items-center gap-1.5">
+                    <button onclick="app.resetAll()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold px-3 py-2 rounded-lg border border-slate-700 transition flex items-center gap-1.5">
                         <i class="fa-solid fa-rotate-right text-slate-400"></i> <span>초기화</span>
                     </button>
-                    <button onclick="app.copyFinalPrompt()" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-xs font-semibold px-4 py-1.5 rounded-xl shadow-lg shadow-emerald-600/30 transition flex items-center gap-2 ml-auto">
+                    <button onclick="app.copyFinalPrompt()" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow-lg shadow-emerald-600/30 transition flex items-center gap-2 ml-auto">
                         <i class="fa-solid fa-copy"></i> <span>복사</span>
                     </button>
                 </div>
 
                 <div class="flex-1 my-3 overflow-y-auto">
-                    <textarea id="finalPromptOutput" oninput="app.onManualTextEdit(event)" class="w-full h-full bg-slate-950/90 border border-slate-800/80 rounded-xl p-4 text-xs font-mono text-emerald-200 leading-relaxed focus:outline-none focus:border-emerald-500 resize-none selection:bg-emerald-600 selection:text-white" placeholder="좌측 항목들을 조작하거나 이곳에 직접 타이핑하여 프롬프트를 수정할 수 있습니다..."></textarea>
+                    <textarea id="finalPromptOutput" oninput="app.onManualTextEdit(event)" class="w-full h-full bg-slate-950/90 border border-slate-800/80 rounded-xl p-4 text-xs font-mono text-amber-200/90 leading-relaxed focus:outline-none focus:border-emerald-500 resize-none selection:bg-emerald-600 selection:text-white" placeholder="좌측 항목들을 조작하거나 이곳에 직접 타이핑하여 프롬프트를 수정할 수 있습니다..."></textarea>
                 </div>
 
                 <div class="bg-slate-950/60 rounded-xl p-3 border border-slate-800/80 text-[11px] text-slate-400 space-y-1.5">
                     <div class="font-semibold text-slate-300 flex items-center gap-1.5">
-                        <i class="fa-solid fa-circle-info text-emerald-400"></i> 안내 사항
+                        <i class="fa-solid fa-circle-info text-emerald-400"></i> 안내 사항 및 플랫폼 팁
                     </div>
-                    <p>• <b>실시간 직접 편집</b>: 우측 박스에서 직접 수정한 내용은 '한 / 영' 번역 및 복사 시 그대로 연동됩니다.</p>
-                    <p>• <b>AI 강화</b>: 상단 우측의 'AI 강화' 버튼을 누르면 작성된 프롬프트가 할리우드 시네마틱 디렉터 수준의 전문 영문 프롬프트로 고도화됩니다.</p>
+                    <p>• <b>Google Veo / 옴니 호환</b>: 컷 듀레이션(Cut Duration)에 5s, 10s 또는 30초 등 원하는 타임을 직접 입력하여 플랫폼별 최적화 컷을 생성하세요.</p>
+                    <p>• <b>한 / 영 변환</b>: 우측 상단의 '한 / 영' 버튼을 누르면 현재 프롬프트 내용이 양방향으로 완벽하게 번역됩니다.</p>
                 </div>
 
             </div>
@@ -320,46 +327,46 @@
             {
                 category: "접근",
                 items: [
-                    { id: "dolly_in", name: "달리 인 (DOLLY IN)", desc: "카메라가 인물을 향해 곧게 밀고 들어갑니다.", ex: "깨닫는 순간, 각성하는 순간에 사용, 공간이 열리는 느낌" },
-                    { id: "slow_zoom_in", name: "슬로 줌 인 (SLOW ZOOM IN)", desc: "카메라는 세워두고 렌즈만 당깁니다.", ex: "공간이 눌리며 압박감, 조용한 긴장에 사용" },
-                    { id: "dolly_zoom", name: "돌리 줌 (DOLLY ZOOM)", desc: "뒤로 빠지면서 동시에 줌인합니다.", ex: "인물은 그대로, 배경만 뒤틀림, 발밑이 꺼지는 순간, 충격, 히치콕 샷, 버티고샷이라고 불림" }
+                    { id: "dolly_in", name: "DOLLY IN (달리 인)", prompt: "dolly in", desc: "카메라가 인물을 향해 곧게 밀고 들어갑니다.", ex: "깨닫는 순간, 각성하는 순간에 사용, 공간이 열리는 느낌" },
+                    { id: "slow_zoom_in", name: "SLOW ZOOM IN (슬로 줌 인)", prompt: "slow zoom in", desc: "카메라는 세워두고 렌즈만 당깁니다.", ex: "공간이 눌리며 압박감, 조용한 긴장에 사용" },
+                    { id: "dolly_zoom", name: "DOLLY ZOOM (돌리 줌)", prompt: "dolly zoom", desc: "뒤로 빠지면서 동시에 줌인합니다.", ex: "인물은 그대로, 배경만 뒤틀림, 발밑이 꺼지는 순간, 충격, 히치콕 샷, 버티고샷이라고 불림" }
                 ]
             },
             {
                 category: "회전ㆍ이동",
                 items: [
-                    { id: "arc", name: "아크 (ARC)", desc: "인물 주위를 곡선으로 한 바퀴 돕니다.", ex: "첫 등장, 공간을 한 번에 설명할 때 사용" },
-                    { id: "side_tracking", name: "사이드 트래킹 (SIDE TRACKING)", desc: "인물 옆에서 나란히 평행으로 달립니다.", ex: "인물 옆에서 나란히 평행으로 달립니다., 이동의 리듬" },
-                    { id: "follow_shot", name: "팔로우 샷 (FOLLOW SHOT)", desc: "인물 뒤를 어깨 높이로 따라 갑니다.", ex: "이동, 추격, 몰입도가 가장 높은 샷, 관객이 인물 뒤에 서 있음" },
-                    { id: "reverse_tracking", name: "리버스 트래킹 (REVERSE TRACKING)", desc: "인물 앞에서 뒤로 물러나며 찍습니다.", ex: "걸으면서 대사 하는 씬은 무조건 이것 사용" },
-                    { id: "whip_pan", name: "휩 팬 (WHIP PAN)", desc: "카메라를 빠르게 휘둘러 잔상을 남깁니다.", ex: "컷을 전환하거나 타격감을 줄 때" }
+                    { id: "arc", name: "ARC (아크)", prompt: "arc camera movement", desc: "인물 주위를 곡선으로 한 바퀴 돕니다.", ex: "첫 등장, 공간을 한 번에 설명할 때 사용" },
+                    { id: "side_tracking", name: "SIDE TRACKING (사이드 트래킹)", prompt: "side tracking shot", desc: "인물 옆에서 나란히 평행으로 달립니다.", ex: "인물 옆에서 나란히 평행으로 달립니다., 이동의 리듬" },
+                    { id: "follow_shot", name: "FOLLOW SHOT (팔로우 샷)", prompt: "follow shot", desc: "인물 뒤를 어깨 높이로 따라 갑니다.", ex: "이동, 추격, 몰입도가 가장 높은 샷, 관객이 인물 뒤에 서 있음" },
+                    { id: "reverse_tracking", name: "REVERSE TRACKING (리버스 트래킹)", prompt: "reverse tracking shot", desc: "인물 앞에서 뒤로 물러나며 찍습니다.", ex: "걸으면서 대사 하는 씬은 무조건 이것 사용" },
+                    { id: "whip_pan", name: "WHIP PAN (휩 팬)", prompt: "whip pan", desc: "카메라를 빠르게 휘둘러 잔상을 남깁니다.", ex: "컷을 전환하거나 타격감을 줄 때" }
                 ]
             },
             {
                 category: "높이",
                 items: [
-                    { id: "crane_up", name: "크레인 업 (CRANE UP)", desc: "렌즈는 수평, 몸만 수직으로 솟구칩니다.", ex: "씬을 닫을 때, 엔딩에서 씁니다. 인물이 점점 작아짐" },
-                    { id: "drone_pull_back", name: "드론 풀백 (DRONE PULL BACK)", desc: "항공 촬영에서 피사체에 바짝 붙은 상태에서 드론을 뒤로(Back) 빼면서 위로 상승시키는 카메라 무빙 기법", ex: "웅장한 스케일과 공간감을 극적으로 드러낼 때 사용" },
-                    { id: "low_angle", name: "로우 앵글 (LOW ANGLE)", desc: "카메라를 지면 가까이 두고 올려다봄", ex: "위압감, 영웅 프레이밍, 인물이 강해 보여야 할 때 사용" },
-                    { id: "high_angle", name: "하이 앵글 (HIGH ANGLE)", desc: "카메라를 반대로 위에서 내려다봄", ex: "무력함, 고립, 감시당하는 느낌." },
-                    { id: "overhead", name: "오버헤드 (OVERHEAD)", desc: "정확히 수직 90도로 내리 꽂습니다.", ex: "상황을 한 컷에 요약할 때 사용" }
+                    { id: "crane_up", name: "CRANE UP (크레인 업)", prompt: "crane up", desc: "렌즈는 수평, 몸만 수직으로 솟구칩니다.", ex: "씬을 닫을 때, 엔딩에서 씁니다. 인물이 점점 작아짐" },
+                    { id: "drone_pull_back", name: "DRONE PULL BACK (드론 풀백)", prompt: "drone pull back", desc: "항공 촬영에서 피사체에 바짝 붙은 상태에서 드론을 뒤로(Back) 빼면서 위로 상승시키는 카메라 무빙 기법", ex: "웅장한 스케일과 공간감을 극적으로 드러낼 때 사용" },
+                    { id: "low_angle", name: "LOW ANGLE (로우 앵글)", prompt: "low angle shot", desc: "카메라를 지면 가까이 두고 올려다봄", ex: "위압감, 영웅 프레이밍, 인물이 강해 보여야 할 때 사용" },
+                    { id: "high_angle", name: "HIGH ANGLE (하이 앵글)", prompt: "high angle shot", desc: "카메라를 반대로 위에서 내려다봄", ex: "무력함, 고립, 감시당하는 느낌." },
+                    { id: "overhead", name: "OVERHEAD (오버헤드)", prompt: "overhead shot", desc: "정확히 수직 90도로 내리 꽂습니다.", ex: "상황을 한 컷에 요약할 때 사용" }
                 ]
             },
             {
                 category: "시점",
                 items: [
-                    { id: "handheld", name: "핸드헬드 (HANDHELD)", desc: "사람이 손으로 든 미세한 흔들림입니다.", ex: "현장감, 불안, 드림코어의 리얼리티에 사용" },
-                    { id: "snorricam", name: "스노리캠 (SNORRICAM)", desc: "카메라를 인물 몸에 붙여버립니다.", ex: "얼굴은 고정, 배경만 흔들림, 패닝에 사용." },
-                    { id: "first_person", name: "1인칭 시점 (FIRST PERSON POV)", desc: "인물의 눈높이에서 그대로 전진합니다.", ex: "얼굴 대신 손, 관객을 인물 안에." },
-                    { id: "rear_shot", name: "리어 샷 (REAR SHOT)", desc: "인물 뒤에 고정하고 아예 안 움직입니다.", ex: "표정을 감출 때, 정적을 보여줄 때, 뒷모습만 화면에 꽉 참, 울음을 참는 모습 등에 사용" }
+                    { id: "handheld", name: "HANDHELD (핸드헬드)", prompt: "handheld camera", desc: "사람이 손으로 든 미세한 흔들림입니다.", ex: "현장감, 불안, 드림코어의 리얼리티에 사용" },
+                    { id: "snorricam", name: "SNORRICAM (스노리캠)", prompt: "snorricam shot", desc: "카메라를 인물 몸에 붙여버립니다.", ex: "얼굴은 고정, 배경만 흔들림, 패닝에 사용." },
+                    { id: "first_person", name: "FIRST PERSON POV (1인칭 시점)", prompt: "first person POV", desc: "인물의 눈높이에서 그대로 전진합니다.", ex: "얼굴 대신 손, 관객을 인물 안에." },
+                    { id: "rear_shot", name: "REAR SHOT (리어 샷)", prompt: "rear shot", desc: "인물 뒤에 고정하고 아예 안 움직입니다.", ex: "표정을 감출 때, 정적을 보여줄 때, 뒷모습만 화면에 꽉 참, 울음을 참는 모습 등에 사용" }
                 ]
             },
             {
                 category: "외곡ㆍ초점",
                 items: [
-                    { id: "dutch_angle", name: "더치 앵글 (DUTCH ANGLE)", desc: "수평선을 20도쯤 기울입니다.", ex: "불안, 왜곡, 길게 쓰면 피로해집니다." },
-                    { id: "rack_focus", name: "랙 포커스 (RACK FOCUS)", desc: "카메라는 고정, 초점만 앞뒤로 넘깁니다.", ex: "시선을 강제로 옮길 때, 숨어 있던 정보 공개, 관객의 시선을 강제로 옮김" },
-                    { id: "push_past", name: "푸시 패스트 (PUSH PAST)", desc: "문이나 창을 통과해 다른 공간으로 넘어갑니다.", ex: "전환을 편집이 아니라 카메라, 공간으로 수행" }
+                    { id: "dutch_angle", name: "DUTCH ANGLE (더치 앵글)", prompt: "dutch angle", desc: "수평선을 20도쯤 기울입니다.", ex: "불안, 왜곡, 길게 쓰면 피로해집니다." },
+                    { id: "rack_focus", name: "RACK FOCUS (랙 포커스)", prompt: "rack focus", desc: "카메라는 고정, 초점만 앞뒤로 넘깁니다.", ex: "시선을 강제로 옮길 때, 숨어 있던 정보 공개, 관객의 시선을 강제로 옮김" },
+                    { id: "push_past", name: "PUSH PAST (푸시 패스트)", prompt: "push past shot", desc: "문이나 창을 통과해 다른 공간으로 넘어갑니다.", ex: "전환을 편집이 아니라 카메라, 공간으로 수행" }
                 ]
             }
         ];
@@ -372,33 +379,33 @@
         ];
 
         const framingOptions = [
-            { id: "extreme_long", name: "익스트림 롱샷", desc: "인물이 점처럼 작습니다.", ex: "공간이 주인공일 때, 오프닝과 엔딩의 단골" },
-            { id: "long_shot", name: "롱샷", desc: "전신 + 위아래 넉넉한 여백", ex: "여기가 어디인지 설명하는 샷, 보통 설정샷이 이겁니다." },
-            { id: "full_shot", name: "풀샷", desc: "머리끝부터 발끝까지 딱 맞게", ex: "의상과 동작 전체를 보여줄 때, 춤과 액션은 여기서 시작" },
-            { id: "medium_long", name: "미디엄 롱샷", desc: "무릎 아래에서 자릅니다. 카우보이샷", ex: "서부극에서 온 이름, 카우보이샷, 두 사람 대화에 잘 맞음" },
-            { id: "medium_shot", name: "미디엄샷", desc: "허리에서 자릅니다.", ex: "대화 장면의 기본값, 고민되면 일단 여기서 시작하세요." },
-            { id: "medium_close", name: "미디엄 클로즈업", desc: "가슴 중간에서 자릅니다.", ex: "뉴스와 인터뷰의 표준, 표정과 손짓이 동시에 읽히는 유일한 구간" },
-            { id: "close_up", name: "클로즈업", desc: "머리와 어깨만 남습니다.", ex: "감정을 전달하는 주력 샷." },
-            { id: "big_close_up", name: "빅 클로즈업", desc: "이마부터 턱까지, 머리 위가 잘립니다.", ex: "감정이 최고조일 때 씁니다." },
-            { id: "extreme_close", name: "익스트림 클로즈업", desc: "눈만 화면에 꽉 찹니다.", ex: "디테일과 긴장의 정점" }
+            { id: "extreme_long", name: "EXTREME LONG SHOT (익스트림 롱샷)", prompt: "extreme long shot", desc: "인물이 점처럼 작습니다.", ex: "공간이 주인공일 때, 오프닝과 엔딩의 단골" },
+            { id: "long_shot", name: "LONG SHOT (롱샷)", prompt: "long shot", desc: "전신 + 위아래 넉넉한 여백", ex: "여기가 어디인지 설명하는 샷, 보통 설정샷이 이겁니다." },
+            { id: "full_shot", name: "FULL SHOT (풀샷)", prompt: "full shot", desc: "머리끝부터 발끝까지 딱 맞게", ex: "의상과 동작 전체를 보여줄 때, 춤과 액션은 여기서 시작" },
+            { id: "medium_long", name: "MEDIUM LONG SHOT (미디엄 롱샷)", prompt: "medium long shot", desc: "무릎 아래에서 자릅니다. 카우보이샷", ex: "서부극에서 온 이름, 카우보이샷, 두 사람 대화에 잘 맞음" },
+            { id: "medium_shot", name: "MEDIUM SHOT (미디엄샷)", prompt: "medium shot", desc: "허리에서 자릅니다.", ex: "대화 장면의 기본값, 고민되면 일단 여기서 시작하세요." },
+            { id: "medium_close", name: "MEDIUM CLOSE-UP (미디엄 클로즈업)", prompt: "medium close-up", desc: "가슴 중간에서 자릅니다.", ex: "뉴스와 인터뷰의 표준, 표정과 손짓이 동시에 읽히는 유일한 구간" },
+            { id: "close_up", name: "CLOSE-UP (클로즈업)", prompt: "close-up", desc: "머리와 어깨만 남습니다.", ex: "감정을 전달하는 주력 샷." },
+            { id: "big_close_up", name: "BIG CLOSE-UP (빅 클로즈업)", prompt: "big close-up", desc: "이마부터 턱까지, 머리 위가 잘립니다.", ex: "감정이 최고조일 때 씁니다." },
+            { id: "extreme_close", name: "EXTREME CLOSE-UP (익스트림 클로즈업)", prompt: "extreme close-up", desc: "눈만 화면에 꽉 찹니다.", ex: "디테일과 긴장의 정점" }
         ];
 
         const shotTypesOptions = [
-            { id: "single", name: "싱글 (Single)", desc: "인물 1인 중심의 샷", ex: "독점적인 인물의 심리 묘사" },
-            { id: "two_shot", name: "투샷 (Two Shot)", desc: "화면에 인물 2명이 담기는 샷", ex: "관계성과 대화 씬에 최적화" },
-            { id: "three_shot", name: "쓰리샷 (Three Shot)", desc: "인물 3명이 함께 등장하는 샷", ex: "그룹 구도와 역학 관계 표현" },
-            { id: "over_shoulder", name: "오버 더 숄더 (OTS)", desc: "상대방 어깨 너머로 바라보는 샷", ex: "대화 시 몰입감과 시선 교환 강조" },
-            { id: "insert", name: "인서트 (Insert)", desc: "특정 사물이나 디테일을 잡는 샷", ex: "핵심 단서나 소품 강조" },
-            { id: "cut_away", name: "컷 어웨이 (Cut Away)", desc: "메인 피사체 외의 배경이나 상황으로 전환", ex: "시간 경과나 긴장감 유도" },
-            { id: "reaction", name: "리액션 샷 (Reaction Shot)", desc: "상황이나 대사에 반응하는 인물의 표정", ex: "감정적 울림 전달" }
+            { id: "single", name: "SINGLE (싱글)", prompt: "single shot", desc: "인물 1인 중심의 샷", ex: "독점적인 인물의 심리 묘사" },
+            { id: "two_shot", name: "TWO SHOT (투샷)", prompt: "two shot", desc: "화면에 인물 2명이 담기는 샷", ex: "관계성과 대화 씬에 최적화" },
+            { id: "three_shot", name: "THREE SHOT (쓰리샷)", prompt: "three shot", desc: "인물 3명이 함께 등장하는 샷", ex: "그룹 구도와 역학 관계 표현" },
+            { id: "over_shoulder", name: "OVER THE SHOULDER (오버더 숄더)", prompt: "over the shoulder shot", desc: "상대방 어깨 너머로 바라보는 샷", ex: "대화 시 몰입감과 시선 교환 강조" },
+            { id: "insert", name: "INSERT SHOT (인서트)", prompt: "insert shot", desc: "특정 사물이나 디테일을 잡는 샷", ex: "핵심 단서나 소품 강조" },
+            { id: "cut_away", name: "CUT AWAY (컷 어웨이)", prompt: "cut away shot", desc: "메인 피사체 외의 배경이나 상황으로 전환", ex: "시간 경과나 긴장감 유도" },
+            { id: "reaction", name: "REACTION SHOT (리액션샷)", prompt: "reaction shot", desc: "상황이나 대사에 반응하는 인물의 표정", ex: "감정적 울림 전달" }
         ];
 
         const platformGuides = [
             { name: "Google Veo", desc: "구글의 최신 시네마틱 AI 비디오 모델로, 높은 해상도와 정교한 물리 법칙 구현에 강점.", ex: "기본 5초~10초 단위 컷 제작 및 자연스러운 카메라 무빙에 최적화." },
+            { name: "Google Omni", desc: "실시간 멀티모달 인터랙션 및 오디오·비디오 동기화 연출에 특화된 차세대 AI 모델.", ex: "대화형 시퀀스 및 옴니 호환 컷 타임 설정에 필수적." },
             { name: "Runway Gen-3", desc: "뛰어난 인물 일관성과 역동적인 카메라 모션 제어가 가능한 프로급 비디오 모델.", ex: "5초 기본 컷 단위로 세밀한 프롬프트 제어에 유리." },
             { name: "Luma Dream Machine", desc: "빠른 렌더링 속도와 부드러운 3D 공간 이해도가 돋보이는 비디오 AI.", ex: "짧고 임팩트 있는 전환 컷(5초)에 적합." },
-            { name: "Kling AI", desc: "사실적인 물리 인터랙션과 고품질 캐릭터 움직임 표현에 뛰어난 모델.", ex: "10초 연장 및 복잡한 액션 씬 제작에 추천." },
-            { name: "Sora Cinematic", desc: "오픈에이아이의 장시간 고해상도 시네마틱 씬 생성 모델.", ex: "웅장한 스케일과 복잡한 내러티브 컷 연출에 활용." }
+            { name: "Kling AI", desc: "사실적인 물리 인터랙션과 고품질 캐릭터 움직임 표현에 뛰어난 모델.", ex: "10초 연장 및 복잡한 액션 씬 제작에 추천." }
         ];
 
         class VideoBuilderApp {
@@ -415,10 +422,10 @@
                     duration: "",
                     audio: "",
                     aspect: "--ar 16:9",
-                    isEnglish: false,
                     envImageBase64: null,
                     styleImageBase64: null,
-                    userCustomPrompt: null
+                    userCustomPrompt: null,
+                    isTranslated: false
                 };
                 this.initUI();
             }
@@ -588,6 +595,32 @@
                 this.update();
             }
 
+            clearEnvironment() {
+                document.getElementById('inputEnvironment').value = "";
+                this.removeImage('env');
+                this.state.userCustomPrompt = null;
+                this.update();
+            }
+
+            clearVisualStyle() {
+                document.getElementById('inputVisualStyle').value = "";
+                this.removeImage('style');
+                this.state.userCustomPrompt = null;
+                this.update();
+            }
+
+            clearDuration() {
+                document.getElementById('inputDuration').value = "";
+                this.state.userCustomPrompt = null;
+                this.update();
+            }
+
+            clearAudio() {
+                document.getElementById('inputAudio').value = "";
+                this.state.userCustomPrompt = null;
+                this.update();
+            }
+
             showInfo(title, desc, ex) {
                 document.getElementById('modalTitle').innerText = title;
                 document.getElementById('modalDesc').innerText = desc;
@@ -645,7 +678,7 @@
 
                 const btnElem = event.target;
                 const originalText = btnElem.innerHTML;
-                btnElem.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Gemini 분석 중...`;
+                btnElem.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> 분석 중...`;
                 btnElem.disabled = true;
 
                 try {
@@ -688,7 +721,6 @@
                         throw new Error("Invalid response format");
                     }
                 } catch (err) {
-                    console.debug(err);
                     if (type === 'env') {
                         document.getElementById('inputEnvironment').value = "Detailed cinematic environment background excluding subjects, immersive atmosphere, volumetric lighting, photorealistic";
                     } else {
@@ -726,6 +758,8 @@
                         document.getElementById('inputSubject').value = text.replace(/^["']|["']$/g, '');
                         this.state.userCustomPrompt = null;
                         this.update();
+                    } else {
+                        throw new Error();
                     }
                 } catch (e) {
                     document.getElementById('inputSubject').value = "A cyberpunk detective running through neon-lit futuristic alleyways, cinematic lighting";
@@ -751,7 +785,7 @@
                     const payload = {
                         contents: [{
                             role: "user",
-                            parts: [{ text: `Act as a Hollywood cinematography director and AI prompt engineer. Take the following video generation prompt parameters and rewrite/enhance them into a professional, high-end cinematic AI prompt (in fluent English) optimized for state-of-the-art video models (Google Veo, Sora, Kling, Runway). Make it vivid, highly detailed with lighting and texture keywords:\n\n${currentPrompt}` }]
+                            parts: [{ text: `Act as a Hollywood cinematography director and AI prompt engineer. Take the following video generation prompt parameters and rewrite/enhance them into a professional, high-end cinematic AI prompt (in fluent English) optimized for state-of-the-art video models (Google Veo, Google Omni, Sora, Kling, Runway). Make it vivid, highly detailed with lighting and texture keywords:\n\n${currentPrompt}` }]
                         }]
                     };
 
@@ -777,8 +811,9 @@
             }
 
             onUserInputChange() {
-                this.state.userCustomPrompt = null;
-                this.update();
+                if (this.state.userCustomPrompt === null) {
+                    this.update();
+                }
             }
 
             onManualTextEdit(event) {
@@ -808,16 +843,16 @@
 
                 let parts = [];
                 if (this.state.subject) parts.push(this.state.subject);
-                if (this.state.locking) parts.push(`[Locking: ${this.state.locking}]`);
+                if (this.state.locking) parts.push(`Locking: ${this.state.locking}`);
                 if (this.state.environment) parts.push(this.state.environment);
                 if (this.state.visualStyle) parts.push(this.state.visualStyle);
-                if (this.state.movement) parts.push(this.state.movement.name);
+                if (this.state.movement) parts.push(this.state.movement.prompt);
                 
                 const spdObj = speedOptions.find(s => s.id === this.state.speed);
                 if (spdObj && this.state.speed !== 'normal') parts.push(spdObj.prompt);
                 
-                if (this.state.framing) parts.push(this.state.framing.name);
-                if (this.state.shotType) parts.push(this.state.shotType.name);
+                if (this.state.framing) parts.push(this.state.framing.prompt);
+                if (this.state.shotType) parts.push(this.state.shotType.prompt);
                 if (this.state.duration) parts.push(`Duration: ${this.state.duration}`);
                 if (this.state.audio) parts.push(`Audio: ${this.state.audio}`);
                 if (this.state.aspect) parts.push(this.state.aspect);
@@ -826,14 +861,10 @@
             }
 
             update() {
+                if (this.state.userCustomPrompt !== null) return;
                 const outputBox = document.getElementById('finalPromptOutput');
                 const charCountElem = document.getElementById('charCount');
                 if (!outputBox) return;
-
-                if (this.state.userCustomPrompt !== null) {
-                    if (charCountElem) charCountElem.innerText = `${outputBox.value.length}자`;
-                    return; 
-                }
 
                 let finalString = this.buildPromptString();
                 outputBox.value = finalString;
@@ -845,19 +876,19 @@
                 const currentText = outputBox.value || this.buildPromptString();
                 if (!currentText) return;
 
-                this.state.isEnglish = !this.state.isEnglish;
+                this.state.isTranslated = !this.state.isTranslated;
                 const btnText = document.getElementById('langToggleText');
-                if (btnText) btnText.innerText = this.state.isEnglish ? "영 / 한" : "한 / 영";
+                if (btnText) btnText.innerText = this.state.isTranslated ? "영 / 한" : "한 / 영";
 
-                outputBox.value = this.state.isEnglish ? "Translating to English..." : "번역 중...";
+                outputBox.value = "번역 중...";
 
                 try {
                     const apiKey = "";
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
                     
-                    const directionPrompt = this.state.isEnglish 
-                        ? `Translate the following video generation prompt into natural, cinematic English keywords suitable for AI video models:\n\n${currentText}`
-                        : `Translate the following AI video generation prompt into natural Korean:\n\n${currentText}`;
+                    const directionPrompt = this.state.isTranslated 
+                        ? `Translate the following AI video generation prompt into natural Korean, maintaining accurate technical camera terminology:\n\n${currentText}`
+                        : `Translate the following AI video generation prompt back into natural, professional English cinematic prompt keywords:\n\n${currentText}`;
 
                     const payload = {
                         contents: [{
@@ -877,6 +908,8 @@
                     if (translated) {
                         outputBox.value = translated;
                         this.state.userCustomPrompt = translated;
+                        const charCountElem = document.getElementById('charCount');
+                        if (charCountElem) charCountElem.innerText = `${translated.length}자`;
                     } else {
                         outputBox.value = currentText;
                     }
@@ -907,7 +940,7 @@
                 this.state.shotType = null;
                 this.state.speed = "normal";
                 this.state.userCustomPrompt = null;
-                this.state.isEnglish = false;
+                this.state.isTranslated = false;
 
                 const btnText = document.getElementById('langToggleText');
                 if (btnText) btnText.innerText = "한 / 영";
