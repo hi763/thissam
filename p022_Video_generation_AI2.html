@@ -65,7 +65,7 @@
                     <button onclick="app.clearCharacterLock()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded transition">초기화</button>
                 </div>
                 <p class="text-[11px] text-slate-300 leading-relaxed">
-                    영상의 컷마다 캐릭터가 변형되는 현상을 방지하기 위해 프롬프트 최상단에 자동으로 고정 지침(`[IMPORTANT]`)을 부여합니다.
+                    영상의 컷마다 캐릭터가 변형되는 현상을 방지하기 위해 프롬프트 최상단에 자동으로 고정 지침(<code>[IMPORTANT]</code>)을 부여합니다.
                 </p>
                 <div>
                     <input type="text" id="inputCharacterLock" oninput="app.onUserInputChange()" placeholder="예: Maintain exact same character appearance across all cuts (hairstyle, accessories, outfit)" class="w-full bg-slate-950/80 border border-emerald-500/30 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition">
@@ -289,19 +289,13 @@
                     </button>
                 </div>
 
-                <!-- Action Controls Bar (Translate, AI Enhance, Reset, Copy) -->
-                <div class="flex flex-wrap items-center gap-2 py-3 border-b border-slate-800/80">
-                    <button onclick="app.translateToggle()" id="langToggleBtn" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3 py-2 rounded-lg border border-slate-700 transition flex items-center gap-1.5">
+                <!-- Action Controls Bar (Translate & AI Enhance) -->
+                <div class="flex items-center gap-2 py-3 border-b border-slate-800/80">
+                    <button onclick="app.translateToggle()" id="langToggleBtn" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3 py-2 rounded-lg border border-slate-700 transition flex items-center justify-center gap-1.5">
                         <i class="fa-solid fa-globe text-emerald-400"></i> <span id="langToggleText">한 / 영</span>
                     </button>
-                    <button onclick="app.enhancePromptWithAI()" class="bg-teal-600 hover:bg-teal-500 text-white text-xs font-semibold px-3 py-2 rounded-lg transition flex items-center gap-1.5 shadow-md shadow-teal-600/30 border border-teal-500/30">
+                    <button onclick="app.enhancePromptWithAI()" class="flex-1 bg-teal-600 hover:bg-teal-500 text-white text-xs font-semibold px-3 py-2 rounded-lg transition flex items-center justify-center gap-1.5 shadow-md shadow-teal-600/30 border border-teal-500/30">
                         <i class="fa-solid fa-wand-magic-sparkles"></i> <span>AI 강화 실행</span>
-                    </button>
-                    <button onclick="app.resetAll()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold px-3 py-2 rounded-lg border border-slate-700 transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-rotate-right text-slate-400"></i> <span>초기화</span>
-                    </button>
-                    <button onclick="app.copyFinalPrompt()" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow-lg shadow-emerald-600/30 transition flex items-center gap-2 ml-auto">
-                        <i class="fa-solid fa-copy"></i> <span>복사</span>
                     </button>
                 </div>
 
@@ -319,12 +313,22 @@
                     </div>
                 </div>
 
+                <!-- Full-Width Copy Button & Reset Button placed above guide -->
+                <div class="flex items-center gap-2 pb-3">
+                    <button onclick="app.copyFinalPrompt()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-xs font-semibold py-2.5 px-4 rounded-xl shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-copy"></i> <span>프롬프트 복사</span>
+                    </button>
+                    <button onclick="app.resetAll()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold px-4 py-2.5 rounded-xl border border-slate-700 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-rotate-right text-slate-400"></i> <span>초기화</span>
+                    </button>
+                </div>
+
                 <div class="bg-slate-950/60 rounded-xl p-3 border border-slate-800/80 text-[11px] text-slate-400 space-y-1.5">
                     <div class="font-semibold text-slate-300 flex items-center gap-1.5">
                         <i class="fa-solid fa-circle-info text-emerald-400"></i> 안내 사항 및 플랫폼 팁
                     </div>
                     <p>• <b>캐릭터 일관성 고정</b>: 최상단에 입력된 <code>[IMPORTANT]</code> 지침이 프롬프트 맨 앞에 자동 적용되어 컷 간 캐릭터 변형을 막아줍니다.</p>
-                    <p>• <b>한 / 영 변환</b>: 상단 '한 / 영' 버튼을 누르면 실시간 프롬프트가 즉시 번역되며 사용자 커스텀 수정 내용도 함께 유지됩니다.</p>
+                    <p>• <b>한 / 영 변환</b>: 기본 프롬프트 탭에서 '한 / 영' 버튼을 누르면 실시간 프롬프트가 즉시 번역되며 커스텀 수정 내용도 유지됩니다.</p>
                 </div>
 
             </div>
@@ -563,6 +567,7 @@
                 const tabEnhancedBtn = document.getElementById('tabEnhancedBtn');
                 const standardView = document.getElementById('standardPromptView');
                 const enhancedView = document.getElementById('enhancedPromptView');
+                const langToggleBtn = document.getElementById('langToggleBtn');
 
                 if (tab === 'prompt') {
                     tabPromptBtn.className = "flex-1 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 text-white transition shadow-sm";
@@ -571,6 +576,7 @@
                     standardView.classList.add('flex');
                     enhancedView.classList.add('hidden');
                     enhancedView.classList.remove('flex');
+                    if (langToggleBtn) langToggleBtn.disabled = false;
                 } else {
                     tabEnhancedBtn.className = "flex-1 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 text-white transition shadow-sm flex items-center justify-center gap-1.5";
                     tabPromptBtn.className = "flex-1 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-400 hover:text-white transition shadow-sm";
@@ -578,6 +584,7 @@
                     enhancedView.classList.add('flex');
                     standardView.classList.add('hidden');
                     standardView.classList.remove('flex');
+                    if (langToggleBtn) langToggleBtn.disabled = true;
                 }
             }
 
@@ -869,7 +876,7 @@
                     return;
                 }
 
-                enhancedBox.value = "Gemini LLM이 시네마틱 프롬프트를 전문적으로 고도화하고 있습니다...";
+                enhancedBox.value = "Gemini LLM이 시네마틱 프롬프트를 전문적으로 다양하고 풍부하게 고도화하고 있습니다...";
                 this.switchTab('enhanced');
 
                 try {
@@ -879,7 +886,7 @@
                     const payload = {
                         contents: [{
                             role: "user",
-                            parts: [{ text: `Act as a Hollywood cinematography director and AI prompt engineer. Take the following video generation prompt parameters and rewrite/enhance them into a professional, high-end cinematic AI prompt (in fluent English) optimized for state-of-the-art video models (Google Veo, Google Omni, Sora, Kling, Runway). Make it vivid, highly detailed with lighting and texture keywords:\n\n${currentPrompt}` }]
+                            parts: [{ text: `Act as an expert Hollywood cinematography director and world-class AI video prompt engineer. Take the following user input parameters and dramatically expand, enhance, and rewrite them into a rich, professional, multi-sentence cinematic master-prompt in English optimized for advanced AI video generators (Runway Gen-3, Sora, Kling, Google Veo). Add vivid details about volumetric lighting, camera optics, color grading, mood, and texture:\n\n${currentPrompt}` }]
                         }]
                     };
 
@@ -895,10 +902,10 @@
                         enhancedBox.value = enhancedText;
                         this.state.enhancedPromptText = enhancedText;
                     } else {
-                        enhancedBox.value = currentPrompt;
+                        enhancedBox.value = currentPrompt + ", masterclass cinematic composition, 8k resolution, photorealistic masterpiece";
                     }
                 } catch (e) {
-                    enhancedBox.value = currentPrompt + ", masterclass cinematography, 8k resolution, photorealistic masterpiece";
+                    enhancedBox.value = currentPrompt + ", ultra-realistic volumetric lighting, anamorphic lens flare, masterclass cinematography, 8k";
                     this.state.enhancedPromptText = enhancedBox.value;
                 }
             }
@@ -983,8 +990,8 @@
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
                     
                     const directionPrompt = this.state.isTranslated 
-                        ? `Translate the following AI video generation prompt into natural Korean, keeping technical camera and prompt keywords accurate:\n\n${currentText}`
-                        : `Translate the following AI video generation prompt back into natural, professional English cinematic prompt keywords:\n\n${currentText}`;
+                        ? `Translate the following AI video generation prompt into natural, fluent Korean while keeping technical camera terms accurate:\n\n${currentText}`
+                        : `Translate the following Korean prompt description back into professional English cinematic AI prompt keywords:\n\n${currentText}`;
 
                     const payload = {
                         contents: [{
