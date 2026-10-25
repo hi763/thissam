@@ -56,7 +56,7 @@
         </div>
     </header>
 
-    <!-- Main Workspace with top padding for fixed header -->
+    <!-- Main Workspace with proper top padding for fixed header -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 pt-24 md:pt-28 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
         <!-- Left Column: Input Sections (7 Cols) -->
@@ -789,7 +789,7 @@
                 try {
                     const promptText = type === 'env' 
                         ? "Analyze this reference image in extreme detail and write a precise English AI video prompt describing ONLY the environment, background, architecture, terrain, and atmospheric lighting (exclude any main subjects). Return ONLY the prompt keywords." 
-                        : "Analyze the unique artistic style, color grading, lighting setup, camera lens characteristics, film stock, mood, and aesthetic of this uploaded image. Do NOT use generic defaults like 'Cinematic film still' unless specifically warranted. Return specific, vivid, professional English prompt keywords that capture this exact image's unique visual style.";
+                        : "Analyze the unique artistic style, color grading, lighting setup, camera lens characteristics, film stock, mood, and aesthetic of this uploaded image. Do NOT use generic defaults like 'Cinematic film still'. Return specific, vivid, professional English prompt keywords that capture this exact image's unique visual style.";
 
                     const apiKey = "";
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
@@ -995,7 +995,6 @@
                 const btnText = document.getElementById('langToggleText');
                 if (btnText) btnText.innerText = this.state.isTranslated ? "영 / 한" : "한 / 영";
 
-                // Update UI button labels
                 this.initUI();
                 this.state.userCustomPrompt = null;
                 this.update();
