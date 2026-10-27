@@ -1,470 +1,732 @@
 <!doctype html>
 <html lang="ko">
- <head><script>window["__codeletBootstrap__"]=JSON.parse('{"A":"A","B":"20261016-04-d5e3a25","C":{"Abril Fatface":"YACgEZbkUVE,0","Albert Sans":"YAHO2HRfeh4,0","Alfa Slab One":"YACgEYS9sJU,0","Anton":"YACgEcYqQ-A,0","Archivo Black":"YACgEZulLoA,0","Archivo":"YAHO2-t-jNE,0","Arial":"YAGyDvJ_4Ts,0","Baloo 2":"YAHO2IcQUcM,0","Barlow Condensed":"YAFdJljEuFc,0","Barlow":"YAFdJsyuOPM,1","Bebas Neue":"YACgESME5ew,0","Bricolage Grotesque":"YAFyMcdwzpc,0","Cairo":"YAFdtXpDzlQ,0","Canva Sans":"YAFdJjTk5UU,1","Caveat":"YALBs2ploWQ,0","Cinzel":"YACgEeV8bIQ,0","Cormorant Garamond":"YAFdJhX-538,0","Courier New":"YAGzXiGs0_8,0","Courier Prime":"YAD1aFjegN8,0","DM Sans":"YAD1aU3sLnI,0","DM Serif Display":"YAD1aYG82rc,0","Figtree":"YAHO2b-mV7A,0","Forum":"YACgEcnnqB4,0","Fraunces":"YAFdJpU7Kkk,0","Fredoka":"YACgEZml080,0","Georgia":"YAGzXkO0pEM,0","Hanken Grotesk":"YAHO2VB9G0I,0","Helvetica":"YAFcf7zkXN0,0","IBM Plex Mono":"YAFdJkmvhGI,0","IBM Plex Sans":"YAFdJgT0SHI,0","Impact":"YAFcfnjI7Vk,0","Instrument Sans":"YAHO2bKyaSQ,0","Instrument Serif":"YAHFeOnZNEk,0","Inter":"YAFdJvSyp_k,3","Italiana":"YAHO2Toik_w,0","Jacques Francois":"YAHO2a5g66Q,0","JetBrains Mono":"YAFdJksXcAk,0","Josefin Sans":"YAFdJjvw9Ps,0","Karla":"YAHO2V2NSXM,0","Lato":"YAFdJuFCnaw,0","Libre Baskerville":"YACgEUFdPdA,0","Libre Caslon Display":"YAHO2XhLmt0,0","Lobster":"YAD8SnSjSFI,0","Lora":"YACgEXvxf8Q,0","Manrope":"YAHO2b2feC4,0","Merriweather":"YACgEXvHxxs,0","Montserrat":"YAFdtQi73Xs,0","Noto Sans JP":"YAFdJiHXlcI,0","Noto Sans KR":"YAGsojZj-RQ,0","Nunito Sans":"YAFdtQJYB9w,1","Nunito":"YAFdJoNRMmU,1","Oleo Script":"YACgEQQ14jI,0","Open Sans":"YAFdJt8dAY0,1","Oswald":"YACgEQY10lw,0","Outfit":"YAHO2nVlg14,0","Pacifico":"YADLjORQ1u4,0","Playfair Display":"YAFdJhem5V8,1","Plus Jakarta Sans":"YAHO2gdhi18,0","Poppins":"YAFdJjbTu24,1","Press Start 2P":"YAFyGr-8pmQ,0","Public Sans":"YAFdJj8NdaU,1","Quicksand":"YAFdJpYtCxE,1","Raleway":"YAFdJhmxbVQ,1","Roboto Slab":"YAFdJswIKAg,0","Rockwell":"YAFcfyVZnN0,0","Rye":"YACgEdQP21k,0","STIX Two Text":"YAHO2joycuk,0","Sarabun":"YAFdJssSnME,0","Schibsted Grotesk":"YAHO2sWydRk,0","Segoe UI":"YAHNdRD1Klw,0","Source Sans 3":"YAG4lO1Mj10,0","Space Grotesk":"YAHO2sjPCSM,0","Space Mono":"YADW1-vpsoc,0","Spectral":"YAHO2rVUHIM,0","Times New Roman":"YAGzXW3gftg,0","Trebuchet MS":"YAFcfrglpVA,0","Ubuntu":"YACgERDU--Q,0","Verdana":"YAGzXTctYtQ,0","Work Sans":"YAGXhLOKv44,0","Yellowtail":"YACgEYG4kG4,0"}}');</script><script src="/_sdk/05db820ba1544614.telemetry_sdk.js" integrity="sha512-a7JzkQDDcioSXpM61nxTfeRW7PcxWQy5+BrhyeTFmQFsXJ+Gncm0y50u7fTA7qOPegFnRgqCfa0mGUOK1yjDWQ=="></script>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>드론 탐험대</title>
-  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
-  <style>
-    :root{--lime:#c8f35b;--night:#090e18;--panel:#151e2c}
-    *{box-sizing:border-box}
-    html,body{margin:0;width:100%;min-width:320px}
-    body{color:#f5f8fa;font-family:'Work Sans',sans-serif}
-    button,input{font:inherit}
-    button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--lime);outline-offset:3px}
-    .app-shell{width:100%;max-width:1500px;margin:auto;padding:12px clamp(10px,2vw,28px);display:flex;flex-direction:column;gap:10px;min-height:calc(100 * min(var(--vh,1vh),1vh))}
-    .topline{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:47px;border-bottom:1px solid #314052;padding-bottom:8px}
-    .brand{display:flex;align-items:center;gap:10px;min-width:0}
-    .brand-mark{display:grid;place-items:center;width:34px;height:34px;flex:none;border:2px solid var(--lime);border-radius:10px;color:var(--lime);font-size:22px;transform:rotate(-8deg)}
-    .eyebrow{color:var(--lime);font-size:10px;font-weight:800;letter-spacing:.13em}
-    h1{margin:0;line-height:1.1}
-    .top-actions{display:flex;align-items:center;gap:8px}
-    .pill,.icon-btn{border:1px solid #425167;border-radius:99px;background:#182432;color:#edf5f7;padding:7px 11px;font-size:12px;white-space:nowrap}
-    .icon-btn{cursor:pointer}
-    main{display:flex;flex-direction:column;flex:1;min-height:0;gap:9px}
-    .arena{position:relative;flex:1;min-height:340px;overflow:hidden;border:1px solid #3b5261;border-radius:22px;background:#122333}
-    canvas{display:block;width:100%;height:100%}
-    .arena-top{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;pointer-events:none}
-    .arena-top>*{pointer-events:auto}
-    .mission-brief{max-width:min(60%,440px);border:1px solid #466170;border-radius:12px;padding:8px 11px;background:#09131de8;backdrop-filter:blur(6px)}
-    .mission-index{color:var(--lime);font-weight:800;font-size:10px;letter-spacing:.12em}
-    .mission-name{font-size:15px;font-weight:800;line-height:1.2}
-    .mission-status{font-size:11px;color:#b9ced6;line-height:1.3}
-    .mini-actions{display:flex;gap:6px}
-    .mini-actions button{border:1px solid #4d6574;background:#09131de8;color:white;border-radius:9px;padding:7px 10px;cursor:pointer;font-size:12px;font-weight:700}
-    .info-card{position:absolute;top:78px;right:12px;z-index:8;width:min(310px,calc(100% - 24px));border:1px solid #617583;border-radius:15px;background:#192634f5;padding:15px;box-shadow:0 16px 35px #0009}
-    .info-card p{margin:7px 0;color:#c5d5df;font-size:13px;line-height:1.5}
-    .info-card .quiet{margin-top:7px}
-    .info-card h2{margin:0;font-size:18px}
-    .controls{position:absolute;inset:0;z-index:5;pointer-events:none;display:flex;justify-content:space-between;align-items:flex-end;padding:0 clamp(12px,3vw,40px) 17px}
-    .stick-wrap{pointer-events:auto}
-    .stick{width:clamp(112px,14vw,158px);height:clamp(112px,14vw,158px);position:relative;border-radius:50%;touch-action:none;user-select:none;cursor:grab;border:2px solid #929aa0;background:radial-gradient(circle,#202a36 0 15%,#030509 17% 61%,#afb5b9 69%,#39444d 77%,#07090e 84%);box-shadow:inset 0 0 10px #ffffff69,0 9px 25px #000b}
-    .stick:active{cursor:grabbing}
-    .stick .knob{position:absolute;left:50%;top:50%;width:29%;height:29%;border-radius:50%;transform:translate(-50%,-50%);background:radial-gradient(circle at 40% 30%,#4b5862,#07090d 65%);box-shadow:0 0 0 4px #636d75,inset 0 2px 6px #000,0 3px 8px #000;pointer-events:none}
-    .glyph{position:absolute;color:#e4edf0;font-size:23px;font-weight:800;line-height:1;pointer-events:none;text-shadow:0 0 5px #fff7}
-    .glyph.up{top:7px;left:50%;transform:translateX(-50%)}
-    .glyph.down{bottom:6px;left:50%;transform:translateX(-50%)}
-    .glyph.left{left:9px;top:50%;transform:translateY(-50%)}
-    .glyph.right{right:9px;top:50%;transform:translateY(-50%)}
-    .bottom-strip{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid #354456;border-radius:14px;background:#101722;padding:9px 15px;min-height:50px}
-    .bottom-strip strong{color:var(--lime)}
-    .bottom-strip small{color:#9bafbc}
-    .progress{width:clamp(65px,12vw,170px);height:7px;border-radius:10px;background:#303e4c;overflow:hidden}
-    .progress div{height:100%;width:0;background:linear-gradient(90deg,#74dce0,#c8f35b)}
-    .quiet{border:1px solid #516272;background:#1b2937;color:#eaf3f7;border-radius:9px;padding:7px 11px;cursor:pointer;font-size:12px}
-    .notice{font-size:11px;color:#ffbf9b;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    .overlay{position:absolute;inset:0;z-index:12;display:grid;place-items:center;background:#07121be8;backdrop-filter:blur(5px);padding:12px}
-    .dialog{width:min(100%,390px);max-height:100%;overflow:auto;border:1px solid #617583;border-radius:18px;background:#192634;padding:17px 20px;text-align:center;box-shadow:0 22px 60px #000b}
-    .dialog h2{margin:0 0 5px;line-height:1.2}
-    .dialog p{color:#c5d5df;font-size:12px;line-height:1.4;margin:6px 0}
-    .form-label{display:block;text-align:left;font-size:12px;font-weight:700;margin:9px 0 4px}
-    .name-input{width:100%;border:1px solid #657887;border-radius:9px;background:#0c1824;color:white;padding:8px 10px}
-    .safety-line{display:flex;text-align:left;align-items:flex-start;gap:8px;margin:9px 0;color:#e2ebee;font-size:11px}
-    .safety-line input{accent-color:var(--lime);margin-top:2px}
-    .slide-track{position:relative;height:43px;border-radius:30px;background:#95999f;margin-top:8px;touch-action:none;cursor:grab}
-    .slide-text{position:absolute;inset:0;display:grid;place-items:center;font-weight:800;font-size:12px;pointer-events:none}
-    .slide-thumb{position:absolute;top:4px;left:4px;width:35px;height:35px;border-radius:50%;background:#fff;box-shadow:0 2px 8px #0005;pointer-events:none}
-    .action{border:0;border-radius:10px;background:var(--lime);color:#14200e;padding:10px 18px;font-weight:800;cursor:pointer}
-    .hidden{display:none!important}
-    @media(max-width:700px) and (orientation:landscape){
-      html,body{height:100%;overflow:hidden}
-      .app-shell{height:calc(100 * min(var(--vh,1vh),1vh));min-height:0;padding:5px 8px;gap:4px}
-      .topline{min-height:30px;padding-bottom:3px}
-      .brand-mark{width:24px;height:24px;font-size:15px;border-radius:7px}
-      .eyebrow{display:none}
-      .pill,.icon-btn{padding:3px 7px;font-size:10px}
-      main{gap:4px}
-      .arena{min-height:0;border-radius:12px}
-      .mission-brief{padding:4px 7px;max-width:48%}
-      .mission-index{font-size:8px}
-      .mission-name{font-size:11px}
-      .mission-status{font-size:9px}
-      .arena-top{top:5px;left:6px;right:6px}
-      .mini-actions button{padding:5px 7px;font-size:10px}
-      .controls{padding:0 8px 5px}
-      .stick{width:clamp(74px,21vh,112px);height:clamp(74px,21vh,112px)}
-      .glyph{font-size:15px}.glyph.up{top:3px}.glyph.down{bottom:2px}.glyph.left{left:4px}.glyph.right{right:4px}
-      .bottom-strip{min-height:27px;padding:3px 9px;font-size:10px}
-      .bottom-strip small{display:none}
-      .quiet{padding:3px 7px;font-size:10px}
-      .info-card{top:34px;max-height:calc(100% - 39px);overflow:auto;padding:9px}
-      .info-card p{font-size:11px;margin:4px 0}
-      .dialog{width:min(370px,68%);padding:8px 14px}
-      .dialog h2{font-size:17px}.dialog p{font-size:10px;margin:3px 0}
-      .form-label{margin:4px 0 2px}.name-input{padding:4px 8px}
-      .safety-line{margin:5px 0}.slide-track{height:32px;margin-top:5px}.slide-thumb{height:26px;width:26px;top:3px}
-      .notice{font-size:10px}
-    }
-    @media(max-width:700px) and (orientation:portrait){
-      html,body{height:100%;overflow:hidden}
-      .app-shell{height:calc(100 * min(var(--vh,1vh),1vh));min-height:0;padding:6px;gap:5px}
-      .topline{min-height:38px;padding-bottom:4px}
-      .brand-mark{width:28px;height:28px;font-size:17px}
-      .game-title{font-size:20px}
-      main{min-height:0;gap:5px}
-      .arena{min-height:0;height:calc(100 * min(var(--vh,1vh),1vh) - 119px);border-radius:14px}
-      .stick{width:78px;height:78px}
-      .glyph{font-size:16px}
-      .controls{padding:0 9px 13px}
-      .mission-brief{max-width:70%;padding:6px 8px}
-      .mission-name{font-size:12px}.mission-status{font-size:9px}
-      .bottom-strip{min-height:36px;padding:5px 8px;gap:6px;font-size:10px}
-      .progress{width:52px}.notice{max-width:70px}
-      .info-card{top:48px;max-height:calc(100% - 55px);padding:10px}
-      .overlay{padding:7px}.dialog{padding:10px 13px}
-    }
-    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
-  </style>
-  <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js" type="text/javascript"></script>
-  <script src="https://cdn.tailwindcss.com/3.4.17" type="text/javascript"></script>
-  <script src="/_sdk/570d53629f0b998d.data_sdk.js" type="text/javascript" integrity="sha512-JEN39+V+Nvv9ZZOVS8vNk1iA9ErZJHTdgOw9KzPuMiK7m0I+KPEr/wmTnCFIQVsDjCZgJWfGnFi1IQh2Io2qyA=="></script>
-  <script src="/_sdk/7825871aa95c503d.editing_sdk.js" type="text/javascript" integrity="sha512-2lFhP7fVLyI/xh1XVD1wGvcEUDBQxBW40AsWL6PQ5RZg0/hxM41hBHE/wQF1zqhE8vvzASF/osL1pnlucLWnaQ=="></script>
-  <script src="/_sdk/f195026a424c1f85.resizing_sdk.js" type="text/javascript" integrity="sha512-8On4Z+AXh1abEzZJ9Dbn9wOvFg+k1LsAaAzKGQ7LlfgXajZ9xEmZaZ1QVzv0AWhCZtCsEpWSOG9DgLri06TS7A=="></script>
- </head>
- <body data-template-id="__page-root" class="w-full">
-  <div class="app-shell">
-   <header data-template-id="top-bar" class="canva-header topline">
-    <div class="brand">
-     <div class="brand-mark" aria-hidden="true">
-      ✦
-     </div>
-     <div>
-      <div data-template-id="brand-kicker" class="canva-text eyebrow">
-       FLIGHT ACADEMY · JUNIOR
-      </div>
-      <h1 data-template-id="game-title" class="canva-text font-extrabold">드론 탐험대</h1>
-     </div>
-    </div>
-    <div class="top-actions">
-     <span id="levelPill" class="pill" aria-live="polite">01 / 20 · 준비</span> <button id="soundButton" class="icon-btn" type="button" aria-label="드론 소리 끄기" aria-pressed="false">♪ 켜짐</button>
-    </div>
-   </header>
-   <main>
-    <section data-template-id="flight-panel" class="canva-panel arena" aria-label="드론 비행장">
-     <canvas id="field" aria-label="드론, 경유점, 장애물 및 착륙장이 표시된 비행장"></canvas>
-     <div class="arena-top">
-      <div class="mission-brief">
-       <div id="missionNumber" class="mission-index">
-        MISSION 01 / 20
-       </div>
-       <div id="missionTitle" class="mission-name">
-        안전하게 이륙!
-       </div>
-       <div id="missionStatus" class="mission-status" aria-live="polite">
-        시작할 준비를 해요
-       </div>
-      </div>
-      <div class="mini-actions">
-       <button id="infoButton" data-template-id="info-button" class="canva-button" type="button" aria-expanded="false" aria-controls="infoCard">ⓘ 안내</button> <button id="retryButton" data-template-id="retry-button" class="canva-button" type="button">↺ 다시</button>
-      </div>
-     </div>
-     <aside id="infoCard" data-template-id="info-card" class="canva-card info-card hidden" aria-label="조종 및 미션 안내">
-      <h2 data-template-id="info-heading" class="canva-text">비행 안내</h2>
-      <p id="missionHelp"></p>
-      <p data-template-id="controller-hint" class="canva-text">왼쪽 원: 위·아래로 고도, 좌·우로 회전. 오른쪽 원: 이동. 키보드 방향키 이동 · W/S 고도 · A/D 회전.</p>
-      <p data-template-id="landing-hint" class="canva-text">모든 미션은 경로를 마친 뒤 H 착륙장 위에서 고도를 낮춰야 성공해요.</p><button id="closeInfo" data-template-id="close-info" class="canva-button quiet" type="button">닫기</button>
-     </aside>
-     <div class="controls">
-      <div class="stick-wrap">
-       <div id="leftStick" class="stick" role="group" aria-label="왼쪽 조종기: 위쪽 상승, 아래쪽 하강, 좌우 회전">
-        <span class="glyph up" aria-hidden="true">⌃</span><span class="glyph down" aria-hidden="true">⌄</span> <span class="glyph left" aria-hidden="true">↶</span><span class="glyph right" aria-hidden="true">↷</span>
-        <div class="knob"></div>
-       </div>
-      </div>
-      <div class="stick-wrap">
-       <div id="rightStick" class="stick" role="group" aria-label="오른쪽 조종기: 화살표 방향으로 이동">
-        <span class="glyph up" aria-hidden="true">▴</span><span class="glyph down" aria-hidden="true">▾</span> <span class="glyph left" aria-hidden="true">◂</span><span class="glyph right" aria-hidden="true">▸</span>
-        <div class="knob"></div>
-       </div>
-      </div>
-     </div>
-     <div id="startOverlay" class="overlay">
-      <form id="startForm" class="dialog">
-       <h2 data-template-id="start-title" class="canva-text font-extrabold">이륙하시겠습니까?</h2>
-       <p data-template-id="start-description" class="canva-text">기본 10단계와 도전 10단계! 경로를 따라 비행하고 착륙까지 해 보세요.</p><label data-template-id="name-label" class="canva-text form-label" for="playerName">조종자 이름</label> <input id="playerName" class="name-input" maxlength="16" autocomplete="nickname" required> <label class="safety-line" for="safetyCheck"><input id="safetyCheck" type="checkbox" required><span data-template-id="safety-checkbox-text" class="canva-text">실제 드론은 안전한 장소에서 보호자와 함께 날릴게요.</span></label>
-       <div id="slideTrack" class="slide-track" role="slider" tabindex="0" aria-label="오른쪽으로 밀어 시작하기. Enter 키로도 시작할 수 있습니다" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-        <span data-template-id="slide-text" class="canva-text slide-text">밀어서 이륙 →</span>
-        <div id="slideThumb" class="slide-thumb"></div>
-       </div>
-       <p id="startError" class="notice" role="status"></p>
-      </form>
-     </div>
-     <div id="completeOverlay" class="overlay hidden">
-      <div class="dialog">
-       <div style="font-size:27px;color:#c8f35b" aria-hidden="true">
-        ✦ ✦ ✦
-       </div>
-       <h2 data-template-id="complete-title" class="canva-text font-extrabold">미션 성공!</h2>
-       <p id="completeDetails" aria-live="polite"></p><button id="nextButton" class="action" type="button"> <span data-template-id="next-label" class="canva-text next-label">다음 미션</span> <span data-template-id="restart-label" class="canva-text restart-label hidden">처음부터 다시 도전</span> </button>
-      </div>
-     </div>
-    </section>
-    <section data-template-id="controller-panel" class="canva-panel bottom-strip" aria-label="비행 상태">
-     <span><small data-template-id="altitude-label" class="canva-text">고도 </small><strong id="altitudeValue">0.0 m</strong></span> <span id="waypointValue" aria-live="polite">경로 0 / 0</span>
-     <div class="progress" role="progressbar" id="progressMeter" aria-label="미션 진행률" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-      <div id="progressFill"></div>
-     </div><span id="starsValue" aria-label="별 세 개">★★★</span> <span id="gameNotice" class="notice" role="status" aria-live="polite"></span>
-    </section>
-   </main>
-  </div>
-  <script>
-  const $=id=>document.getElementById(id);
-  const start={x:.30,y:.68};
-  const P=(x,y)=>({x,y});
-  const triangle=[P(.53,.20),P(.78,.68),P(.25,.68)];
-  const circle=[P(.50,.20),P(.69,.29),P(.76,.50),P(.69,.71),P(.50,.80),P(.31,.71),P(.24,.50),P(.31,.29)];
-  const cone=(x,y,r=.055)=>({x,y,r});
-  const missions=[
-    {title:'안전하게 이륙',help:'고도 1 m에 도달한 뒤 출발점에 착륙해요.',kind:'climb',alt:1,land:start},
-    {title:'제자리 호버링',help:'고도 1 m에서 3초 머문 다음 착륙해요.',kind:'hover',alt:1,seconds:3,land:start},
-    {title:'첫 번째 별',help:'별을 통과하고 출발점으로 돌아와 착륙해요.',points:[P(.70,.35)],land:start},
-    {title:'왼쪽으로 출발',help:'왼쪽 경유점을 통과한 뒤 목표 착륙장에 내려요.',points:[P(.22,.37)],land:P(.67,.70)},
-    {title:'앞으로 전진',help:'앞쪽 경유점을 지나 목표 착륙장에 내려요.',points:[P(.50,.20)],land:P(.72,.68)},
-    {title:'안전한 착륙',help:'빛나는 경유점을 지나 지정된 착륙장에 내려요.',points:[P(.52,.38)],land:P(.68,.72)},
-    {title:'콘 사이 지나가기',help:'두 콘 사이의 경유점을 반드시 지나 착륙해요.',points:[P(.53,.48),P(.76,.23)],land:P(.76,.70),obstacles:[cone(.42,.48),cone(.64,.48)]},
-    {title:'지그재그 비행',help:'별을 순서대로 통과하고 착륙해요. 콘은 피해 주세요.',points:[P(.66,.70),P(.42,.35),P(.22,.22)],land:P(.24,.74),obstacles:[cone(.52,.62),cone(.56,.27)]},
-    {title:'정밀 호버링',help:'목표 원에 들어가 고도 1 m로 4초 머문 뒤 착륙해요.',kind:'hover',alt:1,seconds:4,points:[P(.70,.31)],land:P(.70,.69),obstacles:[cone(.51,.51)]},
-    {title:'마지막 기본 비행',help:'두 경유점을 순서대로 지나 콘을 피하고 착륙해요.',points:[P(.54,.28),P(.77,.43)],land:P(.72,.73),obstacles:[cone(.42,.47),cone(.62,.60)]},
-    {title:'삼각 비행 입문',help:'삼각형의 세 꼭짓점을 순서대로 돌고 착륙해요.',points:triangle,land:start},
-    {title:'역방향 삼각 비행',help:'반대 방향으로 삼각형을 완성하고 착륙해요.',points:[triangle[2],triangle[1],triangle[0]],land:start},
-    {title:'큰 원주 비행',help:'원 둘레의 8개 별을 차례대로 통과하고 착륙해요.',points:circle,land:start},
-    {title:'반대 방향 원주',help:'원 둘레를 반대 방향으로 순서대로 돌고 착륙해요.',points:[circle[7],circle[6],circle[5],circle[4],circle[3],circle[2],circle[1],circle[0]],land:start},
-    {title:'콘 사이 삼각 비행',help:'콘을 피해 삼각형 경유점을 순서대로 통과해요.',points:triangle,land:start,obstacles:[cone(.50,.49),cone(.37,.44)]},
-    {title:'이중 지그재그',help:'좁은 구간의 별 네 개를 차례대로 통과해요.',points:[P(.69,.69),P(.42,.53),P(.69,.37),P(.42,.20)],land:P(.73,.75),obstacles:[cone(.55,.70),cone(.55,.35)]},
-    {title:'정밀 삼각 호버링',help:'삼각형을 완성한 뒤 마지막 점에서 3초 호버링하고 착륙해요.',kind:'hover',alt:1,seconds:3,points:triangle,land:start,obstacles:[cone(.51,.48)]},
-    {title:'콘을 감싼 원주',help:'가운데 콘에 닿지 않게 원주를 한 바퀴 돌고 착륙해요.',points:circle,land:start,obstacles:[cone(.50,.50,.11)]},
-    {title:'복합 경로 비행',help:'삼각형 다음 중앙 경유점을 지나 지정된 곳에 착륙해요.',points:[...triangle,P(.50,.48)],land:P(.72,.74),obstacles:[cone(.36,.47),cone(.64,.54)]},
-    {title:'최종 비행 시험',help:'삼각형과 원주 경유점을 모두 순서대로 통과하고 출발점에 착륙해요!',points:[...triangle,...circle],land:start,obstacles:[cone(.50,.49,.075)]}
-  ];
-  let level=0,running=false,complete=false,collisions=0,passed=0,hoverTime=0,climbed=false,phase='route',player='';
-  let drone={...start,z:0,angle:0};
-  const input={left:{x:0,y:0},right:{x:0,y:0}},keys=new Set();
-  const canvas=$('field'),ctx=canvas.getContext('2d');
-  let cw=1,ch=1,last=0,audioCtx=null,motor=null,motorGain=null,muted=false;
-
-  function resize(){
-    const b=canvas.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);
-    cw=Math.max(1,b.width);ch=Math.max(1,b.height);
-    canvas.width=Math.round(cw*dpr);canvas.height=Math.round(ch*dpr);
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-  }
-  new ResizeObserver(resize).observe(canvas);
-  resize();
-
-  function stopSound(){
-    if(motorGain){motorGain.gain.setTargetAtTime(0,audioCtx.currentTime,.07)}
-  }
-  async function prepareSound(){
-    if(muted)return;
-    try{
-      audioCtx ||= new (window.AudioContext||window.webkitAudioContext)();
-      await audioCtx.resume();
-      if(!motor){
-        motor=audioCtx.createOscillator();
-        const overtone=audioCtx.createOscillator();
-        motorGain=audioCtx.createGain();
-        const overtoneGain=audioCtx.createGain();
-        motor.type='sawtooth';overtone.type='triangle';
-        motor.frequency.value=105;overtone.frequency.value=210;
-        motorGain.gain.value=0;overtoneGain.gain.value=.12;
-        motor.connect(motorGain);overtone.connect(overtoneGain);motorGain.connect(audioCtx.destination);
-        motor.start();overtone.start();
-      }
-    }catch{muted=true;updateSoundButton()}
-  }
-  function updateSoundButton(){
-    $('soundButton').textContent=muted?'♪ 꺼짐':'♪ 켜짐';
-    $('soundButton').setAttribute('aria-label',muted?'드론 소리 켜기':'드론 소리 끄기');
-    $('soundButton').setAttribute('aria-pressed',String(muted));
-    if(muted)stopSound();
-  }
-  $('soundButton').addEventListener('click',()=>{muted=!muted;updateSoundButton();if(!muted)prepareSound()});
-  document.addEventListener('visibilitychange',()=>{if(document.hidden)stopSound()});
-
-  function setNotice(message){$('gameNotice').textContent=message}
-  function reset(){
-    drone={...start,z:0,angle:0};passed=0;hoverTime=0;climbed=false;phase='route';collisions=0;
-    complete=false;running=true;stopSound();
-    $('completeOverlay').classList.add('hidden');
-    const m=missions[level];
-    $('missionNumber').textContent=`MISSION ${String(level+1).padStart(2,'0')} / 20`;
-    $('missionTitle').textContent=m.title;
-    $('missionHelp').textContent=m.help;
-    $('levelPill').textContent=`${String(level+1).padStart(2,'0')} / 20 · 비행 중`;
-    setNotice('');updateUI(0);
-  }
-  function updateUI(progress){
-    const m=missions[level],n=Math.max(0,Math.min(100,Math.round(progress)));
-    $('altitudeValue').textContent=drone.z.toFixed(1)+' m';
-    $('waypointValue').textContent=`경로 ${passed} / ${(m.points||[]).length}`;
-    $('starsValue').textContent='★'.repeat(3-collisions)+'☆'.repeat(collisions);
-    $('progressFill').style.width=n+'%';
-    $('progressMeter').setAttribute('aria-valuenow',String(n));
-    $('missionStatus').textContent=phase==='landing'?'경로 완료 · H 착륙장 위에서 고도를 낮춰 착륙':phase==='hover'?`호버링 중 · ${m.seconds}초 유지 (${Math.min(m.seconds,Math.floor(hoverTime))}/${m.seconds}초)`:m.kind==='hover'?`목표 지점에서 ${m.seconds}초 호버링 후 착륙`:m.kind==='climb'&&!climbed?`고도 ${m.alt.toFixed(1)} m까지 상승 후 출발점 착륙`:`경유점 ${Math.min(passed+1,(m.points||[]).length)} / ${(m.points||[]).length} · ${m.help}`;
-  }
-  function finish(){
-    if(complete)return;
-    complete=true;running=false;stopSound();updateUI(100);
-    $('levelPill').textContent=`${String(level+1).padStart(2,'0')} / 20 · 성공!`;
-    $('completeDetails').textContent=`${player} 조종사, 경로를 완성하고 착륙했어요! 별 ${3-collisions}개 획득.`;
-    $('nextButton').querySelector('.next-label').classList.toggle('hidden',level===19);
-    $('nextButton').querySelector('.restart-label').classList.toggle('hidden',level!==19);
-    $('completeOverlay').classList.remove('hidden');$('nextButton').focus();
-  }
-  $('nextButton').addEventListener('click',()=>{level=(level+1)%20;reset()});
-  $('retryButton').addEventListener('click',()=>{if($('startOverlay').classList.contains('hidden'))reset()});
-  function toggleInfo(open){
-    $('infoCard').classList.toggle('hidden',!open);
-    $('infoButton').setAttribute('aria-expanded',String(open));
-  }
-  $('infoButton').addEventListener('click',()=>toggleInfo($('infoCard').classList.contains('hidden')));
-  $('closeInfo').addEventListener('click',()=>{toggleInfo(false);$('infoButton').focus()});
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')toggleInfo(false)});
-
-  function setupStick(id,side){
-    const stick=$(id),knob=stick.querySelector('.knob');
-    function move(e){
-      const b=stick.getBoundingClientRect(),r=b.width*.29;
-      let x=e.clientX-b.left-b.width/2,y=e.clientY-b.top-b.height/2;
-      const len=Math.hypot(x,y);
-      if(len>r){x*=r/len;y*=r/len}
-      input[side].x=x/r;input[side].y=y/r;
-      knob.style.transform=`translate(calc(-50% + ${x}px),calc(-50% + ${y}px))`;
-    }
-    function release(){
-      input[side].x=0;input[side].y=0;
-      knob.style.transform='translate(-50%,-50%)';
-    }
-    stick.addEventListener('pointerdown',e=>{stick.setPointerCapture(e.pointerId);move(e);prepareSound()});
-    stick.addEventListener('pointermove',e=>{if(stick.hasPointerCapture(e.pointerId))move(e)});
-    stick.addEventListener('pointerup',release);
-    stick.addEventListener('pointercancel',release);
-    stick.addEventListener('lostpointercapture',release);
-  }
-  setupStick('leftStick','left');setupStick('rightStick','right');
-  window.addEventListener('keydown',e=>{
-    if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','KeyW','KeyS','KeyA','KeyD'].includes(e.code)&&!['INPUT','TEXTAREA'].includes(e.target.tagName)&&e.target.id!=='slideTrack'){
-      e.preventDefault();keys.add(e.code);prepareSound();
-    }
-  });
-  window.addEventListener('keyup',e=>keys.delete(e.code));
-  window.addEventListener('blur',()=>{keys.clear();input.left={x:0,y:0};input.right={x:0,y:0};stopSound()});
-
-  const track=$('slideTrack'),thumb=$('slideThumb');let slidePointer=null;
-  function slideMove(e){
-    const b=track.getBoundingClientRect(),max=Math.max(1,b.width-thumb.offsetWidth-8);
-    const x=Math.max(0,Math.min(max,e.clientX-b.left-thumb.offsetWidth/2-4));
-    thumb.style.left=4+x+'px';track.setAttribute('aria-valuenow',String(Math.round(x/max*100)));
-    return x/max;
-  }
-  function slideReset(){thumb.style.left='4px';track.setAttribute('aria-valuenow','0')}
-  function begin(){
-    if(!$('startForm').reportValidity()){slideReset();return}
-    player=$('playerName').value.trim();
-    if(!player){$('startError').textContent='조종자 이름을 입력해 주세요.';$('playerName').focus();slideReset();return}
-    $('startError').textContent='';
-    $('startOverlay').classList.add('hidden');reset();prepareSound();
-  }
-  $('startForm').addEventListener('submit',e=>{e.preventDefault();begin()});
-  track.addEventListener('pointerdown',e=>{slidePointer=e.pointerId;track.setPointerCapture(e.pointerId);slideMove(e)});
-  track.addEventListener('pointermove',e=>{if(slidePointer===e.pointerId)slideMove(e)});
-  track.addEventListener('pointerup',e=>{if(slidePointer!==e.pointerId)return;const f=slideMove(e);slidePointer=null;f>.87?begin():slideReset()});
-  track.addEventListener('pointercancel',()=>{slidePointer=null;slideReset()});
-  track.addEventListener('keydown',e=>{if(['Enter',' ','ArrowRight'].includes(e.key)){e.preventDefault();begin()}});
-
-  function distance(a,b){return Math.hypot((a.x-b.x)*cw,(a.y-b.y)*ch)/Math.min(cw,ch)}
-  function hitReset(){
-    collisions=Math.min(2,collisions+1);drone={...start,z:0,angle:0};passed=0;hoverTime=0;climbed=false;phase='route';
-    stopSound();setNotice('장애물 충돌! 경로를 처음부터 다시 시작해요.');
-  }
-  function tick(t){
-    const dt=Math.min((t-last)/1000||0,.05);last=t;
-    if(running){
-      const m=missions[level],points=m.points||[];
-      const vx=Math.max(-1,Math.min(1,input.right.x+(keys.has('ArrowRight')?1:0)-(keys.has('ArrowLeft')?1:0)));
-      const vy=Math.max(-1,Math.min(1,input.right.y+(keys.has('ArrowDown')?1:0)-(keys.has('ArrowUp')?1:0)));
-      const vz=Math.max(-1,Math.min(1,-input.left.y+(keys.has('KeyW')?1:0)-(keys.has('KeyS')?1:0)));
-      drone.z=Math.max(0,Math.min(2,drone.z+vz*dt*.85));
-      drone.angle+=Math.max(-1,Math.min(1,input.left.x+(keys.has('KeyD')?1:0)-(keys.has('KeyA')?1:0)))*dt*2;
-      if(drone.z>.18){const forward=-vy,strafe=vx;drone.x+=(Math.sin(drone.angle)*forward+Math.cos(drone.angle)*strafe)*dt*.43;drone.y+=(-Math.cos(drone.angle)*forward+Math.sin(drone.angle)*strafe)*dt*.43}
-      if(audioCtx&&motorGain&&!muted&&!document.hidden){
-        motorGain.gain.setTargetAtTime(drone.z>.18?.015+Math.abs(vz)*.006:0,audioCtx.currentTime,.08);
-        motor.frequency.setTargetAtTime(100+drone.z*23+Math.abs(vz)*28,audioCtx.currentTime,.08);
-      }
-      const boundary=drone.x<.045||drone.x>.955||drone.y<.07||drone.y>.93;
-      const collision=drone.z>.18&&(m.obstacles||[]).some(o=>distance(drone,o)<o.r+.033);
-      if(boundary||collision)hitReset();
-      if(m.kind==='climb'&&drone.z>=m.alt)climbed=true;
-      if(phase==='route'){
-        if(passed<points.length&&drone.z>=.55&&distance(drone,points[passed])<.075){
-          passed++;setNotice(passed<points.length?'좋아요! 다음 별로 이동해요.':'경로 완료! 이제 착륙해요.');
-        }
-        if(passed===points.length){
-          if(m.kind==='hover')phase='hover';
-          else if(m.kind!=='climb'||climbed)phase='landing';
-        }
-      }
-      if(phase==='hover'){
-        const spot=points.length?points[points.length-1]:start;
-        if(distance(drone,spot)<.075&&Math.abs(drone.z-m.alt)<.2&&Math.hypot(vx,vy)<.3)hoverTime+=dt;
-        else hoverTime=Math.max(0,hoverTime-dt);
-        if(hoverTime>=m.seconds){phase='landing';setNotice('호버링 완료! H에 착륙해요.')}
-      }
-      // 착륙 판정은 공중에서 착륙장에 진입한 후 고도를 낮춘 경우에만 허용합니다.
-      if(phase==='landing'&&distance(drone,m.land)<.077&&drone.z<.12){finish()}
-      const routePart=points.length?passed/points.length*.72:climbed?.55:Math.min(.55,drone.z/(m.alt||1)*.55);
-      const progress=phase==='landing'?.85+(distance(drone,m.land)<.077?.1:0):phase==='hover'?.72+hoverTime/m.seconds*.12:routePart;
-      updateUI(progress*100);
-    }
-    draw();requestAnimationFrame(tick);
-  }
-
-  function draw(){
-    ctx.clearRect(0,0,cw,ch);
-    ctx.fillStyle='#112536';ctx.fillRect(0,0,cw,ch);
-    const s=Math.min(cw,ch),px=x=>x*cw,py=y=>y*ch,grid=Math.max(25,s/10);
-    ctx.strokeStyle='#ffffff10';ctx.lineWidth=1;
-    for(let x=0;x<cw;x+=grid){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,ch);ctx.stroke()}
-    for(let y=0;y<ch;y+=grid){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(cw,y);ctx.stroke()}
-    ctx.strokeStyle='#4e7880';ctx.lineWidth=2;ctx.setLineDash([8,7]);ctx.strokeRect(14,14,Math.max(0,cw-28),Math.max(0,ch-28));ctx.setLineDash([]);
-    const m=missions[level],points=m.points||[];
-    if(points.length){
-      ctx.strokeStyle='#c8f35b48';ctx.lineWidth=2;ctx.setLineDash([4,6]);ctx.beginPath();
-      ctx.moveTo(px(start.x),py(start.y));
-      points.forEach(p=>ctx.lineTo(px(p.x),py(p.y)));
-      ctx.lineTo(px(m.land.x),py(m.land.y));ctx.stroke();ctx.setLineDash([]);
-    }
-    function marker(p,label,active,landing=false){
-      const x=px(p.x),y=py(p.y),r=Math.max(11,s*.054);
-      ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
-      ctx.fillStyle=active?'#c8f35b30':'#23414a';ctx.fill();
-      ctx.strokeStyle=active?'#c8f35b':'#668b92';ctx.lineWidth=active?2.5:1.5;ctx.stroke();
-      ctx.fillStyle=active?'#e5fb9c':'#a5c8ca';ctx.textAlign='center';ctx.textBaseline='middle';
-      ctx.font=`800 ${Math.max(10,s*.037)}px Work Sans`;ctx.fillText(label,x,y);
-      if(landing&&phase==='landing'){ctx.beginPath();ctx.arc(x,y,r+5,0,Math.PI*2);ctx.strokeStyle='#c8f35b6a';ctx.stroke()}
-    }
-    marker(start,'H',m.land===start&&phase==='landing',m.land===start);
-    points.forEach((p,i)=>marker(p,i<passed?'✓':String(i+1),i===passed&&phase==='route'));
-    if(m.land!==start)marker(m.land,'H',phase==='landing',true);
-    (m.obstacles||[]).forEach(o=>{
-      const x=px(o.x),y=py(o.y),r=s*o.r;
-      ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle='#ff8b4d42';ctx.fill();
-      ctx.strokeStyle='#ff9b5f';ctx.lineWidth=2;ctx.stroke();
-      ctx.fillStyle='#ffbd82';ctx.font=`800 ${Math.max(12,r)}px Work Sans`;ctx.fillText('!',x,y);
-    });
-    const x=px(drone.x),y=py(drone.y),r=Math.max(10,s*.036);
-    ctx.save();ctx.translate(x,y);
-    ctx.fillStyle='#0008';ctx.beginPath();ctx.ellipse(4,7+drone.z*4,r*1.3,r*.58,0,0,Math.PI*2);ctx.fill();
-    ctx.rotate(drone.angle);ctx.strokeStyle='#b7edf0';ctx.lineWidth=3;
-    ctx.beginPath();ctx.moveTo(-r*.8,-r*.8);ctx.lineTo(r*.8,r*.8);ctx.moveTo(r*.8,-r*.8);ctx.lineTo(-r*.8,r*.8);ctx.stroke();
-    for(const a of [-1,1])for(const b of [-1,1]){
-      ctx.beginPath();ctx.arc(a*r*.8,b*r*.8,r*.34,0,Math.PI*2);ctx.strokeStyle='#8be2ea';ctx.lineWidth=2;ctx.stroke();
-    }
-    ctx.beginPath();ctx.arc(0,0,r*.51,0,Math.PI*2);ctx.fillStyle='#c8f35b';ctx.fill();
-    ctx.beginPath();ctx.moveTo(0,-r*.94);ctx.lineTo(-r*.23,-r*.38);ctx.lineTo(r*.23,-r*.38);ctx.fillStyle='#fff';ctx.fill();
-    ctx.restore();
-  }
-  requestAnimationFrame(tick);
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>드론 1종 실기 시뮬레이터 (프로토타입)</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#cfe6f5;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;color:#fff;touch-action:none;user-select:none;-webkit-user-select:none;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block}
+.panel{background:rgba(15,23,42,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border-radius:12px;padding:8px 10px}
+#hud{position:fixed;inset:0;pointer-events:none;z-index:3}
+#tele{position:absolute;left:calc(10px + env(safe-area-inset-left));top:calc(10px + env(safe-area-inset-top));display:flex;gap:8px;font-size:12px;line-height:1.55}
+.bar{width:10px;height:136px;border-radius:5px;background:rgba(255,255,255,.22);position:relative;overflow:hidden;flex:none}
+#altFill{position:absolute;left:0;right:0;bottom:0;height:0;background:#22d3ee}
+.big{font-size:28px;font-weight:700;line-height:1.1}
+.big small{font-size:13px;font-weight:500}
+.dim{opacity:.75}
+#windArrow{display:inline-block;transition:transform .2s}
+#rightcol{position:absolute;right:calc(10px + env(safe-area-inset-right));top:calc(10px + env(safe-area-inset-top));display:flex;flex-direction:column;align-items:flex-end;gap:8px;max-width:min(300px,58vw)}
+#btns{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;pointer-events:auto}
+#btns button{font:inherit;font-size:12px;color:#fff;background:rgba(15,23,42,.6);border:1px solid rgba(255,255,255,.35);border-radius:8px;padding:6px 9px;touch-action:manipulation;cursor:pointer}
+#btns button.on{background:rgba(14,165,233,.75);border-color:#bae6fd}
+#pip{width:min(240px,42vw);aspect-ratio:4/3;border:2px solid rgba(255,255,255,.8);border-radius:4px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.3);position:relative}
+#pip.off{display:none}
+#pipcv{position:absolute;inset:0;width:100%;height:100%}
+#toast{position:absolute;left:50%;top:18%;transform:translateX(-50%);background:rgba(15,23,42,.78);padding:10px 16px;border-radius:12px;font-size:15px;text-align:center;line-height:1.5;opacity:0;transition:opacity .25s;max-width:80vw}
+#toast.show{opacity:1}
+#sticks{position:fixed;inset:0;pointer-events:none;display:none;z-index:5}
+#sticks.on{display:block}
+.stickwrap{position:absolute;bottom:calc(22px + env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;gap:6px}
+.stickwrap.left{left:calc(18px + env(safe-area-inset-left))}
+.stickwrap.right{right:calc(18px + env(safe-area-inset-right))}
+.lbl{font-size:11px;background:rgba(15,23,42,.55);padding:2px 8px;border-radius:8px}
+.stick{width:150px;height:150px;border-radius:50%;background:rgba(15,23,42,.33);border:2px solid rgba(255,255,255,.6);position:relative;touch-action:none;pointer-events:auto}
+.stick::before,.stick::after{content:"";position:absolute;background:rgba(255,255,255,.28)}
+.stick::before{left:50%;top:8px;bottom:8px;width:1px}
+.stick::after{top:50%;left:8px;right:8px;height:1px}
+.knob{position:absolute;left:45px;top:45px;width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.78);box-shadow:0 2px 8px rgba(0,0,0,.35)}
+#intro{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(15,23,42,.5);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);z-index:20;padding:14px}
+.card{max-width:540px;width:100%;max-height:100%;overflow:auto;background:#fff;color:#0f172a;border-radius:16px;padding:20px 22px;font-size:14px;line-height:1.6;touch-action:pan-y}
+.card h1{font-size:20px;margin:0 0 4px}
+.card .sub{color:#475569;margin:0 0 12px}
+.card table{width:100%;border-collapse:collapse;margin:8px 0 12px}
+.card td{border-top:1px solid #e2e8f0;padding:5px 4px;vertical-align:top}
+.card td:first-child{white-space:nowrap;font-weight:600;padding-right:10px}
+.card .note{font-size:12px;color:#64748b}
+.card button{width:100%;margin-top:10px;font:inherit;font-size:16px;font-weight:700;color:#fff;background:#0284c7;border:0;border-radius:10px;padding:12px;cursor:pointer}
+</style>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}
 </script>
- </body>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div id="hud">
+  <div id="tele" class="panel">
+    <div class="bar"><div id="altFill"></div></div>
+    <div>
+      <div class="big"><span id="vAlt">0.0</span><small> m</small></div>
+      <div>속도 <b id="vSpd">0.0</b> m/s</div>
+      <div>패드와 거리 <b id="vDist">0</b> m</div>
+      <div>상태 <b id="vState">-</b></div>
+      <div>바람 <b id="vWind">없음</b> <span id="windArrow">➤</span></div>
+      <div class="dim" id="vPad"></div>
+    </div>
+  </div>
+  <div id="rightcol">
+    <div id="btns">
+      <button id="bCam"></button>
+      <button id="bPip"></button>
+      <button id="bGuide"></button>
+      <button id="bZoom"></button>
+      <button id="bWind"></button>
+      <button id="bMode"></button>
+      <button id="bStick"></button>
+      <button id="bReset">리셋</button>
+    </div>
+    <div id="pip"><canvas id="pipcv"></canvas></div>
+  </div>
+  <div id="toast"></div>
+</div>
+
+<div id="sticks">
+  <div class="stickwrap left"><div class="lbl" id="lblL"></div><div class="stick" id="stL"><div class="knob"></div></div></div>
+  <div class="stickwrap right"><div class="lbl" id="lblR"></div><div class="stick" id="stR"><div class="knob"></div></div></div>
+</div>
+
+<div id="intro">
+  <div class="card">
+    <h1>드론 1종 실기 시뮬레이터</h1>
+    <p class="sub">프로토타입 1단계 · 이착륙과 조종 감각 확인용</p>
+    <table>
+      <tr><td>이륙</td><td>스로틀을 위로 올리면 시동이 걸리고 상승합니다. 스틱을 놓으면 그 높이에서 정지비행합니다.</td></tr>
+      <tr><td>착륙</td><td>스로틀을 아래로 천천히 내리세요. 하강 속도가 느릴수록 부드러운 착지입니다. 바닥에서 스로틀을 내리고 있으면 시동이 꺼집니다.</td></tr>
+      <tr><td>키보드</td><td>왼쪽 스틱 W/S/A/D · 오른쪽 스틱 방향키<br>C 카메라 · V 보조창 · G 가이드선 · B 바람 · M 조작모드 · J 조이스틱 · R 리셋</td></tr>
+      <tr><td>모바일</td><td>화면의 두 조이스틱을 동시에 사용합니다 (멀티터치).</td></tr>
+      <tr><td>조종기</td><td>게임패드/USB 조종기를 연결하면 자동 인식합니다 (표준 매핑 기준).</td></tr>
+      <tr><td>조작 모드</td><td>모드 2: 왼쪽 스로틀·회전, 오른쪽 전후·좌우<br>모드 1: 왼쪽 전후·회전, 오른쪽 스로틀·좌우</td></tr>
+    </table>
+    <p class="note">연습용 프로토타입이며 실제 시험의 평가 기준과는 다릅니다.</p>
+    <button id="bStart">시작하기</button>
+  </div>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+
+const V3 = THREE.Vector3, MU = THREE.MathUtils, clamp = MU.clamp;
+const $ = id => document.getElementById(id);
+const isTouch = matchMedia('(pointer:coarse)').matches || 'ontouchstart' in window;
+
+/* ---------- 기본 설정값 ---------- */
+const PILOT = new V3(0, 1.7, 10);   // 조종자 위치
+const MAXACC = 3.6, DRAG = 0.55;    // 수평 최대 가속도, 공기 저항
+const CEIL = 25, RANGE = 60;        // 최대 고도, 비행 가능 반경
+const CRASH_V = 4.5;                // 충돌 판정 하강속도
+const WIND_LEVELS = [0, 1.2, 2.8], WIND_LABEL = ['없음', '약', '강'], WIND_ANGLE = 0.6;
+const CAMS = ['조종자', '추적', '1인칭'];
+
+/* ---------- 렌더러 / 씬 ---------- */
+const canvas = $('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio || 1, isTouch ? 1.75 : 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0xcfe6f5, 140, 700);
+
+const cam = new THREE.PerspectiveCamera(50, 1, 0.1, 1500);
+cam.rotation.order = 'YXZ';
+const sideCam = new THREE.PerspectiveCamera(45, 4 / 3, 0.1, 1500);
+
+/* 하늘 */
+{
+  const g = new THREE.SphereGeometry(900, 24, 16);
+  const pos = g.attributes.position, col = [];
+  const top = new THREE.Color(0x3b82c4), hor = new THREE.Color(0xcfe6f5), c = new THREE.Color();
+  for (let i = 0; i < pos.count; i++) {
+    const t = Math.pow(Math.max(pos.getY(i) / 900, 0), 0.6);
+    c.copy(hor).lerp(top, t);
+    col.push(c.r, c.g, c.b);
+  }
+  g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+  const sky = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.BackSide, fog: false, depthWrite: false }));
+  sky.renderOrder = -1;
+  scene.add(sky);
+}
+
+/* 조명 */
+scene.add(new THREE.HemisphereLight(0xdcecff, 0x4a6b3a, 1.5));
+const sun = new THREE.DirectionalLight(0xfff3d6, 3.2);
+sun.castShadow = true;
+sun.shadow.mapSize.set(isTouch ? 1024 : 2048, isTouch ? 1024 : 2048);
+Object.assign(sun.shadow.camera, { left: -10, right: 10, top: 10, bottom: -10, near: 1, far: 120 });
+sun.shadow.bias = -0.0005;
+sun.shadow.normalBias = 0.02;
+scene.add(sun, sun.target);
+const SUN_DIR = new V3(0.5, 1, 0.3).normalize();
+
+/* ---------- 텍스처 도우미 ---------- */
+function canvasTex(w, h, draw, repeat) {
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  draw(c.getContext('2d'), w, h);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  if (repeat) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(repeat, repeat); }
+  return t;
+}
+function labelSprite(text) {
+  const t = canvasTex(128, 64, (c, w, h) => {
+    c.fillStyle = 'rgba(15,23,42,.75)'; c.fillRect(0, 0, w, h);
+    c.fillStyle = '#fff'; c.font = 'bold 36px sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.fillText(text, w / 2, h / 2 + 2);
+  });
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: t }));
+  s.scale.set(1.4, 0.7, 1);
+  return s;
+}
+
+/* ---------- 지면 ---------- */
+const grassTex = canvasTex(512, 512, (c, w, h) => {
+  c.fillStyle = '#5b9140'; c.fillRect(0, 0, w, h);
+  for (let i = 0; i < 70; i++) {
+    c.fillStyle = Math.random() < 0.5 ? 'rgba(40,90,30,.12)' : 'rgba(140,190,80,.12)';
+    c.beginPath(); c.arc(Math.random() * w, Math.random() * h, 30 + Math.random() * 80, 0, 7); c.fill();
+  }
+  for (let i = 0; i < 5000; i++) {
+    c.fillStyle = `rgba(${30 + Math.random() * 60 | 0},${90 + Math.random() * 80 | 0},${20 + Math.random() * 40 | 0},.35)`;
+    c.fillRect(Math.random() * w, Math.random() * h, 2 + Math.random() * 3, 2 + Math.random() * 3);
+  }
+  c.strokeStyle = 'rgba(0,0,0,.07)'; c.lineWidth = 2; c.strokeRect(0, 0, w, h);
+}, 212);
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(1700, 1700), new THREE.MeshLambertMaterial({ map: grassTex }));
+ground.rotation.x = -Math.PI / 2;
+ground.receiveShadow = true;
+scene.add(ground);
+
+const polyOff = { polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 };
+const concTex = canvasTex(512, 512, (c, w, h) => {
+  c.fillStyle = '#a3a9ae'; c.fillRect(0, 0, w, h);
+  for (let i = 0; i < 3000; i++) {
+    c.fillStyle = Math.random() < 0.5 ? 'rgba(0,0,0,.06)' : 'rgba(255,255,255,.07)';
+    c.fillRect(Math.random() * w, Math.random() * h, 2, 2);
+  }
+  c.strokeStyle = 'rgba(40,44,48,.55)'; c.lineWidth = 2;
+  for (let i = 1; i < 6; i++) {
+    const p = i * w / 6;
+    c.beginPath(); c.moveTo(p, 0); c.lineTo(p, h); c.stroke();
+    c.beginPath(); c.moveTo(0, p); c.lineTo(w, p); c.stroke();
+  }
+  c.strokeStyle = '#f2c200'; c.lineWidth = 10; c.strokeRect(5, 5, w - 10, h - 10);
+});
+const conc = new THREE.Mesh(new THREE.PlaneGeometry(36, 36), new THREE.MeshLambertMaterial({ map: concTex, ...polyOff }));
+conc.rotation.x = -Math.PI / 2; conc.position.y = 0.01; conc.receiveShadow = true;
+scene.add(conc);
+
+const padTex = canvasTex(512, 512, (c) => {
+  c.fillStyle = '#3b424b'; c.beginPath(); c.arc(256, 256, 256, 0, 7); c.fill();
+  c.strokeStyle = '#ffffff'; c.lineWidth = 5;
+  for (const r of [85, 171]) { c.beginPath(); c.arc(256, 256, r, 0, 7); c.stroke(); }
+  c.strokeStyle = '#f2c200'; c.lineWidth = 12; c.beginPath(); c.arc(256, 256, 248, 0, 7); c.stroke();
+  c.fillStyle = '#fff'; c.font = 'bold 200px sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
+  c.fillText('H', 256, 266);
+});
+const pad = new THREE.Mesh(new THREE.CircleGeometry(3, 64), new THREE.MeshLambertMaterial({ map: padTex, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }));
+pad.rotation.x = -Math.PI / 2; pad.position.y = 0.02; pad.receiveShadow = true;
+scene.add(pad);
+
+/* ---------- 소품: 콘, 폴, 윈드삭, 나무 ---------- */
+{
+  const coneGeo = new THREE.ConeGeometry(0.17, 0.45, 14);
+  const coneMat = new THREE.MeshLambertMaterial({ color: 0xff6a1a });
+  for (let i = 0; i < 8; i++) {
+    const a = i / 8 * Math.PI * 2;
+    const m = new THREE.Mesh(coneGeo, coneMat);
+    m.position.set(Math.cos(a) * 10, 0.235, Math.sin(a) * 10);
+    scene.add(m);
+  }
+  const poleMat = new THREE.MeshLambertMaterial({ color: 0xdddddd });
+  for (const [x, z, c] of [[-17, -17, 0xef4444], [17, -17, 0x3b82f6], [-17, 17, 0x3b82f6], [17, 17, 0xef4444]]) {
+    const p = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 3, 8), poleMat);
+    p.position.set(x, 1.5, z); scene.add(p);
+    const b = new THREE.Mesh(new THREE.SphereGeometry(0.15, 12, 8), new THREE.MeshLambertMaterial({ color: c }));
+    b.position.set(x, 3.05, z); scene.add(b);
+  }
+
+  // 고도 기준 폴 (1m 간격 줄무늬 + 눈금 라벨)
+  const matW = new THREE.MeshLambertMaterial({ color: 0xffffff }), matO = new THREE.MeshLambertMaterial({ color: 0xff7a1a });
+  const gh = new THREE.CylinderGeometry(0.06, 0.06, 1, 10);
+  for (let i = 0; i < 10; i++) {
+    const m = new THREE.Mesh(gh, i % 2 ? matO : matW);
+    m.position.set(-5, i + 0.5, -2); scene.add(m);
+  }
+  for (const h of [2, 4, 6, 8, 10]) {
+    const s = labelSprite(h + 'm'); s.position.set(-4.0, h, -2); scene.add(s);
+  }
+
+  // 윈드삭
+  const wp = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.06, 3.5, 8), poleMat);
+  wp.position.set(7, 1.75, -3); scene.add(wp);
+}
+const sockPivot = new THREE.Group(); sockPivot.position.set(7, 3.5, -3); scene.add(sockPivot);
+const sockDroop = new THREE.Group(); sockPivot.add(sockDroop);
+{
+  const sock = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.25, 1.4, 14, 1, true), new THREE.MeshLambertMaterial({ color: 0xff7a1a, side: THREE.DoubleSide }));
+  sock.rotation.z = -Math.PI / 2; sock.position.x = 0.7; sockDroop.add(sock);
+}
+{
+  const N = 140;
+  const trunk = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.25, 0.35, 2.5, 8), new THREE.MeshLambertMaterial({ color: 0x6b4a2b }), N);
+  const leaf = new THREE.InstancedMesh(new THREE.ConeGeometry(2, 5.5, 9), new THREE.MeshLambertMaterial({ color: 0x2f6b3a }), N);
+  const m = new THREE.Matrix4(), q = new THREE.Quaternion(), p = new V3(), s = new V3();
+  for (let i = 0; i < N; i++) {
+    const a = Math.random() * Math.PI * 2, r = 48 + Math.random() * 190, k = 0.8 + Math.random() * 1.1;
+    p.set(Math.cos(a) * r, 1.25 * k, Math.sin(a) * r); s.set(k, k, k);
+    m.compose(p, q, s); trunk.setMatrixAt(i, m);
+    p.y = (2.5 + 2.75) * k; m.compose(p, q, s); leaf.setMatrixAt(i, m);
+  }
+  scene.add(trunk, leaf);
+}
+
+/* ---------- 드론 모델 ---------- */
+const drone = new THREE.Group();
+drone.rotation.order = 'YXZ';
+scene.add(drone);
+const model = new THREE.Group();
+model.scale.setScalar(1.25);
+drone.add(model);
+
+const M = (c, o = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.55, metalness: 0.25, ...o });
+function part(geo, mat, x = 0, y = 0, z = 0) {
+  const m = new THREE.Mesh(geo, mat);
+  m.position.set(x, y, z); m.castShadow = true; model.add(m);
+  return m;
+}
+part(new THREE.BoxGeometry(0.34, 0.1, 0.34), M(0x2b3038), 0, 0.19, 0);
+part(new THREE.BoxGeometry(0.24, 0.05, 0.24), M(0xe5e7eb), 0, 0.26, 0);
+part(new THREE.BoxGeometry(0.2, 0.04, 0.05), M(0xe0342b, { emissive: 0x501010 }), 0, 0.2, -0.19);   // 전방 표시
+part(new THREE.SphereGeometry(0.05, 12, 8), M(0x111111), 0, 0.12, -0.14);                          // 짐벌
+const props = [];
+for (const [sx, sz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+  const mx = sx * 0.336, mz = sz * 0.336, front = sz < 0;
+  const arm = part(new THREE.BoxGeometry(0.5, 0.035, 0.05), M(front ? 0xe0342b : 0xf3f4f6), mx / 2, 0.19, mz / 2);
+  arm.rotation.y = -Math.atan2(mz, mx);
+  part(new THREE.CylinderGeometry(0.05, 0.05, 0.07, 14), M(0x1f2937), mx, 0.2, mz);
+  part(new THREE.SphereGeometry(0.018, 8, 6), new THREE.MeshBasicMaterial({ color: front ? 0xff3b30 : 0x34d399 }), mx, 0.245, mz);
+  const g = new THREE.Group(); g.position.set(mx, 0.255, mz); model.add(g);
+  for (const ry of [0, Math.PI / 2]) {
+    const b = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.008, 0.03), M(0x111827));
+    b.rotation.y = ry; b.castShadow = true; g.add(b);
+  }
+  const disc = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.004, 28), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, depthWrite: false }));
+  g.add(disc);
+  props.push({ g, disc, dir: sx * sz > 0 ? 1 : -1 });
+}
+for (const [lx, lz] of [[-0.15, -0.15], [0.15, -0.15], [-0.15, 0.15], [0.15, 0.15]]) {
+  part(new THREE.CylinderGeometry(0.012, 0.012, 0.15, 6), M(0x111111), lx, 0.075, lz);
+}
+
+/* ---------- 가이드 (지면 링 + 수직선) ---------- */
+const ring = new THREE.Mesh(new THREE.RingGeometry(0.45, 0.58, 40), new THREE.MeshBasicMaterial({ color: 0x22d3ee, transparent: true, opacity: 0.95, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -3 }));
+ring.rotation.x = -Math.PI / 2; ring.position.y = 0.04;
+scene.add(ring);
+const lineGeo = new THREE.BufferGeometry().setFromPoints([new V3(), new V3(0, 1, 0)]);
+const vline = new THREE.Line(lineGeo, new THREE.LineBasicMaterial({ color: 0x22d3ee }));
+vline.frustumCulled = false;
+scene.add(vline);
+
+/* ---------- 먼지 (프롭 바람) ---------- */
+const dustTex = canvasTex(64, 64, (c, w, h) => {
+  const g = c.createRadialGradient(32, 32, 2, 32, 32, 32);
+  g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+  c.fillStyle = g; c.fillRect(0, 0, w, h);
+});
+const dust = [];
+for (let i = 0; i < 36; i++) {
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: dustTex, color: 0xdad2bb, transparent: true, opacity: 0, depthWrite: false }));
+  s.visible = false; scene.add(s);
+  dust.push({ s, life: 0, max: 1, vx: 0, vy: 0, vz: 0 });
+}
+let dustAcc = 0;
+
+/* ---------- 상태 ---------- */
+const S = { x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0, yaw: 0, yawRate: 0, tiltP: 0, tiltR: 0, spin: 0, armed: false, airborne: false, disarmT: 0, warnT: 0 };
+const opts = { mode: 2, cam: 0, pip: true, guide: true, zoomAuto: true, wind: 0, sticks: isTouch };
+let started = false, time = 0, camSnap = true;
+
+/* ---------- 알림 ---------- */
+let toastTimer = 0;
+function toast(html, ms = 1800) {
+  const t = $('toast');
+  t.innerHTML = html; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), ms);
+}
+
+/* ---------- 입력 ---------- */
+const kbKeys = new Set();
+const kb = { Lx: 0, Ly: 0, Rx: 0, Ry: 0 };
+const touch = { L: { x: 0, y: 0 }, R: { x: 0, y: 0 } };
+let padId = '', padPrev = [];
+
+function makeStick(el, out) {
+  const knob = el.querySelector('.knob'), R = 45;
+  let pid = null;
+  const upd = e => {
+    const r = el.getBoundingClientRect();
+    let dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+    const d = Math.hypot(dx, dy), k = d > R ? R / d : 1;
+    dx *= k; dy *= k;
+    knob.style.transform = `translate(${dx}px,${dy}px)`;
+    out.x = dx / R; out.y = -dy / R;
+  };
+  el.addEventListener('pointerdown', e => { pid = e.pointerId; el.setPointerCapture(pid); upd(e); e.preventDefault(); });
+  el.addEventListener('pointermove', e => { if (e.pointerId === pid) upd(e); });
+  const end = e => { if (e.pointerId !== pid) return; pid = null; knob.style.transform = ''; out.x = 0; out.y = 0; };
+  el.addEventListener('pointerup', end);
+  el.addEventListener('pointercancel', end);
+}
+makeStick($('stL'), touch.L);
+makeStick($('stR'), touch.R);
+
+addEventListener('keydown', e => {
+  if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) e.preventDefault();
+  kbKeys.add(e.code);
+  if (e.repeat || !started) return;
+  switch (e.code) {
+    case 'KeyC': cycleCam(); break;
+    case 'KeyV': opts.pip = !opts.pip; refreshUI(); break;
+    case 'KeyG': opts.guide = !opts.guide; refreshUI(); break;
+    case 'KeyB': cycleWind(); break;
+    case 'KeyM': toggleMode(); break;
+    case 'KeyJ': opts.sticks = !opts.sticks; refreshUI(); break;
+    case 'KeyR': resetDrone(); break;
+  }
+});
+addEventListener('keyup', e => kbKeys.delete(e.code));
+addEventListener('blur', () => kbKeys.clear());
+addEventListener('gamepadconnected', e => toast('게임패드 연결됨'));
+
+function readPad() {
+  const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+  for (const p of pads) {
+    if (p && p.connected) {
+      padId = p.id;
+      const dz = v => Math.abs(v) < 0.08 ? 0 : v;
+      const btn = p.buttons.map(b => b.pressed);
+      if (started) {
+        if (btn[3] && !padPrev[3]) cycleCam();
+        if (btn[9] && !padPrev[9]) resetDrone();
+      }
+      padPrev = btn;
+      return { lx: dz(p.axes[0] || 0), ly: -dz(p.axes[1] || 0), rx: dz(p.axes[2] || 0), ry: -dz(p.axes[3] || 0) };
+    }
+  }
+  padId = '';
+  return null;
+}
+
+function readAxes(dt) {
+  const k = c => kbKeys.has(c) ? 1 : 0;
+  const t = { Lx: k('KeyD') - k('KeyA'), Ly: k('KeyW') - k('KeyS'), Rx: k('ArrowRight') - k('ArrowLeft'), Ry: k('ArrowUp') - k('ArrowDown') };
+  for (const key in t) {
+    const r = t[key] === 0 ? 6 : 3.4;
+    kb[key] += clamp(t[key] - kb[key], -r * dt, r * dt);
+  }
+  const pad = readPad();
+  const pick = (...a) => a.reduce((m, v) => Math.abs(v) > Math.abs(m) ? v : m, 0);
+  const L = { x: pick(kb.Lx, touch.L.x, pad ? pad.lx : 0), y: pick(kb.Ly, touch.L.y, pad ? pad.ly : 0) };
+  const R = { x: pick(kb.Rx, touch.R.x, pad ? pad.rx : 0), y: pick(kb.Ry, touch.R.y, pad ? pad.ry : 0) };
+  const e = v => 0.5 * v + 0.5 * v * v * v;   // 중앙 부근을 부드럽게
+  let th, pit;
+  if (opts.mode === 2) { th = L.y; pit = R.y; } else { pit = L.y; th = R.y; }
+  return { th: e(th), yaw: e(L.x), pit: e(pit), rol: e(R.x) };
+}
+
+/* ---------- 바람 ---------- */
+function windNow() {
+  const base = WIND_LEVELS[opts.wind];
+  if (!base) return { x: 0, z: 0, s: 0 };
+  const s = base * (1 + 0.3 * Math.sin(time * 0.9) + 0.15 * Math.sin(time * 2.3 + 1));
+  return { x: Math.cos(WIND_ANGLE) * s, z: Math.sin(WIND_ANGLE) * s, s };
+}
+
+/* ---------- 물리 ---------- */
+function land(v) {
+  const dist = Math.hypot(S.x, S.z);
+  S.airborne = false;
+  if (v > CRASH_V) {
+    S.armed = false; S.vx = S.vz = 0;
+    toast(`<b>충돌!</b><br>하강 속도 ${v.toFixed(1)} m/s (${CRASH_V} 초과)`, 3000);
+    return;
+  }
+  const q = v < 1 ? '부드러운 착지' : v < 2 ? '보통 착지' : '강한 착지 주의';
+  toast(`<b>${q}</b><br>하강 ${v.toFixed(1)} m/s · 패드 중심에서 ${dist.toFixed(1)} m ${dist <= 3 ? '(패드 안)' : '(패드 밖)'}`, 3200);
+}
+
+function step(dt, ax) {
+  const onGround = S.y <= 0.0005;
+
+  if (!S.armed && ax.th > 0.08) { S.armed = true; toast('시동 ON · 스로틀을 올려 이륙'); }
+  if (S.armed && onGround && ax.th < -0.6 && Math.hypot(S.vx, S.vz) < 0.3) {
+    S.disarmT += dt;
+    if (S.disarmT > 1.2) { S.armed = false; S.disarmT = 0; toast('시동 OFF'); }
+  } else S.disarmT = 0;
+
+  // 수직
+  let tvy = 0;
+  if (S.armed) tvy = ax.th >= 0 ? ax.th * 3.5 : ax.th * 2.5;
+  if (onGround) {
+    if (S.armed && ax.th > 0.15) S.vy += (tvy - S.vy) * (1 - Math.exp(-5 * dt));
+    else S.vy = 0;
+  } else S.vy += (tvy - S.vy) * (1 - Math.exp(-4 * dt));
+  S.y += S.vy * dt;
+  if (S.y > CEIL) { S.y = CEIL; S.vy = Math.min(S.vy, 0); }
+  if (S.y < 0) {
+    S.y = 0;
+    if (S.vy < 0) { if (S.airborne) land(-S.vy); S.vy = 0; }
+  }
+  if (!S.airborne && S.y > 0.4) { S.airborne = true; toast('이륙!', 1200); }
+
+  // 수평
+  const air = S.y > 0.02, w = windNow();
+  if (air) {
+    const sy = Math.sin(S.yaw), cy = Math.cos(S.yaw);
+    const fx = -sy, fz = -cy, rx = cy, rz = -sy;
+    let a_x = (fx * ax.pit + rx * ax.rol) * MAXACC - DRAG * (S.vx - w.x);
+    let a_z = (fz * ax.pit + rz * ax.rol) * MAXACC - DRAG * (S.vz - w.z);
+    const r = Math.hypot(S.x, S.z);
+    if (r > RANGE) {
+      a_x -= S.x / r * (r - RANGE) * 0.6; a_z -= S.z / r * (r - RANGE) * 0.6;
+      if (S.warnT <= 0) { toast('비행 범위를 벗어났습니다 · 중앙으로 돌아오세요', 1600); S.warnT = 3; }
+    }
+    S.vx += a_x * dt; S.vz += a_z * dt;
+  } else {
+    const f = Math.exp(-8 * dt); S.vx *= f; S.vz *= f;
+  }
+  S.warnT -= dt;
+  S.x += S.vx * dt; S.z += S.vz * dt;
+
+  // 회전, 기울기, 프롭
+  const yawT = S.armed ? ax.yaw * 1.7 : 0;
+  S.yawRate += (yawT - S.yawRate) * (1 - Math.exp(-8 * dt));
+  S.yaw -= S.yawRate * dt;
+  const tp = air ? ax.pit * 0.32 : 0, tr = air ? ax.rol * 0.32 : 0;
+  S.tiltP += (tp - S.tiltP) * (1 - Math.exp(-7 * dt));
+  S.tiltR += (tr - S.tiltR) * (1 - Math.exp(-7 * dt));
+  const spT = !S.armed ? 0 : (air ? 90 + ax.th * 35 : 60);
+  S.spin += (spT - S.spin) * (1 - Math.exp(-3 * dt));
+}
+
+function resetDrone() {
+  Object.assign(S, { x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0, yaw: 0, yawRate: 0, tiltP: 0, tiltR: 0, spin: 0, armed: false, airborne: false, disarmT: 0, warnT: 0 });
+  for (const d of dust) { d.life = 0; d.s.visible = false; }
+  camSnap = true;
+  toast('리셋');
+}
+
+/* ---------- 시각 효과 ---------- */
+function updateDust(dt) {
+  if (S.armed && S.y < 2.2) {
+    dustAcc += (1 - S.y / 2.2) * (S.spin / 100) * 55 * dt;
+    while (dustAcc >= 1) {
+      dustAcc--;
+      const d = dust.find(o => o.life <= 0);
+      if (!d) break;
+      const a = Math.random() * Math.PI * 2, sp = 1.6 + Math.random() * 2.2;
+      d.life = d.max = 0.7 + Math.random() * 0.6;
+      d.s.position.set(S.x + Math.cos(a) * 0.4, 0.08, S.z + Math.sin(a) * 0.4);
+      d.vx = Math.cos(a) * sp; d.vz = Math.sin(a) * sp; d.vy = 0.2 + Math.random() * 0.5;
+      d.s.visible = true;
+    }
+  }
+  const f = Math.exp(-1.6 * dt);
+  for (const d of dust) {
+    if (d.life <= 0) continue;
+    d.life -= dt;
+    if (d.life <= 0) { d.s.visible = false; continue; }
+    const k = d.life / d.max;
+    d.s.position.x += d.vx * dt; d.s.position.y += d.vy * dt; d.s.position.z += d.vz * dt;
+    d.vx *= f; d.vy *= f; d.vz *= f;
+    d.s.scale.setScalar(0.5 + (1 - k) * 1.6);
+    d.s.material.opacity = 0.38 * k;
+  }
+}
+
+function updateVisuals(dt) {
+  drone.position.set(S.x, S.y, S.z);
+  drone.rotation.set(-S.tiltP, S.yaw, -S.tiltR);
+  for (const p of props) p.g.rotation.y += S.spin * dt * p.dir;
+  const dop = clamp((S.spin - 30) / 80, 0, 1) * 0.3;
+  for (const p of props) p.disc.material.opacity = dop;
+
+  ring.visible = vline.visible = opts.guide;
+  ring.position.set(S.x, 0.04, S.z);
+  const lp = lineGeo.attributes.position;
+  lp.setXYZ(0, S.x, 0.04, S.z); lp.setXYZ(1, S.x, S.y + 0.1, S.z);
+  lp.needsUpdate = true;
+
+  const w = windNow();
+  if (w.s > 0) sockPivot.rotation.y = Math.atan2(-w.z, w.x);
+  sockDroop.rotation.z = -(1 - clamp(w.s / 3, 0, 1)) * 1.3;
+
+  sun.position.set(S.x, S.y, S.z).addScaledVector(SUN_DIR, 40);
+  sun.target.position.set(S.x, S.y, S.z);
+
+  updateDust(dt);
+}
+
+/* ---------- 카메라 ---------- */
+const look = new V3(), tmp = new V3();
+function updateCamera(dt) {
+  const fx = -Math.sin(S.yaw), fz = -Math.cos(S.yaw);
+  drone.visible = opts.cam !== 2;
+  if (opts.cam === 0) {
+    cam.position.copy(PILOT);
+    tmp.set(S.x, S.y + 0.35, S.z);
+    if (camSnap) look.copy(tmp); else look.lerp(tmp, 1 - Math.exp(-12 * dt));
+    cam.lookAt(look);
+    const d = Math.hypot(S.x - PILOT.x, S.y - PILOT.y, S.z - PILOT.z);
+    const ft = opts.zoomAuto ? clamp(62 - d * 1.1, 16, 55) : 50;
+    cam.fov = camSnap ? ft : cam.fov + (ft - cam.fov) * (1 - Math.exp(-4 * dt));
+  } else if (opts.cam === 1) {
+    tmp.set(S.x + Math.sin(S.yaw) * 5.5, Math.max(S.y + 2.2, 0.8), S.z + Math.cos(S.yaw) * 5.5);
+    if (camSnap) cam.position.copy(tmp); else cam.position.lerp(tmp, 1 - Math.exp(-5 * dt));
+    cam.lookAt(S.x + fx * 2, S.y + 0.5, S.z + fz * 2);
+    cam.fov = 62;
+  } else {
+    cam.position.set(S.x + fx * 0.35, S.y + 0.3, S.z + fz * 0.35);
+    cam.rotation.set(-S.tiltP * 0.6, S.yaw, -S.tiltR * 0.6);
+    cam.fov = 85;
+  }
+  camSnap = false;
+  cam.updateProjectionMatrix();
+}
+
+/* ---------- 렌더 (메인 + 측면 보조창) ---------- */
+const pipEl = $('pip'), pipCv = $('pipcv'), pipCtx = pipCv.getContext('2d');
+function drawPip(w, h) {
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  if (pipCv.width !== Math.round(w * dpr) || pipCv.height !== Math.round(h * dpr)) {
+    pipCv.width = Math.round(w * dpr); pipCv.height = Math.round(h * dpr);
+  }
+  const c = pipCtx;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.clearRect(0, 0, w, h);
+  c.font = '11px sans-serif'; c.textBaseline = 'bottom';
+  const v = new V3();
+  for (const m of [0, 2, 5, 10, 15, 20, 25]) {
+    v.set(S.x, m, S.z).project(sideCam);
+    if (v.z > 1) continue;
+    const y = (1 - v.y) / 2 * h;
+    if (y < 0 || y > h) continue;
+    c.strokeStyle = m === 0 ? 'rgba(255,255,255,.95)' : 'rgba(255,255,255,.4)';
+    c.lineWidth = m === 0 ? 1.5 : 1;
+    c.beginPath(); c.moveTo(0, y); c.lineTo(w, y); c.stroke();
+    c.fillStyle = '#fff'; c.fillText(m + 'm', 4, y - 1);
+  }
+  v.set(S.x, S.y + 0.3, S.z).project(sideCam);
+  const px = (v.x + 1) / 2 * w, py = (1 - v.y) / 2 * h;
+  c.strokeStyle = '#22d3ee'; c.lineWidth = 2;
+  c.beginPath(); c.arc(px, py, 11, 0, 7); c.stroke();
+  c.fillStyle = '#22d3ee'; c.textBaseline = 'top';
+  c.fillText(S.y.toFixed(1) + 'm', Math.min(px + 14, w - 38), Math.max(py - 6, 2));
+  c.fillStyle = 'rgba(15,23,42,.65)'; c.fillRect(0, 0, 62, 17);
+  c.fillStyle = '#fff'; c.fillText('측면 고도', 5, 3);
+}
+
+function render() {
+  const W = innerWidth, H = innerHeight;
+  renderer.setScissorTest(false);
+  renderer.setViewport(0, 0, W, H);
+  renderer.render(scene, cam);
+  if (opts.pip) {
+    const r = pipEl.getBoundingClientRect();
+    if (r.width > 10) {
+      const x = r.left, y = H - r.bottom, w = r.width, h = r.height;
+      const d = 11 + S.y * 0.9, ty = Math.max(S.y * 0.5 + 0.3, 1.0);
+      sideCam.aspect = w / h; sideCam.updateProjectionMatrix();
+      sideCam.position.set(S.x + d, ty, S.z);
+      sideCam.lookAt(S.x, ty, S.z);
+      sideCam.updateMatrixWorld();
+      const vis = drone.visible; drone.visible = true;
+      renderer.setViewport(x, y, w, h);
+      renderer.setScissor(x, y, w, h);
+      renderer.setScissorTest(true);
+      renderer.render(scene, sideCam);
+      renderer.setScissorTest(false);
+      drone.visible = vis;
+      drawPip(w, h);
+    }
+  }
+}
+
+/* ---------- HUD / UI ---------- */
+let hudT = 0;
+function updateHud(dt) {
+  hudT += dt;
+  if (hudT < 0.08) return;
+  hudT = 0;
+  $('vAlt').textContent = S.y.toFixed(1);
+  $('vSpd').textContent = Math.hypot(S.vx, S.vz).toFixed(1);
+  $('vDist').textContent = Math.hypot(S.x, S.z).toFixed(0);
+  $('vState').textContent = S.y > 0.02 ? '비행 중' : (S.armed ? '지상 대기' : '시동 꺼짐');
+  const w = windNow();
+  $('vWind').textContent = opts.wind ? `${WIND_LABEL[opts.wind]} ${w.s.toFixed(1)}` : '없음';
+  $('windArrow').style.visibility = opts.wind ? 'visible' : 'hidden';
+  $('windArrow').style.transform = `rotate(${Math.atan2(WIND_ANGLE ? Math.sin(WIND_ANGLE) : 0, Math.cos(WIND_ANGLE)) * 180 / Math.PI}deg)`;
+  $('altFill').style.height = clamp(S.y / CEIL, 0, 1) * 100 + '%';
+  $('vPad').textContent = padId ? '게임패드: ' + padId.slice(0, 22) : '';
+}
+
+const bCam = $('bCam'), bPip = $('bPip'), bGuide = $('bGuide'), bZoom = $('bZoom'), bWind = $('bWind'), bMode = $('bMode'), bStick = $('bStick');
+function refreshUI() {
+  bCam.textContent = '카메라: ' + CAMS[opts.cam];
+  bPip.textContent = '보조창'; bPip.classList.toggle('on', opts.pip);
+  pipEl.classList.toggle('off', !opts.pip);
+  bGuide.textContent = '가이드'; bGuide.classList.toggle('on', opts.guide);
+  bZoom.textContent = '줌: ' + (opts.zoomAuto ? '자동' : '고정');
+  bWind.textContent = '바람: ' + WIND_LABEL[opts.wind];
+  bMode.textContent = '조작 모드 ' + opts.mode;
+  bStick.textContent = '조이스틱'; bStick.classList.toggle('on', opts.sticks);
+  $('sticks').classList.toggle('on', opts.sticks);
+  $('lblL').textContent = opts.mode === 2 ? '스로틀 ↕ · 회전 ↔' : '전후진 ↕ · 회전 ↔';
+  $('lblR').textContent = opts.mode === 2 ? '전후진 ↕ · 좌우 ↔' : '스로틀 ↕ · 좌우 ↔';
+}
+function cycleCam() { opts.cam = (opts.cam + 1) % 3; camSnap = true; refreshUI(); }
+function cycleWind() { opts.wind = (opts.wind + 1) % 3; refreshUI(); toast('바람: ' + WIND_LABEL[opts.wind]); }
+function toggleMode() { opts.mode = opts.mode === 2 ? 1 : 2; refreshUI(); toast('조작 모드 ' + opts.mode); }
+
+bCam.onclick = cycleCam;
+bPip.onclick = () => { opts.pip = !opts.pip; refreshUI(); };
+bGuide.onclick = () => { opts.guide = !opts.guide; refreshUI(); };
+bZoom.onclick = () => { opts.zoomAuto = !opts.zoomAuto; refreshUI(); };
+bWind.onclick = cycleWind;
+bMode.onclick = toggleMode;
+bStick.onclick = () => { opts.sticks = !opts.sticks; refreshUI(); };
+$('bReset').onclick = resetDrone;
+$('bStart').onclick = () => { started = true; $('intro').style.display = 'none'; toast('스로틀을 위로 올려 이륙하세요', 2600); };
+
+function resize() {
+  renderer.setSize(innerWidth, innerHeight, false);
+  cam.aspect = innerWidth / innerHeight;
+  cam.updateProjectionMatrix();
+}
+addEventListener('resize', resize);
+resize();
+refreshUI();
+
+/* ---------- 메인 루프 ---------- */
+let last = performance.now();
+function frame(now) {
+  requestAnimationFrame(frame);
+  const dt = Math.min((now - last) / 1000, 0.05);
+  last = now;
+  time += dt;
+  const ax = started ? readAxes(dt) : { th: 0, yaw: 0, pit: 0, rol: 0 };
+  step(dt, ax);
+  updateVisuals(dt);
+  updateCamera(dt);
+  updateHud(dt);
+  render();
+}
+requestAnimationFrame(frame);
+</script>
+</body>
 </html>
