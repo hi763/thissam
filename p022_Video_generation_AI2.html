@@ -1,1071 +1,143 @@
-<!DOCTYPE html>
-<html lang="ko" class="h-full">
+<!doctype html>
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>영상 생성형 AI 빌더 2 PRO</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Pretendard', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            50: '#ecfdf5',
-                            100: '#d1fae5',
-                            500: '#10b981',
-                            600: '#059669',
-                            700: '#047857',
-                            900: '#064e3b',
-                            950: '#022c22'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f5f7fb">
+<title>Flow 영상 만들기 도우미</title>
+<style>
+:root{--ink:#203047;--muted:#68788d;--blue:#2868b2;--blue2:#eaf2fc;--line:#dce4ee;--bg:#f5f7fb;--white:#fff;--green:#16845b;--shadow:0 8px 28px #1d355710}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;font-size:16px;line-height:1.55}
+button,input,textarea,select{font:inherit}button{cursor:pointer;border:0;border-radius:12px;padding:11px 15px;font-weight:700}
+header{background:#fff;border-bottom:1px solid var(--line);padding:18px max(18px,calc((100vw - 1180px)/2));display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:5}
+.brand{font-size:21px;font-weight:850;letter-spacing:-.5px}.brand span{color:var(--blue)}.sub{font-size:13px;color:var(--muted)}
+.wrap{max-width:1180px;margin:24px auto;padding:0 18px 60px}.hero{background:linear-gradient(120deg,#eaf2fc,#f4f8ff);border:1px solid #d8e6f8;border-radius:20px;padding:23px;margin-bottom:20px}.hero h1{margin:0 0 5px;font-size:clamp(23px,4vw,32px)}.hero p{margin:0;color:#536981}
+.layout{display:grid;grid-template-columns: minmax(0,1fr) minmax(340px,.9fr);gap:18px;align-items:start}
+.panel{background:var(--white);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+h2{font-size:19px;margin:0 0 14px}h3{font-size:15px;margin:0 0 9px}
+label{font-weight:700;font-size:14px;display:block;margin:12px 0 6px}
+input,textarea,select{width:100%;border:1px solid #cfd9e5;border-radius:11px;padding:11px 12px;background:#fff;color:var(--ink)}
+textarea{min-height:90px;resize:vertical}input:focus,textarea:focus,select:focus{outline:3px solid #dceafe;border-color:var(--blue)}
+.row{display:flex;gap:9px;align-items:center}.row>*{min-width:0}.between{justify-content:space-between}.muted{color:var(--muted);font-size:13px}.primary{background:var(--blue);color:white}.secondary{background:var(--blue2);color:#20538e}.ghost{background:#f0f3f7;color:#42536a}.danger{background:#fff0ef;color:#a53c36}.small{padding:7px 10px;font-size:13px}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.character{border:2px solid var(--line);border-radius:14px;padding:9px;text-align:left;background:#fff;position:relative}
+.character.active{border-color:var(--blue);background:#f3f8ff}.avatar{height:85px;border-radius:9px;background:#eef2f7;display:flex;align-items:center;justify-content:center;font-size:34px;overflow:hidden;margin-bottom:7px}.avatar img{width:100%;height:100%;object-fit:cover}.character b{display:block;font-size:14px}.character small{color:var(--muted)}
+.addcard{border:2px dashed #b8c8da;border-radius:14px;background:#fafcff;color:var(--blue);min-height:135px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.pill{display:inline-block;background:#eef3f9;border-radius:999px;padding:4px 9px;font-size:12px;color:#50647c}
+.choicegrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.choice{border:1px solid var(--line);border-radius:13px;padding:12px;background:#fff;text-align:left}
+.choice.selected{border:2px solid var(--blue);background:#f1f7ff;padding:11px}
+.choice strong{display:block}.choice span{font-size:13px;color:var(--muted)}
+.help{border:1px solid #d9e5f3;background:#f5f9ff;padding:11px;border-radius:12px;margin-top:10px;font-size:13px;color:#4b617a}
+.promptbox{border:1px solid var(--line);border-radius:13px;padding:12px;margin-top:10px}.promptbox textarea{min-height:130px;border:0;padding:5px 0;outline:0}.promptbox textarea:focus{outline:0}.prompthead{display:flex;justify-content:space-between;align-items:center;gap:8px}.prompthead b{font-size:15px}
+.sticky{position:sticky;top:92px}.status{font-size:12px;color:var(--green);min-height:18px}.footer{font-size:12px;color:var(--muted);text-align:center;margin-top:20px}
+.modal{position:fixed;inset:0;background:#13223880;display:none;align-items:center;justify-content:center;padding:16px;z-index:20}.modal.open{display:flex}.modalbox{background:#fff;border-radius:18px;padding:22px;width:min(560px,100%);max-height:90vh;overflow:auto}.modalbox h2{margin-bottom:6px}
+#imagePreview{width:76px;height:76px;border-radius:12px;object-fit:cover;display:none;border:1px solid var(--line)}
+@media(max-width:820px){.layout{grid-template-columns:1fr}.sticky{position:static}header{padding:13px 16px}.wrap{margin:15px auto;padding:0 12px 40px}.panel{padding:16px}.hero{padding:18px}.cards{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:430px){body{font-size:15px}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.avatar{height:75px}.choicegrid{grid-template-columns:1fr}.brand{font-size:18px}.hero p{font-size:14px}.row.mobile-stack{align-items:stretch;flex-direction:column}.row.mobile-stack button{width:100%}}
+</style>
 </head>
-<body class="h-full bg-slate-950 text-slate-100 font-sans antialiased selection:bg-emerald-500 selection:text-white flex flex-col overflow-x-hidden">
-
-    <!-- Fixed Header -->
-    <header class="border-b border-slate-800/80 bg-slate-900/95 backdrop-blur-md fixed top-0 left-0 right-0 z-50 px-4 md:px-8 py-3.5 flex items-center justify-between shadow-md">
-        <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-                <i class="fa-solid fa-clapperboard text-white text-lg"></i>
-            </div>
-            <div>
-                <h1 class="text-lg md:text-xl font-bold tracking-tight text-white flex items-center gap-2">
-                    영상 생성형 AI 빌더 2 <span class="text-[10px] md:text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">PRO</span>
-                </h1>
-                <p class="text-xs text-slate-400 hidden sm:block">Cinematic Prompt & Camera Direction Studio</p>
-            </div>
-        </div>
-        <div class="flex items-center gap-2">
-            <button onclick="app.enhancePromptWithAI()" class="bg-teal-600 hover:bg-teal-500 text-white text-xs font-semibold px-3.5 py-2 rounded-lg transition flex items-center gap-1.5 shadow-md shadow-teal-600/30 border border-teal-500/30">
-                <i class="fa-solid fa-wand-magic-sparkles"></i> <span class="hidden sm:inline">AI 강화 실행</span>
-            </button>
-            <button onclick="app.resetAll()" class="px-3.5 py-2 rounded-lg text-xs font-medium text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 transition flex items-center gap-1.5 border border-slate-700 shadow-sm">
-                <i class="fa-solid fa-rotate-right"></i> <span class="hidden sm:inline">전체 초기화</span>
-            </button>
-        </div>
-    </header>
-
-    <!-- Main Workspace with top padding for fixed header -->
-    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 pt-24 md:pt-28 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        
-        <!-- Left Column: Input Sections (7 Cols) -->
-        <div class="lg:col-span-7 space-y-6">
-            
-            <!-- Section 0: Character Consistency Lock -->
-            <div class="bg-emerald-950/20 border border-emerald-500/40 rounded-2xl p-5 shadow-xl backdrop-blur-sm space-y-3">
-                <div class="flex items-center justify-between">
-                    <label class="text-sm font-bold text-emerald-400 flex items-center gap-2">
-                        <i class="fa-solid fa-shield-halved text-emerald-500"></i> [IMPORTANT] 캐릭터 일관성 고정 (Character Consistency Lock)
-                    </label>
-                    <button onclick="app.clearCharacterLock()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded transition">초기화</button>
-                </div>
-                <p class="text-[11px] text-slate-300 leading-relaxed">
-                    영상의 컷마다 캐릭터가 변형되는 현상을 방지하기 위해 프롬프트 최상단에 자동으로 고정 지침(<code>[IMPORTANT]</code>)을 부여합니다.
-                </p>
-                <div>
-                    <input type="text" id="inputCharacterLock" oninput="app.onUserInputChange()" placeholder="예: Maintain exact same character appearance across all cuts (hairstyle, accessories, outfit)" class="w-full bg-slate-950/80 border border-emerald-500/30 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition">
-                </div>
-            </div>
-
-            <!-- Section 1: Subject + Action & Locking -->
-            <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 shadow-xl backdrop-blur-sm space-y-4">
-                <div class="flex items-center justify-between mb-3">
-                    <label class="text-sm font-bold text-emerald-400 flex items-center gap-2">
-                        <i class="fa-solid fa-user-injured text-emerald-500"></i> 1. [Subject + Action] & Locking
-                    </label>
-                    <button onclick="app.suggestSubjectAI()" class="text-[11px] bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 px-2.5 py-1 rounded-lg border border-emerald-500/20 transition flex items-center gap-1 font-medium">
-                        <i class="fa-solid fa-sparkles"></i> AI 아이디어 추천
-                    </button>
-                </div>
-                <div>
-                    <div class="text-xs text-slate-400 mb-1.5 font-medium flex items-center justify-between">
-                        <span>[Subject + Action] 입력</span>
-                        <button onclick="app.clearSubject()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded transition">초기화</button>
-                    </div>
-                    <textarea id="inputSubject" rows="2" oninput="app.onUserInputChange()" placeholder="예: A futuristic cyberpunk detective running through neon-lit alleyways..." class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 transition"></textarea>
-                </div>
-                <div>
-                    <div class="text-xs text-slate-400 mb-1.5 font-medium flex items-center justify-between">
-                        <span>잠금 문장 입력 (Locking)</span>
-                        <button onclick="app.clearLocking()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded transition">초기화</button>
-                    </div>
-                    <input type="text" id="inputLocking" oninput="app.onUserInputChange()" placeholder="예: 얼굴과 의상만 가져오고, 배경은 가져오지 말고, 인물은 한 명이야" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition">
-                </div>
-            </div>
-
-            <!-- Section 2: Scene + Environment -->
-            <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 shadow-xl backdrop-blur-sm">
-                <div class="flex items-center justify-between mb-3">
-                    <label class="text-sm font-bold text-emerald-400 flex items-center gap-2">
-                        <i class="fa-solid fa-mountain-sun text-emerald-500"></i> 2. [Scene + Environment]
-                    </label>
-                    <button onclick="app.clearEnvironment()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded transition">초기화</button>
-                </div>
-                <div class="space-y-3">
-                    <div class="flex gap-2 items-center">
-                        <input type="file" id="envImageInput" accept="image/*" class="hidden" onchange="app.handleImageUpload(event, 'env')">
-                        <button onclick="document.getElementById('envImageInput').click()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs py-2 px-3 rounded-xl border border-slate-700 transition flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-image text-emerald-400"></i> <span id="envImageLabel">참고 이미지 업로드 (배경 분석)</span>
-                        </button>
-                        <button onclick="app.analyzeImageAI('env')" class="bg-emerald-600/80 hover:bg-emerald-600 text-white text-xs py-2 px-4 rounded-xl transition flex items-center gap-1.5 font-medium shadow-md shadow-emerald-600/20">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i> AI 분석
-                        </button>
-                    </div>
-                    <div id="envImagePreviewContainer" class="hidden relative rounded-xl overflow-hidden border border-slate-800 h-24 bg-slate-950">
-                        <img id="envImagePreview" class="w-full h-full object-cover">
-                        <button onclick="app.removeImage('env')" class="absolute top-2 right-2 bg-slate-900/80 hover:bg-rose-600 text-white p-1.5 rounded-lg text-xs transition"><i class="fa-solid fa-xmark"></i></button>
-                    </div>
-                    <div>
-                        <textarea id="inputEnvironment" rows="2" oninput="app.onUserInputChange()" placeholder="배경 프롬프트를 직접 입력하거나 AI 분석을 이용하세요..." class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 transition"></textarea>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Section 3: Visual Style -->
-            <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 shadow-xl backdrop-blur-sm">
-                <div class="flex items-center justify-between mb-3">
-                    <label class="text-sm font-bold text-emerald-400 flex items-center gap-2">
-                        <i class="fa-solid fa-palette text-emerald-500"></i> 3. [Visual Style]
-                    </label>
-                    <button onclick="app.clearVisualStyle()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded transition">초기화</button>
-                </div>
-                <div class="space-y-3">
-                    <div class="flex gap-2 items-center">
-                        <input type="file" id="styleImageInput" accept="image/*" class="hidden" onchange="app.handleImageUpload(event, 'style')">
-                        <button onclick="document.getElementById('styleImageInput').click()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs py-2 px-3 rounded-xl border border-slate-700 transition flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-image text-emerald-400"></i> <span id="styleImageLabel">참고 이미지 업로드 (스타일 분석)</span>
-                        </button>
-                        <button onclick="app.analyzeImageAI('style')" class="bg-emerald-600/80 hover:bg-emerald-600 text-white text-xs py-2 px-4 rounded-xl transition flex items-center gap-1.5 font-medium shadow-md shadow-emerald-600/20">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i> AI 분석
-                        </button>
-                    </div>
-                    <div id="styleImagePreviewContainer" class="hidden relative rounded-xl overflow-hidden border border-slate-800 h-24 bg-slate-950">
-                        <img id="styleImagePreview" class="w-full h-full object-cover">
-                        <button onclick="app.removeImage('style')" class="absolute top-2 right-2 bg-slate-900/80 hover:bg-rose-600 text-white p-1.5 rounded-lg text-xs transition"><i class="fa-solid fa-xmark"></i></button>
-                    </div>
-                    <div>
-                        <textarea id="inputVisualStyle" rows="2" oninput="app.onUserInputChange()" placeholder="예: Cinematic film still, 35mm photograph, moody lighting, Unreal Engine 5 render..." class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 transition"></textarea>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Section 4: Camera Direction -->
-            <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 shadow-xl backdrop-blur-sm space-y-6">
-                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                    <label class="text-sm font-bold text-emerald-400 flex items-center gap-2">
-                        <i class="fa-solid fa-video text-emerald-500"></i> 4. [Camera Direction]
-                    </label>
-                    <span class="text-[11px] text-slate-400">무브먼트 20종, 스피드, 프레이밍</span>
-                </div>
-
-                <!-- 4.1 Movement (20 types categorized with individual reset) -->
-                <div>
-                    <div class="text-xs font-semibold text-slate-300 mb-3 flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <span>1) Camera Movement (카메라 무브먼트 20종)</span>
-                            <button onclick="app.clearMovement()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded transition">선택 해제</button>
-                        </div>
-                        <span id="selectedMovementName" class="text-emerald-400 font-normal">선택 안 함</span>
-                    </div>
-                    <div id="movementCategoriesContainer" class="space-y-4">
-                        <!-- Dynamically populated categories -->
-                    </div>
-                </div>
-
-                <!-- 4.2 Speed with reset -->
-                <div class="border-t border-slate-800 pt-4">
-                    <div class="text-xs font-semibold text-slate-300 mb-3 flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <span>2) Camera Speed (카메라 스피드)</span>
-                            <button onclick="app.clearSpeed()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded transition">기본값</button>
-                        </div>
-                        <span id="selectedSpeedName" class="text-emerald-400 font-normal">표준 속도</span>
-                    </div>
-                    <div id="speedOptionsContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                        <!-- Populated via JS -->
-                    </div>
-                </div>
-
-                <!-- 4.3 Framing & Shot Types with individual resets -->
-                <div class="border-t border-slate-800 pt-4">
-                    <div class="text-xs font-semibold text-slate-300 mb-3 flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <span>3) Framing & Composition (프레이밍 16종)</span>
-                            <button onclick="app.clearFraming()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded transition">선택 해제</button>
-                        </div>
-                        <span id="selectedFramingName" class="text-emerald-400 font-normal">선택 안 함</span>
-                    </div>
-                    <div id="framingOptionsContainer" class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                        <!-- Populated via JS -->
-                    </div>
-                    <div class="my-4 border-t border-slate-800/80"></div>
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="text-[11px] text-slate-400 font-medium">인물 수 및 추가 샷 타입 (7종)</div>
-                        <button onclick="app.clearShotType()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded transition">선택 해제</button>
-                    </div>
-                    <div id="shotTypesOptionsContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                        <!-- Populated via JS -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Section 5: Platform Guide, Cut Duration, Audio & Ratio -->
-            <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 shadow-xl backdrop-blur-sm space-y-4">
-                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                    <label class="text-sm font-bold text-emerald-400 flex items-center gap-2">
-                        <i class="fa-solid fa-sliders text-emerald-500"></i> 5. [Platform Guide, Cut Duration, Audio & Ratio]
-                    </label>
-                    <span class="text-[11px] text-slate-400">출력 환경 및 플랫폼 가이드</span>
-                </div>
-
-                <!-- Platform Reference & Question Buttons -->
-                <div>
-                    <div class="text-xs text-slate-400 mb-2 font-medium">
-                        <span>주요 AI 플랫폼 가이드 (물음표를 눌러 특성 확인)</span>
-                    </div>
-                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-2" id="platformBadgesContainer">
-                        <!-- Rendered dynamically -->
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-slate-800">
-                    <!-- Cut Duration (Custom time input) -->
-                    <div>
-                        <div class="text-xs text-slate-400 mb-1.5 font-medium flex items-center justify-between">
-                            <span>[Cut Duration / 컷 길이]</span>
-                            <button onclick="app.clearDuration()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded transition">초기화</button>
-                        </div>
-                        <input type="text" id="inputDuration" oninput="app.onUserInputChange()" placeholder="예: 5s, 10s 또는 30초 (옴니 호환)" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition">
-                    </div>
-
-                    <!-- Audio -->
-                    <div>
-                        <div class="text-xs text-slate-400 mb-1.5 font-medium flex items-center justify-between">
-                            <span>[Audio / Sound FX]</span>
-                            <button onclick="app.clearAudio()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded transition">초기화</button>
-                        </div>
-                        <input type="text" id="inputAudio" oninput="app.onUserInputChange()" placeholder="예: Cinematic ambient drone, low bass hum" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition">
-                    </div>
-
-                    <!-- Aspect Ratio -->
-                    <div>
-                        <div class="text-xs text-slate-400 mb-1.5 font-medium">[화면 비율]</div>
-                        <select id="selectAspect" onchange="app.onUserInputChange()" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition">
-                            <option value="--ar 16:9">16:9 (시네마틱 가로)</option>
-                            <option value="--ar 9:16">9:16 (숏폼 / 릴스 / 틱톡)</option>
-                            <option value="--ar 2.39:1">2.39:1 (아나모픽 와이드스크린)</option>
-                            <option value="--ar 1:1">1:1 (정사각형)</option>
-                            <option value="--ar 4:3">4:3 (클래식 TV)</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Right Column: Real-time Output & Comparison Panel (5 Cols, Sticky) -->
-        <div class="lg:col-span-5 flex flex-col gap-4 lg:sticky lg:top-24">
-            <div class="bg-slate-900/80 border border-emerald-500/30 rounded-2xl p-5 shadow-2xl flex flex-col h-[calc(100vh-120px)] backdrop-blur-md">
-                
-                <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-                    <div class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
-                        <h2 class="text-sm font-bold text-white">실시간 완성 프롬프트</h2>
-                    </div>
-                    <span id="charCount" class="text-[11px] text-slate-400 bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800">0자</span>
-                </div>
-
-                <!-- Tabs for Normal vs AI Enhanced Comparison -->
-                <div class="flex items-center gap-2 pt-3">
-                    <button onclick="app.switchTab('prompt')" id="tabPromptBtn" class="flex-1 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 text-white transition shadow-sm">
-                        기본 프롬프트
-                    </button>
-                    <button onclick="app.switchTab('enhanced')" id="tabEnhancedBtn" class="flex-1 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-400 hover:text-white transition shadow-sm flex items-center justify-center gap-1.5">
-                        <i class="fa-solid fa-wand-magic-sparkles text-emerald-400"></i> AI 강화 비교 탭
-                    </button>
-                </div>
-
-                <!-- Action Controls Bar (Translate & Reset placed logically) -->
-                <div class="flex items-center gap-2 py-3 border-b border-slate-800/80">
-                    <button onclick="app.translateToggle()" id="langToggleBtn" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3 py-2 rounded-lg border border-slate-700 transition flex items-center justify-center gap-1.5">
-                        <i class="fa-solid fa-globe text-emerald-400"></i> <span id="langToggleText">한 / 영</span>
-                    </button>
-                    <button onclick="app.resetAll()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold px-3 py-2 rounded-lg border border-slate-700 transition flex items-center justify-center gap-1.5">
-                        <i class="fa-solid fa-rotate-right text-slate-400"></i> <span>초기화</span>
-                    </button>
-                </div>
-
-                <!-- Prompt Output / Enhanced View Container -->
-                <div class="flex-1 my-3 overflow-y-auto relative">
-                    <!-- Standard Editable Prompt Box -->
-                    <div id="standardPromptView" class="w-full h-full flex flex-col">
-                        <textarea id="finalPromptOutput" oninput="app.onManualTextEdit(event)" class="w-full h-full bg-slate-950/90 border border-slate-800/80 rounded-xl p-4 text-xs font-mono text-emerald-300/90 leading-relaxed focus:outline-none focus:border-emerald-500 resize-none selection:bg-emerald-600 selection:text-white" placeholder="좌측 항목들을 조작하거나 이곳에 직접 타이핑하여 프롬프트를 수정할 수 있습니다..."></textarea>
-                    </div>
-
-                    <!-- AI Enhanced Comparison View Box -->
-                    <div id="enhancedPromptView" class="w-full h-full hidden flex-col space-y-2">
-                        <div class="text-[10px] text-emerald-400 font-semibold px-1">✨ AI가 할리우드 감독 및 프롬프트 엔지니어 관점으로 고도화한 결과물입니다:</div>
-                        <textarea id="enhancedPromptOutput" readonly class="w-full h-full bg-slate-950/90 border border-emerald-500/50 rounded-xl p-4 text-xs font-mono text-amber-200/90 leading-relaxed focus:outline-none resize-none" placeholder="상단의 'AI 강화 실행' 버튼을 누르면 이곳에 전문가용 고도화 프롬프트가 생성되어 비교됩니다..."></textarea>
-                    </div>
-                </div>
-
-                <!-- Full-Width Copy Button placed above guide -->
-                <div class="pb-3">
-                    <button onclick="app.copyFinalPrompt()" class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-xs font-semibold py-2.5 px-4 rounded-xl shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-copy"></i> <span>프롬프트 복사</span>
-                    </button>
-                </div>
-
-                <div class="bg-slate-950/60 rounded-xl p-3 border border-slate-800/80 text-[11px] text-slate-400 space-y-1.5">
-                    <div class="font-semibold text-slate-300 flex items-center gap-1.5">
-                        <i class="fa-solid fa-circle-info text-emerald-400"></i> 안내 사항 및 플랫폼 팁
-                    </div>
-                    <p>• <b>캐릭터 일관성 고정</b>: 최상단에 입력된 <code>[IMPORTANT]</code> 지침이 프롬프트 맨 앞에 자동 적용되어 컷 간 캐릭터 변형을 막아줍니다.</p>
-                    <p>• <b>한 / 영 변환</b>: 기본 프롬프트 탭에서 '한 / 영' 버튼을 누르면 실시간 프롬프트가 즉시 번역되며 커스텀 수정 내용도 유지됩니다.</p>
-                </div>
-
-            </div>
-        </div>
-
-    </main>
-
-    <!-- Modal for Question Explanations -->
-    <div id="infoModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative animate-in fade-in zoom-in duration-200">
-            <button onclick="app.closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2 transition">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-            <div class="flex items-center gap-3 mb-4">
-                <div class="w-10 h-10 rounded-xl bg-emerald-600/20 text-emerald-400 flex items-center justify-center text-lg border border-emerald-500/30">
-                    <i class="fa-solid fa-film"></i>
-                </div>
-                <div>
-                    <h3 id="modalTitle" class="text-base font-bold text-white">제목</h3>
-                    <p class="text-xs text-emerald-400 font-medium">카메라 연출 및 플랫폼 가이드</p>
-                </div>
-            </div>
-            <div class="space-y-3 text-xs text-slate-300 bg-slate-950/60 p-4 rounded-xl border border-slate-800/80 leading-relaxed">
-                <div>
-                    <span class="font-semibold text-emerald-300 block mb-1">설명</span>
-                    <p id="modalDesc" class="text-slate-200"></p>
-                </div>
-                <div class="border-t border-slate-800/80 pt-2">
-                    <span class="font-semibold text-amber-400 block mb-1">연출 예시 및 팁</span>
-                    <p id="modalEx" class="text-slate-300 italic"></p>
-                </div>
-            </div>
-            <div class="mt-5 text-right">
-                <button onclick="app.closeModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-4 py-2 rounded-xl transition">
-                    확인
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const movementCategories = [
-            {
-                category: "접근",
-                items: [
-                    { id: "dolly_in", name: "DOLLY IN (달리 인)", enPrompt: "dolly in", koName: "달리 인", desc: "카메라가 인물을 향해 곧게 밀고 들어갑니다.", ex: "깨닫는 순간, 각성하는 순간에 사용, 공간이 열리는 느낌" },
-                    { id: "slow_zoom_in", name: "SLOW ZOOM IN (슬로 줌 인)", enPrompt: "slow zoom in", koName: "슬로 줌 인", desc: "카메라는 세워두고 렌즈만 당깁니다.", ex: "공간이 눌리며 압박감, 조용한 긴장에 사용" },
-                    { id: "dolly_zoom", name: "DOLLY ZOOM (돌리 줌)", enPrompt: "dolly zoom", koName: "돌리 줌", desc: "뒤로 빠지면서 동시에 줌인합니다.", ex: "인물은 그대로, 배경만 뒤틀림, 발밑이 꺼지는 순간, 충격, 히치콕 샷, 버티고샷이라고 불림" }
-                ]
-            },
-            {
-                category: "회전ㆍ이동",
-                items: [
-                    { id: "arc", name: "ARC (아크)", enPrompt: "arc camera movement", koName: "아크", desc: "인물 주위를 곡선으로 한 바퀴 돕니다.", ex: "첫 등장, 공간을 한 번에 설명할 때 사용" },
-                    { id: "side_tracking", name: "SIDE TRACKING (사이드 트래킹)", enPrompt: "side tracking shot", koName: "사이드 트래킹", desc: "인물 옆에서 나란히 평행으로 달립니다.", ex: "인물 옆에서 나란히 평행으로 달립니다., 이동의 리듬" },
-                    { id: "follow_shot", name: "FOLLOW SHOT (팔로우 샷)", enPrompt: "follow shot", koName: "팔로우 샷", desc: "인물 뒤를 어깨 높이로 따라 갑니다.", ex: "이동, 추격, 몰입도가 가장 높은 샷, 관객이 인물 뒤에 서 있음" },
-                    { id: "reverse_tracking", name: "REVERSE TRACKING (리버스 트래킹)", enPrompt: "reverse tracking shot", koName: "리버스 트래킹", desc: "인물 앞에서 뒤로 물러나며 찍습니다.", ex: "걸으면서 대사 하는 씬은 무조건 이것 사용" },
-                    { id: "whip_pan", name: "WHIP PAN (휩 팬)", enPrompt: "whip pan", koName: "휩 팬", desc: "카메라를 빠르게 휘둘러 잔상을 남깁니다.", ex: "컷을 전환하거나 타격감을 줄 때" }
-                ]
-            },
-            {
-                category: "높이",
-                items: [
-                    { id: "crane_up", name: "CRANE UP (크레인 업)", enPrompt: "crane up", koName: "크레인 업", desc: "렌즈는 수평, 몸만 수직으로 솟구칩니다.", ex: "씬을 닫을 때, 엔딩에서 씁니다. 인물이 점점 작아짐" },
-                    { id: "drone_pull_back", name: "DRONE PULL BACK (드론 풀백)", enPrompt: "drone pull back", koName: "드론 풀백", desc: "항공 촬영에서 피사체에 바짝 붙은 상태에서 드론을 뒤로(Back) 빼면서 위로 상승시키는 카메라 무빙 기법", ex: "웅장한 스케일과 공간감을 극적으로 드러낼 때 사용" },
-                    { id: "low_angle", name: "LOW ANGLE (로우 앵글)", enPrompt: "low angle shot", koName: "로우 앵글", desc: "카메라를 지면 가까이 두고 올려다봄", ex: "위압감, 영웅 프레이밍, 인물이 강해 보여야 할 때 사용" },
-                    { id: "high_angle", name: "HIGH ANGLE (하이 앵글)", enPrompt: "high angle shot", koName: "하이 앵글", desc: "카메라를 반대로 위에서 내려다봄", ex: "무력함, 고립, 감시당하는 느낌." },
-                    { id: "overhead", name: "OVERHEAD (오버헤드)", enPrompt: "overhead shot", koName: "오버헤드", desc: "정확히 수직 90도로 내리 꽂습니다.", ex: "상황을 한 컷에 요약할 때 사용" }
-                ]
-            },
-            {
-                category: "시점",
-                items: [
-                    { id: "handheld", name: "HANDHELD (핸드헬드)", enPrompt: "handheld camera", koName: "핸드헬드", desc: "사람이 손으로 든 미세한 흔들림입니다.", ex: "현장감, 불안, 드림코어의 리얼리티에 사용" },
-                    { id: "snorricam", name: "SNORRICAM (스노리캠)", enPrompt: "snorricam shot", koName: "스노리캠", desc: "카메라를 인물 몸에 붙여버립니다.", ex: "얼굴은 고정, 배경만 흔들림, 패닝에 사용." },
-                    { id: "first_person", name: "FIRST PERSON POV (1인칭 시점)", enPrompt: "first person POV", koName: "1인칭 시점", desc: "인물의 눈높이에서 그대로 전진합니다.", ex: "얼굴 대신 손, 관객을 인물 안에." },
-                    { id: "rear_shot", name: "REAR SHOT (리어 샷)", enPrompt: "rear shot", koName: "리어 샷", desc: "인물 뒤에 고정하고 아예 안 움직입니다.", ex: "표정을 감출 때, 정적을 보여줄 때, 뒷모습만 화면에 꽉 참, 울음을 참는 모습 등에 사용" }
-                ]
-            },
-            {
-                category: "외곡ㆍ초점",
-                items: [
-                    { id: "dutch_angle", name: "DUTCH ANGLE (더치 앵글)", enPrompt: "dutch angle", koName: "더치 앵글", desc: "수평선을 20도쯤 기울입니다.", ex: "불안, 왜곡, 길게 쓰면 피로해집니다." },
-                    { id: "rack_focus", name: "RACK FOCUS (랙 포커스)", enPrompt: "rack focus", koName: "랙 포커스", desc: "카메라는 고정, 초점만 앞뒤로 넘깁니다.", ex: "시선을 강제로 옮길 때, 숨어 있던 정보 공개, 관객의 시선을 강제로 옮김" },
-                    { id: "push_past", name: "PUSH PAST (푸시 패스트)", enPrompt: "push past shot", koName: "푸시 패스트", desc: "문이나 창을 통과해 다른 공간으로 넘어갑니다.", ex: "전환을 편집이 아니라 카메라, 공간으로 수행" }
-                ]
-            }
-        ];
-
-        const speedOptions = [
-            { id: "very_slow", name: "매우 느림 (Very Slow)", enPrompt: "extremely slow motion camera movement, hypnotic pacing", koName: "매우 느림" },
-            { id: "slow", name: "느림 (Slow Motion)", enPrompt: "smooth slow motion, cinematic pacing", koName: "느림" },
-            { id: "normal", name: "표준 속도 (Normal)", enPrompt: "natural speed camera motion", koName: "표준 속도" },
-            { id: "fast", name: "빠름 (Fast / Dynamic)", enPrompt: "fast paced dynamic camera movement, high energy", koName: "빠름" }
-        ];
-
-        const framingOptions = [
-            { id: "extreme_long", name: "EXTREME LONG SHOT (익스트림 롱샷)", enPrompt: "extreme long shot", koName: "익스트림 롱샷", desc: "인물이 점처럼 작습니다.", ex: "공간이 주인공일 때, 오프닝과 엔딩의 단골" },
-            { id: "long_shot", name: "LONG SHOT (롱샷)", enPrompt: "long shot", koName: "롱샷", desc: "전신 + 위아래 넉넉한 여백", ex: "여기가 어디인지 설명하는 샷, 보통 설정샷이 이겁니다." },
-            { id: "full_shot", name: "FULL SHOT (풀샷)", enPrompt: "full shot", koName: "풀샷", desc: "머리끝부터 발끝까지 딱 맞게", ex: "의상과 동작 전체를 보여줄 때, 춤과 액션은 여기서 시작" },
-            { id: "medium_long", name: "MEDIUM LONG SHOT (미디엄 롱샷)", enPrompt: "medium long shot", koName: "미디엄 롱샷", desc: "무릎 아래에서 자릅니다. 카우보이샷", ex: "서부극에서 온 이름, 카우보이샷, 두 사람 대화에 잘 맞음" },
-            { id: "medium_shot", name: "MEDIUM SHOT (미디엄샷)", enPrompt: "medium shot", koName: "미디엄샷", desc: "허리에서 자릅니다.", ex: "대화 장면의 기본값, 고민되면 일단 여기서 시작하세요." },
-            { id: "medium_close", name: "MEDIUM CLOSE-UP (미디엄 클로즈업)", enPrompt: "medium close-up", koName: "미디엄 클로즈업", desc: "가슴 중간에서 자릅니다.", ex: "뉴스와 인터뷰의 표준, 표정과 손짓이 동시에 읽히는 유일한 구간" },
-            { id: "close_up", name: "CLOSE-UP (클로즈업)", enPrompt: "close-up", koName: "클로즈업", desc: "머리와 어깨만 남습니다.", ex: "감정을 전달하는 주력 샷." },
-            { id: "big_close_up", name: "BIG CLOSE-UP (빅 클로즈업)", enPrompt: "big close-up", koName: "빅 클로즈업", desc: "이마부터 턱까지, 머리 위가 잘립니다.", ex: "감정이 최고조일 때 씁니다." },
-            { id: "extreme_close", name: "EXTREME CLOSE-UP (익스트림 클로즈업)", enPrompt: "extreme close-up", koName: "익스트림 클로즈업", desc: "눈만 화면에 꽉 찹니다.", ex: "디테일과 긴장의 정점" }
-        ];
-
-        const shotTypesOptions = [
-            { id: "single", name: "SINGLE (싱글)", enPrompt: "single shot", koName: "싱글", desc: "인물 1인 중심의 샷", ex: "독점적인 인물의 심리 묘사" },
-            { id: "two_shot", name: "TWO SHOT (투샷)", enPrompt: "two shot", koName: "투샷", desc: "화면에 인물 2명이 담기는 샷", ex: "관계성과 대화 씬에 최적화" },
-            { id: "three_shot", name: "THREE SHOT (쓰리샷)", enPrompt: "three shot", koName: "쓰리샷", desc: "인물 3명이 함께 등장하는 샷", ex: "그룹 구도와 역학 관계 표현" },
-            { id: "over_shoulder", name: "OVER THE SHOULDER (오버더 숄더)", enPrompt: "over the shoulder shot", koName: "오버더 숄더", desc: "상대방 어깨 너머로 바라보는 샷", ex: "대화 시 몰입감과 시선 교환 강조" },
-            { id: "insert", name: "INSERT SHOT (인서트)", enPrompt: "insert shot", koName: "인서트", desc: "특정 사물이나 디테일을 잡는 샷", ex: "핵심 단서나 소품 강조" },
-            { id: "cut_away", name: "CUT AWAY (컷 어웨이)", enPrompt: "cut away shot", koName: "컷 어웨이", desc: "메인 피사체 외의 배경이나 상황으로 전환", ex: "시간 경과나 긴장감 유도" },
-            { id: "reaction", name: "REACTION SHOT (리액션샷)", enPrompt: "reaction shot", koName: "리액션샷", desc: "상황이나 대사에 반응하는 인물의 표정", ex: "감정적 울림 전달" }
-        ];
-
-        const platformGuides = [
-            { name: "Google Veo", desc: "구글의 최신 시네마틱 AI 비디오 모델로, 높은 해상도와 정교한 물리 법칙 구현에 강점.", ex: "기본 5초~10초 단위 컷 제작 및 자연스러운 카메라 무빙에 최적화." },
-            { name: "Google Omni", desc: "실시간 멀티모달 인터랙션 및 오디오·비디오 동기화 연출에 특화된 차세대 AI 모델.", ex: "대화형 시퀀스 및 옴니 호환 컷 타임 설정에 필수적." },
-            { name: "Runway Gen-3", desc: "뛰어난 인물 일관성과 역동적인 카메라 모션 제어가 가능한 프로급 비디오 모델.", ex: "5초 기본 컷 단위로 세밀한 프롬프트 제어에 유리." },
-            { name: "Luma Dream Machine", desc: "빠른 렌더링 속도와 부드러운 3D 공간 이해도가 돋보이는 비디오 AI.", ex: "짧고 임팩트 있는 전환 컷(5초)에 적합." },
-            { name: "Kling AI", desc: "사실적인 물리 인터랙션과 고품질 캐릭터 움직임 표현에 뛰어난 모델.", ex: "10초 연장 및 복잡한 액션 씬 제작에 추천." }
-        ];
-
-        class VideoBuilderApp {
-            constructor() {
-                this.state = {
-                    characterLock: "Maintain exact same character appearance across all cuts (hairstyle, accessories, outfit)",
-                    subject: "",
-                    locking: "",
-                    environment: "",
-                    visualStyle: "",
-                    movement: null,
-                    speed: "normal",
-                    framing: null,
-                    shotType: null,
-                    duration: "5s",
-                    audio: "",
-                    aspect: "--ar 16:9",
-                    envImageBase64: null,
-                    styleImageBase64: null,
-                    userCustomPrompt: null,
-                    enhancedPromptText: "",
-                    isTranslated: false,
-                    activeTab: "prompt"
-                };
-                this.initUI();
-            }
-
-            initUI() {
-                const movContainer = document.getElementById('movementCategoriesContainer');
-                if (movContainer) {
-                    movContainer.innerHTML = movementCategories.map(cat => `
-                        <div class="bg-slate-950/40 p-3 rounded-xl border border-slate-800/80">
-                            <div class="text-[11px] font-bold text-emerald-400 mb-2 uppercase tracking-wider">[${cat.category}]</div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                ${cat.items.map(item => `
-                                    <div class="flex items-center justify-between bg-slate-900 hover:bg-slate-850 p-2.5 rounded-lg border border-slate-800 transition group cursor-pointer" onclick="app.selectMovement('${item.id}', '${this.state.isTranslated ? item.koName : item.name}')">
-                                        <div class="flex items-center gap-2">
-                                            <input type="radio" name="movementRadio" id="mov_${item.id}" class="text-emerald-600 focus:ring-emerald-500 bg-slate-950 border-slate-700 pointer-events-none">
-                                            <span class="text-xs text-slate-200 font-medium btn-label" data-en="${item.name}" data-ko="${item.koName}">${this.state.isTranslated ? item.koName : item.name}</span>
-                                        </div>
-                                        <button type="button" onclick="event.stopPropagation(); app.showInfo('${item.name}', '${item.desc}', '${item.ex}')" class="text-slate-500 hover:text-emerald-400 p-1 transition">
-                                            <i class="fa-solid fa-circle-question"></i>
-                                        </button>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    `).join('');
-                }
-
-                const speedContainer = document.getElementById('speedOptionsContainer');
-                if (speedContainer) {
-                    speedContainer.innerHTML = speedOptions.map(spd => `
-                        <button type="button" onclick="app.selectSpeed('${spd.id}', '${spd.name}')" id="spd_${spd.id}" class="speed-btn p-2.5 rounded-xl border border-slate-800 bg-slate-950/40 hover:bg-slate-850 text-left text-xs font-medium text-slate-300 transition flex flex-col justify-between">
-                            <span class="text-white font-semibold btn-label" data-en="${spd.name}" data-ko="${spd.koName}">${this.state.isTranslated ? spd.koName : spd.name}</span>
-                            <span class="text-[10px] text-slate-500 mt-1">${spd.id}</span>
-                        </button>
-                    `).join('');
-                }
-                this.updateSpeedUI();
-
-                const framingContainer = document.getElementById('framingOptionsContainer');
-                if (framingContainer) {
-                    framingContainer.innerHTML = framingOptions.map(frm => `
-                        <div class="flex items-center justify-between bg-slate-950/40 hover:bg-slate-850 p-2.5 rounded-xl border border-slate-800 transition cursor-pointer" onclick="app.selectFraming('${frm.id}', '${this.state.isTranslated ? frm.koName : frm.name}')">
-                            <div class="flex items-center gap-2">
-                                <input type="radio" name="framingRadio" id="frm_${frm.id}" class="text-emerald-600 focus:ring-emerald-500 bg-slate-950 border-slate-700 pointer-events-none">
-                                <span class="text-xs text-slate-200 font-medium btn-label" data-en="${frm.name}" data-ko="${frm.koName}">${this.state.isTranslated ? frm.koName : frm.name}</span>
-                            </div>
-                            <button type="button" onclick="event.stopPropagation(); app.showInfo('${frm.name}', '${frm.desc}', '${frm.ex}')" class="text-slate-500 hover:text-emerald-400 p-1 transition">
-                                <i class="fa-solid fa-circle-question"></i>
-                            </button>
-                        </div>
-                    `).join('');
-                }
-
-                const shotTypesContainer = document.getElementById('shotTypesOptionsContainer');
-                if (shotTypesContainer) {
-                    shotTypesContainer.innerHTML = shotTypesOptions.map(st => `
-                        <div class="flex items-center justify-between bg-slate-950/40 hover:bg-slate-850 p-2.5 rounded-xl border border-slate-800 transition cursor-pointer" onclick="app.selectShotType('${st.id}', '${this.state.isTranslated ? st.koName : st.name}')">
-                            <div class="flex items-center gap-2">
-                                <input type="radio" name="shotTypeRadio" id="st_${st.id}" class="text-emerald-600 focus:ring-emerald-500 bg-slate-950 border-slate-700 pointer-events-none">
-                                <span class="text-xs text-slate-200 font-medium btn-label" data-en="${st.name}" data-ko="${st.koName}">${this.state.isTranslated ? st.koName : st.name}</span>
-                            </div>
-                            <button type="button" onclick="event.stopPropagation(); app.showInfo('${st.name}', '${st.desc}', '${st.ex}')" class="text-slate-500 hover:text-emerald-400 p-1 transition">
-                                <i class="fa-solid fa-circle-question"></i>
-                            </button>
-                        </div>
-                    `).join('');
-                }
-
-                const platformBadgesContainer = document.getElementById('platformBadgesContainer');
-                if (platformBadgesContainer) {
-                    platformBadgesContainer.innerHTML = platformGuides.map(pg => `
-                        <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between">
-                            <span class="text-xs font-semibold text-slate-200">${pg.name}</span>
-                            <button type="button" onclick="app.showInfo('${pg.name} 가이드', '${pg.desc}', '${pg.ex}')" class="text-slate-400 hover:text-emerald-400 p-1 transition">
-                                <i class="fa-solid fa-circle-question"></i>
-                            </button>
-                        </div>
-                    `).join('');
-                }
-
-                const charLockInput = document.getElementById('inputCharacterLock');
-                if (charLockInput) charLockInput.value = this.state.characterLock;
-
-                this.update();
-            }
-
-            switchTab(tab) {
-                this.state.activeTab = tab;
-                const tabPromptBtn = document.getElementById('tabPromptBtn');
-                const tabEnhancedBtn = document.getElementById('tabEnhancedBtn');
-                const standardView = document.getElementById('standardPromptView');
-                const enhancedView = document.getElementById('enhancedPromptView');
-                const langToggleBtn = document.getElementById('langToggleBtn');
-
-                if (tab === 'prompt') {
-                    tabPromptBtn.className = "flex-1 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 text-white transition shadow-sm";
-                    tabEnhancedBtn.className = "flex-1 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-400 hover:text-white transition shadow-sm flex items-center justify-center gap-1.5";
-                    standardView.classList.remove('hidden');
-                    standardView.classList.add('flex');
-                    enhancedView.classList.add('hidden');
-                    enhancedView.classList.remove('flex');
-                    if (langToggleBtn) langToggleBtn.disabled = false;
-                } else {
-                    tabEnhancedBtn.className = "flex-1 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 text-white transition shadow-sm flex items-center justify-center gap-1.5";
-                    tabPromptBtn.className = "flex-1 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-400 hover:text-white transition shadow-sm";
-                    enhancedView.classList.remove('hidden');
-                    enhancedView.classList.add('flex');
-                    standardView.classList.add('hidden');
-                    standardView.classList.remove('flex');
-                    if (langToggleBtn) langToggleBtn.disabled = true;
-                }
-            }
-
-            selectMovement(id, name) {
-                this.state.movement = movementCategories.flatMap(c => c.items).find(i => i.id === id);
-                document.querySelectorAll('input[name="movementRadio"]').forEach(r => r.checked = false);
-                const radio = document.getElementById(`mov_${id}`);
-                if (radio) radio.checked = true;
-                const movNameElem = document.getElementById('selectedMovementName');
-                if (movNameElem) movNameElem.innerText = name;
-                this.state.userCustomPrompt = null;
-                this.update();
-            }
-
-            clearMovement() {
-                this.state.movement = null;
-                document.querySelectorAll('input[name="movementRadio"]').forEach(r => r.checked = false);
-                const movNameElem = document.getElementById('selectedMovementName');
-                if (movNameElem) movNameElem.innerText = "선택 안 함";
-                this.state.userCustomPrompt = null;
-                this.update();
-            }
-
-            selectSpeed(id, name) {
-                this.state.speed = id;
-                this.updateSpeedUI();
-                this.state.userCustomPrompt = null;
-                this.update();
-            }
-
-            clearSpeed() {
-                this.state.speed = "normal";
-                this.updateSpeedUI();
-                this.state.userCustomPrompt = null;
-                this.update();
-            }
-
-            updateSpeedUI() {
-                speedOptions.forEach(spd => {
-                    const btn = document.getElementById(`spd_${spd.id}`);
-                    if (btn) {
-                        const span = btn.querySelector('.btn-label');
-                        if (span) span.innerText = this.state.isTranslated ? spd.koName : spd.name;
-                        if (spd.id === this.state.speed) {
-                            btn.className = "speed-btn p-2.5 rounded-xl border border-emerald-500 bg-emerald-600/20 text-left text-xs font-medium text-white transition flex flex-col justify-between shadow-md shadow-emerald-600/10";
-                        } else {
-                            btn.className = "speed-btn p-2.5 rounded-xl border border-slate-800 bg-slate-950/40 hover:bg-slate-850 text-left text-xs font-medium text-slate-300 transition flex flex-col justify-between";
-                        }
-                    }
-                });
-                const cur = speedOptions.find(s => s.id === this.state.speed);
-                const speedNameElem = document.getElementById('selectedSpeedName');
-                if (cur && speedNameElem) speedNameElem.innerText = this.state.isTranslated ? cur.koName : cur.name;
-            }
-
-            selectFraming(id, name) {
-                this.state.framing = framingOptions.find(f => f.id === id);
-                document.querySelectorAll('input[name="framingRadio"]').forEach(r => r.checked = false);
-                const radio = document.getElementById(`frm_${id}`);
-                if (radio) radio.checked = true;
-                const framingNameElem = document.getElementById('selectedFramingName');
-                if (framingNameElem) framingNameElem.innerText = name;
-                this.state.userCustomPrompt = null;
-                this.update();
-            }
-
-            clearFraming() {
-                this.state.framing = null;
-                document.querySelectorAll('input[name="framingRadio"]').forEach(r => r.checked = false);
-                const framingNameElem = document.getElementById('selectedFramingName');
-                if (framingNameElem) framingNameElem.innerText = "선택 안 함";
-                this.state.userCustomPrompt = null;
-                this.update();
-            }
-
-            selectShotType(id, name) {
-                this.state.shotType = shotTypesOptions.find(s => s.id === id);
-                document.querySelectorAll('input[name="shotTypeRadio"]').forEach(r => r.checked = false);
-                const radio = document.getElementById(`st_${id}`);
-                if (radio) radio.checked = true;
-                this.state.userCustomPrompt = null;
-                this.update();
-            }
-
-            clearShotType() {
-                this.state.shotType = null;
-                document.querySelectorAll('input[name="shotTypeRadio"]').forEach(r => r.checked = false);
-                this.state.userCustomPrompt = null;
-                this.update();
-            }
-
-            clearCharacterLock() {
-                document.getElementById('inputCharacterLock').value = "";
-                this.state.characterLock = "";
-                this.state.userCustomPrompt = null;
-                this.update();
-            }
-
-            clearSubject() {
-                document.getElementById('inputSubject').value = "";
-                this.state.userCustomPrompt = null;
-                this.update();
-            }
-
-            clearLocking() {
-                document.getElementById('inputLocking').value = "";
-                this.state.userCustomPrompt = null;
-                this.update();
-            }
-
-            clearEnvironment() {
-                document.getElementById('inputEnvironment').value = "";
-                this.removeImage('env');
-                this.state.userCustomPrompt = null;
-                this.update();
-            }
-
-            clearVisualStyle() {
-                document.getElementById('inputVisualStyle').value = "";
-                this.removeImage('style');
-                this.state.userCustomPrompt = null;
-                this.update();
-            }
-
-            clearDuration() {
-                document.getElementById('inputDuration').value = "";
-                this.state.userCustomPrompt = null;
-                this.update();
-            }
-
-            clearAudio() {
-                document.getElementById('inputAudio').value = "";
-                this.state.userCustomPrompt = null;
-                this.update();
-            }
-
-            showInfo(title, desc, ex) {
-                document.getElementById('modalTitle').innerText = title;
-                document.getElementById('modalDesc').innerText = desc;
-                document.getElementById('modalEx').innerText = `ex) ${ex}`;
-                document.getElementById('infoModal').classList.remove('hidden');
-            }
-
-            closeModal() {
-                document.getElementById('infoModal').classList.add('hidden');
-            }
-
-            handleImageUpload(event, type) {
-                const file = event.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const base64 = e.target.result;
-                    if (type === 'env') {
-                        this.state.envImageBase64 = base64;
-                        document.getElementById('envImagePreview').src = base64;
-                        document.getElementById('envImagePreviewContainer').classList.remove('hidden');
-                        document.getElementById('envImageLabel').innerText = file.name;
-                    } else if (type === 'style') {
-                        this.state.styleImageBase64 = base64;
-                        document.getElementById('styleImagePreview').src = base64;
-                        document.getElementById('styleImagePreviewContainer').classList.remove('hidden');
-                        document.getElementById('styleImageLabel').innerText = file.name;
-                    }
-                };
-                reader.readAsDataURL(file);
-            }
-
-            removeImage(type) {
-                if (type === 'env') {
-                    this.state.envImageBase64 = null;
-                    document.getElementById('envImagePreviewContainer').classList.add('hidden');
-                    document.getElementById('envImageLabel').innerText = "참고 이미지 업로드 (배경 분석)";
-                    document.getElementById('envImageInput').value = "";
-                } else if (type === 'style') {
-                    this.state.styleImageBase64 = null;
-                    document.getElementById('styleImagePreviewContainer').classList.add('hidden');
-                    document.getElementById('styleImageLabel').innerText = "참고 이미지 업로드 (스타일 분석)";
-                    document.getElementById('styleImageInput').value = "";
-                }
-                this.state.userCustomPrompt = null;
-                this.update();
-            }
-
-            async analyzeImageAI(type) {
-                const base64Img = type === 'env' ? this.state.envImageBase64 : this.state.styleImageBase64;
-                if (!base64Img) {
-                    this.showInfo("알림", "먼저 이미지를 업로드해주세요.", "분석할 참고 이미지가 필요합니다.");
-                    return;
-                }
-
-                const btnElem = event.target;
-                const originalText = btnElem.innerHTML;
-                btnElem.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> 분석 중...`;
-                btnElem.disabled = true;
-
-                try {
-                    const promptText = type === 'env' 
-                        ? "Analyze this reference image in extreme detail and write a precise English AI video prompt describing ONLY the environment, background, architecture, terrain, and atmospheric lighting (exclude any main subjects). Return ONLY the prompt keywords." 
-                        : "Analyze the unique artistic style, color grading, lighting setup, camera lens characteristics, film stock, mood, and aesthetic of this uploaded image. Do NOT use generic defaults like 'Cinematic film still' unless specifically warranted. Return specific, vivid, professional English prompt keywords that capture this exact image's unique visual style.";
-
-                    const apiKey = "";
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-                    
-                    const base64DataOnly = base64Img.split(',')[1];
-                    const mimeType = base64Img.substring(base64Img.indexOf(':') + 1, base64Img.indexOf(';'));
-
-                    const payload = {
-                        contents: [{
-                            role: "user",
-                            parts: [
-                                { text: promptText },
-                                { inlineData: { mimeType: mimeType, data: base64DataOnly } }
-                            ]
-                        }]
-                    };
-
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    const result = await response.json();
-                    const candidate = result.candidates?.[0];
-                    if (candidate && candidate.content?.parts?.[0]?.text) {
-                        const generatedText = candidate.content.parts[0].text.trim().replace(/^["']|["']$/g, '');
-                        if (type === 'env') {
-                            document.getElementById('inputEnvironment').value = generatedText;
-                        } else {
-                            document.getElementById('inputVisualStyle').value = generatedText;
-                        }
-                    } else {
-                        throw new Error("Invalid response format");
-                    }
-                } catch (err) {
-                    if (type === 'env') {
-                        document.getElementById('inputEnvironment').value = "Detailed atmospheric background, volumetric lighting, rich environmental textures, photorealistic";
-                    } else {
-                        document.getElementById('inputVisualStyle').value = "Distinctive artistic color grading, unique lighting atmosphere, high detail aesthetic, professional visual texture";
-                    }
-                } finally {
-                    btnElem.innerHTML = originalText;
-                    btnElem.disabled = false;
-                    this.state.userCustomPrompt = null;
-                    this.update();
-                }
-            }
-
-            async suggestSubjectAI() {
-                try {
-                    const apiKey = "";
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-                    
-                    const payload = {
-                        contents: [{
-                            role: "user",
-                            parts: [{ text: "Suggest a captivating, high-energy cinematic Subject + Action prompt in English for an AI video generator. Return ONLY the prompt text, keep it under 20 words." }]
-                        }]
-                    };
-
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    const result = await response.json();
-                    const text = result.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-                    if (text) {
-                        document.getElementById('inputSubject').value = text.replace(/^["']|["']$/g, '');
-                        this.state.userCustomPrompt = null;
-                        this.update();
-                    } else {
-                        throw new Error();
-                    }
-                } catch (e) {
-                    document.getElementById('inputSubject').value = "A cyberpunk detective running through neon-lit futuristic alleyways, cinematic lighting";
-                    this.state.userCustomPrompt = null;
-                    this.update();
-                }
-            }
-
-            async enhancePromptWithAI() {
-                const outputBox = document.getElementById('finalPromptOutput');
-                const enhancedBox = document.getElementById('enhancedPromptOutput');
-                const currentPrompt = outputBox.value || this.buildPromptString();
-                
-                if (!currentPrompt) {
-                    this.showInfo("알림", "고도화할 프롬프트 내용이 없습니다. 먼저 항목을 입력해주세요.", "주제나 환경을 입력 후 AI 강화를 시도하세요.");
-                    return;
-                }
-
-                enhancedBox.value = "Gemini LLM이 할리우드 감독 및 프롬프트 엔지니어 관점으로 전문적인 시네마틱 마스터 프롬프트를 생성하고 있습니다...";
-                this.switchTab('enhanced');
-
-                try {
-                    const apiKey = "";
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-                    
-                    const payload = {
-                        contents: [{
-                            role: "user",
-                            parts: [{ text: `Act as an expert Hollywood cinematography director and world-class AI video prompt engineer. Take the following user input parameters and dramatically expand, enhance, and rewrite them into a rich, professional, multi-sentence cinematic master-prompt in English optimized for advanced AI video generators (Runway Gen-3, Sora, Kling, Google Veo). Add vivid details about volumetric lighting, camera optics, color grading, mood, and texture:\n\n${currentPrompt}` }]
-                        }]
-                    };
-
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    const result = await response.json();
-                    const enhancedText = result.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-                    if (enhancedText) {
-                        enhancedBox.value = enhancedText;
-                        this.state.enhancedPromptText = enhancedText;
-                    } else {
-                        enhancedBox.value = currentPrompt + ", masterclass cinematic composition, 8k resolution, photorealistic masterpiece";
-                    }
-                } catch (e) {
-                    enhancedBox.value = currentPrompt + ", ultra-realistic volumetric lighting, anamorphic lens flare, masterclass cinematography, 8k";
-                    this.state.enhancedPromptText = enhancedBox.value;
-                }
-            }
-
-            onUserInputChange() {
-                if (this.state.userCustomPrompt === null) {
-                    this.update();
-                }
-            }
-
-            onManualTextEdit(event) {
-                this.state.userCustomPrompt = event.target.value;
-                const charCountElem = document.getElementById('charCount');
-                if (charCountElem) {
-                    charCountElem.innerText = `${this.state.userCustomPrompt.length}자`;
-                }
-            }
-
-            buildPromptString() {
-                const charLockElem = document.getElementById('inputCharacterLock');
-                const subjElem = document.getElementById('inputSubject');
-                const lockElem = document.getElementById('inputLocking');
-                const envElem = document.getElementById('inputEnvironment');
-                const styleElem = document.getElementById('inputVisualStyle');
-                const durationElem = document.getElementById('inputDuration');
-                const audioElem = document.getElementById('inputAudio');
-                const aspectElem = document.getElementById('selectAspect');
-
-                if (charLockElem) this.state.characterLock = charLockElem.value;
-                if (subjElem) this.state.subject = subjElem.value;
-                if (lockElem) this.state.locking = lockElem.value;
-                if (envElem) this.state.environment = envElem.value;
-                if (styleElem) this.state.visualStyle = styleElem.value;
-                if (durationElem) this.state.duration = durationElem.value;
-                if (audioElem) this.state.audio = audioElem.value;
-                if (aspectElem) this.state.aspect = aspectElem.value;
-
-                let parts = [];
-                if (this.state.characterLock) parts.push(`[IMPORTANT] ${this.state.characterLock}`);
-                if (this.state.subject) parts.push(this.state.subject);
-                if (this.state.locking) parts.push(this.state.isTranslated ? `잠금: ${this.state.locking}` : `Locking: ${this.state.locking}`);
-                if (this.state.environment) parts.push(this.state.environment);
-                if (this.state.visualStyle) parts.push(this.state.visualStyle);
-                
-                if (this.state.movement) {
-                    parts.push(this.state.isTranslated ? this.state.movement.koName : this.state.movement.enPrompt);
-                }
-                
-                const spdObj = speedOptions.find(s => s.id === this.state.speed);
-                if (spdObj && this.state.speed !== 'normal') {
-                    parts.push(this.state.isTranslated ? spdObj.koName : spdObj.enPrompt);
-                }
-                
-                if (this.state.framing) {
-                    parts.push(this.state.isTranslated ? this.state.framing.koName : this.state.framing.enPrompt);
-                }
-                if (this.state.shotType) {
-                    parts.push(this.state.isTranslated ? this.state.shotType.koName : this.state.shotType.enPrompt);
-                }
-                if (this.state.duration) parts.push(this.state.isTranslated ? `길이: ${this.state.duration}` : `Duration: ${this.state.duration}`);
-                if (this.state.audio) parts.push(this.state.isTranslated ? `오디오: ${this.state.audio}` : `Audio: ${this.state.audio}`);
-                if (this.state.aspect) parts.push(this.state.aspect);
-
-                return parts.join(", ");
-            }
-
-            update() {
-                if (this.state.userCustomPrompt !== null) return;
-                const outputBox = document.getElementById('finalPromptOutput');
-                const charCountElem = document.getElementById('charCount');
-                if (!outputBox) return;
-
-                let finalString = this.buildPromptString();
-                outputBox.value = finalString;
-                if (charCountElem) charCountElem.innerText = `${finalString.length}자`;
-            }
-
-            async translateToggle() {
-                this.state.isTranslated = !this.state.isTranslated;
-                const btnText = document.getElementById('langToggleText');
-                if (btnText) btnText.innerText = this.state.isTranslated ? "영 / 한" : "한 / 영";
-
-                // Update UI button labels
-                this.initUI();
-                this.state.userCustomPrompt = null;
-                this.update();
-            }
-
-            resetAll() {
-                const charLockElem = document.getElementById('inputCharacterLock');
-                const subjElem = document.getElementById('inputSubject');
-                const lockElem = document.getElementById('inputLocking');
-                const envElem = document.getElementById('inputEnvironment');
-                const styleElem = document.getElementById('inputVisualStyle');
-                const audioElem = document.getElementById('inputAudio');
-                const durationElem = document.getElementById('inputDuration');
-
-                if (charLockElem) charLockElem.value = "Maintain exact same character appearance across all cuts (hairstyle, accessories, outfit)";
-                if (subjElem) subjElem.value = "";
-                if (lockElem) lockElem.value = "";
-                if (envElem) envElem.value = "";
-                if (styleElem) styleElem.value = "";
-                if (audioElem) audioElem.value = "";
-                if (durationElem) durationElem.value = "5s";
-
-                this.state.characterLock = "Maintain exact same character appearance across all cuts (hairstyle, accessories, outfit)";
-                this.removeImage('env');
-                this.removeImage('style');
-                this.state.movement = null;
-                this.state.framing = null;
-                this.state.shotType = null;
-                this.state.speed = "normal";
-                this.state.userCustomPrompt = null;
-                this.state.isTranslated = false;
-                this.state.enhancedPromptText = "";
-
-                const btnText = document.getElementById('langToggleText');
-                if (btnText) btnText.innerText = "한 / 영";
-
-                document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
-                
-                const movNameElem = document.getElementById('selectedMovementName');
-                const frmNameElem = document.getElementById('selectedFramingName');
-                if (movNameElem) movNameElem.innerText = "선택 안 함";
-                if (frmNameElem) frmNameElem.innerText = "선택 안 함";
-
-                const enhancedBox = document.getElementById('enhancedPromptOutput');
-                if (enhancedBox) enhancedBox.value = "";
-
-                this.updateSpeedUI();
-                this.switchTab('prompt');
-                this.initUI();
-                this.update();
-            }
-
-            copyFinalPrompt() {
-                const outputBox = this.state.activeTab === 'prompt' 
-                    ? document.getElementById('finalPromptOutput') 
-                    : document.getElementById('enhancedPromptOutput');
-                if (!outputBox) return;
-                outputBox.select();
-                try {
-                    document.execCommand('copy');
-                    alert("선택된 프롬프트가 클립보드에 복사되었습니다!");
-                } catch (err) {
-                    navigator.clipboard.writeText(outputBox.value).then(() => {
-                        alert("선택된 프롬프트가 클립보드에 복사되었습니다!");
-                    });
-                }
-            }
-        }
-
-        const app = new VideoBuilderApp();
-    </script>
-</body>
-</html>
+<body>
+<header><div><div class="brand">🎬 Flow <span>영상 만들기 도우미</span></div><div class="sub">보고 고르고, 나만의 영상 프롬프트 만들기</div></div><button class="ghost small" id="helpBtn">사용 안내</button></header>
+<main class="wrap">
+<section class="hero"><h1>어렵게 쓰지 말고, 쉽게 만들어 보세요!</h1><p>캐릭터를 등록하고 장면을 선택하면 Google Flow에서 사용할 프롬프트를 만들 수 있어요.</p></section>
+<div class="layout">
+<div>
+<section class="panel">
+<div class="row between"><h2>1. 나의 캐릭터</h2><span class="pill">여러 명 등록 가능</span></div>
+<p class="muted">영상에 등장할 인물을 등록해 두세요. 사진은 이 브라우저에 저장됩니다.</p>
+<div id="characterList" class="cards"></div>
+<div id="characterEditor" style="display:none;margin-top:16px;border-top:1px solid var(--line);padding-top:14px">
+<div class="row between"><h3 id="editorTitle">캐릭터 등록</h3><button class="ghost small" id="closeEditor">닫기</button></div>
+<label>캐릭터 이름</label><input id="charName" placeholder="예: 엄마, 우리 집 강아지, 주인공">
+<label>참조 이미지 (선택)</label><div class="row"><img id="imagePreview" alt="이미지 미리보기"><input id="charImage" type="file" accept="image/*"></div>
+<label>외모 특징</label><textarea id="charAppearance" placeholder="예: 어깨까지 오는 검은 웨이브 머리, 둥근 얼굴, 따뜻한 미소"></textarea>
+<label>의상 및 고정 특징</label><input id="charClothes" placeholder="예: 아이보리색 니트와 청바지">
+<div class="row mobile-stack" style="margin-top:12px"><button class="primary" id="saveCharacter">캐릭터 저장</button><button class="danger" id="deleteCharacter" style="display:none">삭제</button></div>
+</div>
+</section>
+<section class="panel">
+<h2>2. 어떤 영상을 만들까요?</h2>
+<label>영상 주제</label><select id="topic"><option value="우리 동네 소개|A video introducing our neighborhood">우리 동네 소개</option><option value="가족 이야기|A heartwarming family story">가족 이야기</option><option value="여행 영상|A travel video">여행 영상</option><option value="일상 브이로그|A daily life vlog">일상 브이로그</option><option value="가게 및 제품 홍보|A promotional video for a shop or product">가게 및 제품 홍보</option><option value="나만의 이야기|A personal creative story">나만의 이야기</option></select>
+<label>장소 및 배경</label><input id="place" placeholder="예: 벚꽃이 핀 공원, 충주 호수 주변">
+<label>인물의 행동</label><textarea id="action" placeholder="예: 천천히 걸으며 주변의 꽃을 바라보고 미소 짓는다."></textarea>
+<label>영상 분위기</label><select id="mood"><option value="따뜻하고 감성적인|warm and emotional">따뜻하고 감성적인</option><option value="밝고 활기찬|bright and cheerful">밝고 활기찬</option><option value="평화롭고 잔잔한|peaceful and calm">평화롭고 잔잔한</option><option value="영화처럼 웅장한|dramatic and cinematic">영화처럼 웅장한</option><option value="재미있고 유쾌한|fun and playful">재미있고 유쾌한</option></select>
+</section>
+<section class="panel">
+<h2>3. 카메라 움직임 고르기</h2><p class="muted">전문 용어보다 어떤 화면인지 먼저 생각하고 선택해 보세요.</p>
+<div class="choicegrid" id="cameraChoices">
+<button class="choice selected" data-camera="zoom"><strong>＋ 가까이 다가가기</strong><span>인물이나 사물이 점점 크게 보여요. (줌인)</span></button>
+<button class="choice" data-camera="pull"><strong>↗ 멀리서 넓게 보기</strong><span>주변 풍경이 점점 넓게 보여요. (줌아웃)</span></button>
+<button class="choice" data-camera="pan"><strong>↔ 좌우로 둘러보기</strong><span>카메라가 왼쪽 또는 오른쪽으로 움직여요. (팬)</span></button>
+<button class="choice" data-camera="tilt"><strong>↕ 위아래로 보기</strong><span>카메라가 위 또는 아래로 움직여요. (틸트)</span></button>
+<button class="choice" data-camera="orbit"><strong>⟳ 주인공 주위 돌기</strong><span>카메라가 인물 주위를 빙글 돌아요. (오빗)</span></button>
+<button class="choice" data-camera="follow"><strong>➜ 인물 따라가기</strong><span>움직이는 인물을 카메라가 따라가요. (트래킹)</span></button>
+</div>
+<div class="help" id="cameraHelp">💡 줌인: 카메라가 피사체에 가까워지는 듯 화면이 확대됩니다. 인물의 표정이나 중요한 물건을 강조할 때 좋아요.</div>
+</section>
+<section class="panel">
+<h2>4. 장면 구성</h2>
+<label>장면에서 일어날 일</label><textarea id="scene" placeholder="예: 꽃을 발견하고 잠시 멈춘 뒤 손으로 꽃잎을 살며시 만진다."></textarea>
+<label>영상 길이</label><select id="duration"><option value="5초|5 seconds">5초</option><option value="8초|8 seconds" selected>8초</option><option value="10초|10 seconds">10초</option></select>
+<label>화면 비율</label><select id="ratio"><option value="세로형 9:16|vertical 9:16 aspect ratio">세로형 9:16 (쇼츠·릴스)</option><option value="가로형 16:9|horizontal 16:9 aspect ratio">가로형 16:9 (유튜브)</option><option value="정사각형 1:1|square 1:1 aspect ratio">정사각형 1:1</option></select>
+</section>
+</div>
+<div>
+<section class="panel sticky">
+<div class="row between"><h2>5. 프롬프트 확인 및 편집</h2><span class="pill">한·영 혼합 편집</span></div>
+<p class="muted">선택한 내용으로 초안을 만들어요. 한국어와 영어를 각각 직접 수정할 수 있습니다.</p>
+<button class="primary" id="generate" style="width:100%">✨ 선택한 내용으로 프롬프트 만들기</button>
+<div class="promptbox"><div class="prompthead"><b>한국어 프롬프트</b><span class="muted">직접 수정 가능</span></div><textarea id="koPrompt" placeholder="위 항목을 선택하고 프롬프트 만들기를 눌러주세요."></textarea></div>
+<div class="promptbox"><div class="prompthead"><b>English Prompt</b><span class="muted">Editable</span></div><textarea id="enPrompt" placeholder="The English prompt will appear here."></textarea></div>
+<div class="help">번역 안내: 현재 체험판은 선택 메뉴에 준비된 영문 표현을 조합해 초안을 만듭니다. 자유롭게 입력한 한국어 문장을 자동 번역하는 기능은 번역 API 연결이 필요하며, 이 버전에서는 영어 문장을 직접 수정할 수 있습니다.</div>
+<div class="row mobile-stack" style="margin-top:12px"><button class="secondary" id="copyKo">한글 복사</button><button class="primary" id="copyEn">영어 복사</button></div>
+<div class="row mobile-stack" style="margin-top:8px"><button class="ghost" id="copyBoth">한글+영어 모두 복사</button><button class="ghost" id="clearPrompt">초기화</button></div>
+<div class="status" id="status" aria-live="polite"></div>
+</section>
+<section class="panel">
+<h2>Google Flow에서 사용하는 방법</h2>
+<ol class="muted" style="padding-left:20px">
+<li>캐릭터 보관함의 참조 이미지를 Google Flow에도 등록합니다.</li>
+<li>위에서 만든 영어 프롬프트를 복사합니다.</li>
+<li>Google Flow에 붙여넣고 영상 생성을 진행합니다.</li>
+</ol>
+<p class="muted">이 웹앱은 Flow를 직접 제어하거나 Flow에 등록된 캐릭터를 자동으로 가져오지는 않습니다.</p>
+</section>
+</div>
+</div>
+<div class="footer">Flow 영상 만들기 도우미 · 체험용 프로토타입 · 캐릭터 정보는 현재 브라우저에 저장됩니다.</div>
+</main>
+<div class="modal" id="helpModal"><div class="modalbox"><div class="row between"><h2>사용 안내</h2><button class="ghost small" id="closeHelp">닫기</button></div><p>① 캐릭터 추가를 눌러 인물의 이름과 특징, 사진을 등록하세요.</p><p>② 영상 주제와 배경, 행동을 선택하거나 직접 입력하세요.</p><p>③ 카메라 움직임을 고르면 쉬운 설명을 확인할 수 있어요.</p><p>④ 프롬프트 만들기를 누른 뒤 한국어와 영어 문장을 확인하고 복사하세요.</p><p class="help">주의: 캐릭터와 이미지는 현재 사용 중인 브라우저에 저장됩니다. 브라우저 데이터 삭제나 기기 변경에 대비해 백업 기능을 다음 버전에서 추가할 예정입니다.</p></div></div>
+<script>
+const DB='flow-helper-db', STORE='characters'; let db, editingId=null, imageData='';
+const $=id=>document.getElementById(id);
+function openDB(){return new Promise((resolve,reject)=>{const r=indexedDB.open(DB,1);r.onupgradeneeded=()=>r.result.createObjectStore(STORE,{keyPath:'id'});r.onsuccess=()=>{db=r.result;resolve(db)};r.onerror=()=>reject(r.error)})}
+function allChars(){return new Promise((resolve,reject)=>{const r=db.transaction(STORE).objectStore(STORE).getAll();r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
+function putChar(c){return new Promise((resolve,reject)=>{const r=db.transaction(STORE,'readwrite').objectStore(STORE).put(c);r.onsuccess=resolve;r.onerror=()=>reject(r.error)})}
+function delChar(id){return new Promise((resolve,reject)=>{const r=db.transaction(STORE,'readwrite').objectStore(STORE).delete(id);r.onsuccess=resolve;r.onerror=()=>reject(r.error)})}
+let selectedChar=null;
+async function renderChars(){const chars=await allChars();const box=$('characterList');box.innerHTML='';chars.forEach(c=>{const b=document.createElement('button');b.className='character'+(selectedChar===c.id?' active':'');b.innerHTML=`<div class="avatar">${c.image?`<img src="${c.image}" alt="">`:'👤'}</div><b></b><small></small>`;b.querySelector('b').textContent=c.name;b.querySelector('small').textContent=c.appearance||'외모 설명 없음';b.onclick=()=>{selectedChar=c.id;renderChars();};b.ondblclick=()=>editChar(c);box.appendChild(b)});const add=document.createElement('button');add.className='addcard';add.innerHTML='<span style="font-size:30px">＋</span><b>캐릭터 추가</b>';add.onclick=()=>editChar();box.appendChild(add)}
+function editChar(c){editingId=c?.id||null;imageData=c?.image||'';$('editorTitle').textContent=c?'캐릭터 수정':'새 캐릭터 등록';$('charName').value=c?.name||'';$('charAppearance').value=c?.appearance||'';$('charClothes').value=c?.clothes||'';$('imagePreview').style.display=imageData?'block':'none';$('imagePreview').src=imageData;$('deleteCharacter').style.display=c?'inline-block':'none';$('characterEditor').style.display='block';$('charName').focus()}
+$('charImage').onchange=e=>{const f=e.target.files[0];if(!f)return;if(f.size>5*1024*1024){alert('이미지는 5MB 이하로 선택해 주세요.');e.target.value='';return}const reader=new FileReader();reader.onload=()=>{imageData=reader.result;$('imagePreview').src=imageData;$('imagePreview').style.display='block'};reader.readAsDataURL(f)};
+$('saveCharacter').onclick=async()=>{const name=$('charName').value.trim();if(!name){alert('캐릭터 이름을 입력해 주세요.');return}const c={id:editingId||crypto.randomUUID(),name,image:imageData,appearance:$('charAppearance').value.trim(),clothes:$('charClothes').value.trim()};await putChar(c);selectedChar=c.id;$('characterEditor').style.display='none';$('charImage').value='';await renderChars();};
+$('deleteCharacter').onclick=async()=>{if(editingId&&confirm('이 캐릭터를 삭제할까요?')){await delChar(editingId);if(selectedChar===editingId)selectedChar=null;$('characterEditor').style.display='none';await renderChars()}};
+$('closeEditor').onclick=()=>$('characterEditor').style.display='none';
+const cams={
+zoom:{ko:'카메라가 피사체를 향해 천천히 줌인한다.',en:'The camera slowly zooms in on the subject.',help:'💡 줌인: 화면이 확대되며 인물의 표정이나 중요한 물건을 강조합니다.'},
+pull:{ko:'카메라가 천천히 줌아웃하며 주변 풍경을 넓게 보여준다.',en:'The camera slowly zooms out to reveal the surrounding scenery.',help:'💡 줌아웃: 화면이 넓어지면서 주변 환경을 보여줍니다.'},
+pan:{ko:'카메라가 부드럽게 좌우로 팬하며 주변을 보여준다.',en:'The camera smoothly pans from side to side, revealing the surroundings.',help:'💡 팬: 카메라가 한 자리에서 좌우로 방향을 바꿉니다.'},
+tilt:{ko:'카메라가 아래에서 위로 부드럽게 틸트한다.',en:'The camera smoothly tilts upward from bottom to top.',help:'💡 틸트: 카메라가 위나 아래를 향해 움직입니다.'},
+orbit:{ko:'카메라가 주인공 주위를 부드럽게 회전한다.',en:'The camera smoothly orbits around the main subject.',help:'💡 오빗: 카메라가 주인공을 중심으로 주위를 돌아 입체적으로 보여줍니다.'},
+follow:{ko:'카메라가 움직이는 인물을 부드럽게 따라간다.',en:'The camera smoothly tracks the moving subject.',help:'💡 트래킹: 카메라가 움직이는 인물을 따라 함께 이동합니다.'}
+};let camera='zoom';
+$('cameraChoices').querySelectorAll('button').forEach(b=>b.onclick=()=>{camera=b.dataset.camera;$('cameraChoices').querySelectorAll('button').forEach(x=>x.classList.toggle('selected',x===b));$('cameraHelp').textContent=cams[camera].help});
+function pair(id){return $(id).value.split('|')}
+$('generate').onclick=async()=>{const [topicKo,topicEn]=pair('topic'),[moodKo,moodEn]=pair('mood'),[durKo,durEn]=pair('duration'),[ratioKo,ratioEn]=pair('ratio');const chars=await allChars();const c=chars.find(x=>x.id===selectedChar);const charKo=c?`${c.name}${c.appearance?'은/는 '+c.appearance:''}${c.clothes?'이며 의상은 '+c.clothes+'이다.':''}`:'등장인물은 자연스럽고 일관된 모습으로 유지한다.';const charEn=c?`The character is ${c.name}. Maintain the same appearance: ${c.appearance||'consistent facial features and hairstyle'}${c.clothes?'. Outfit: '+c.clothes:''}.`:'Keep the main character’s appearance consistent throughout the video.';const place=$('place').value.trim()||'아름다운 야외 공간';const action=$('action').value.trim()||'천천히 주변을 바라본다';const scene=$('scene').value.trim();const ko=[`주제: ${topicKo}.`,charKo,`장소: ${place}.`,`행동: ${action}.`,scene?`장면: ${scene}.`:'',`카메라: ${cams[camera].ko}`,`분위기: ${moodKo}.`,`길이: ${durKo}.`,`화면 비율: ${ratioKo}.`].filter(Boolean).join('\\n');const en=[`Theme: ${topicEn}.`,charEn,`Location: ${place}.`,`Action: ${action}.`,scene?`Scene: ${scene}.`:'',cams[camera].en,`Mood: ${moodEn}.`,`Duration: ${durEn}.`,`Format: ${ratioEn}.`].filter(Boolean).join('\\n');$('koPrompt').value=ko;$('enPrompt').value=en;setStatus('프롬프트 초안을 만들었습니다. 문장을 직접 다듬어 보세요.')};
+function setStatus(t){$('status').textContent=t;setTimeout(()=>$('status').textContent='',3500)}
+async function copy(id){const v=$(id).value;if(!v.trim()){setStatus('먼저 프롬프트를 만들어 주세요.');return}try{await navigator.clipboard.writeText(v);setStatus('복사했습니다.')}catch(e){$(id).select();document.execCommand('copy');setStatus('복사했습니다.')}}
+$('copyKo').onclick=()=>copy('koPrompt');$('copyEn').onclick=()=>copy('enPrompt');$('copyBoth').onclick=async()=>{const t='[한국어]\\n'+$('koPrompt').value+'\\n\\n[English]\\n'+$('enPrompt').value;try{await navigator.clipboard.writeText(t);setStatus('한글과 영어를 모두 복사했습니다.')}catch(e){setStatus('복사 기능을 사용할 수 없습니다.')}};
+$('clearPrompt').onclick=()=>{$('koPrompt').value='';$('enPrompt').value='';setStatus('프롬프트를 비웠습니다.')};
+$('helpBtn').onclick=()=>$('helpModal').classList.add('open');$('closeHelp').onclick=()=>$('helpModal').classList.remove('open');$('helpModal').onclick=e=>{if(e.target===$('helpModal'))$('helpModal').classList.remove('open')};
+openDB().then(renderChars).catch(()=>alert('브라우저 저장 기능을 사용할 수 없습니다. 최신 Chrome에서 다시 열어 주세요.'));
+</script>
+</body></html>
