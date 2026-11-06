@@ -604,7 +604,7 @@
                             role: "user",
                             parts: [
                                 { text: "Analyze this specific uploaded image thoroughly. Extract precise visual traits including dominant color palette, lighting quality, art style, texture, clothing style, and facial aesthetic. Return ONLY concrete English prompt keywords describing this specific image style, without any conversational filler." },
-                                { inlineData: { mimeType: mimeType, data: base64DataOnly } }
+                                { inlineData: { mimeType: mimeType || 'image/jpeg', data: base64DataOnly } }
                             ]
                         }]
                     };
@@ -626,7 +626,7 @@
                         throw new Error("Invalid response");
                     }
                 } catch (err) {
-                    row.text = `Custom analyzed style aesthetic #${id}, unique color palette, professional grade lighting`;
+                    row.text = `Cinematic film still, custom analyzed style aesthetic #${id}, unique color palette`;
                     const textInput = document.getElementById(`styleTextInput_${id}`);
                     if (textInput) textInput.value = row.text;
                 } finally {
@@ -660,7 +660,7 @@
                             role: "user",
                             parts: [
                                 { text: "Analyze this specific environment image in rich detail. Describe lighting, architecture, terrain, and exact background setting in English prompt keywords." },
-                                { inlineData: { mimeType: mimeType, data: base64DataOnly } }
+                                { inlineData: { mimeType: mimeType || 'image/jpeg', data: base64DataOnly } }
                             ]
                         }]
                     };
