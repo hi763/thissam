@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>영상 생성형 AI 빌더 2 PRO (Google Veo Edition)</title>
+    <title>영상 생성형 AI 빌더 2 PRO (Google Veo & Omni Edition)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -41,7 +41,7 @@
             </div>
             <div>
                 <h1 class="text-lg md:text-xl font-bold tracking-tight text-white flex items-center gap-2">
-                    영상 생성형 AI 빌더 2 <span class="text-[10px] md:text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Google Veo PRO</span>
+                    영상 생성형 AI 빌더 2 <span class="text-[10px] md:text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Google Veo & Omni PRO</span>
                 </h1>
                 <p class="text-xs text-slate-400 hidden sm:block">Google Veo & Workspace Cinematic Prompt Studio</p>
             </div>
@@ -68,7 +68,7 @@
                     <button onclick="app.clearCharacterLock()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded transition">초기화</button>
                 </div>
                 <p class="text-[11px] text-slate-300 leading-relaxed">
-                    Google Veo 생성 시 컷마다 캐릭터가 변형되는 현상을 막기 위해 프롬프트 최상단에 고정 지침(<code>[IMPORTANT]</code>)을 부여합니다.
+                    Google Veo 및 옴니 생성 시 컷마다 캐릭터가 변형되는 현상을 막기 위해 프롬프트 최상단에 고정 지침(<code>[IMPORTANT]</code>)을 부여합니다.
                 </p>
                 <div>
                     <input type="text" id="inputCharacterLock" oninput="app.onUserInputChange()" placeholder="예: Maintain exact same character appearance across all cuts (hairstyle, accessories, outfit)" class="w-full bg-slate-950/80 border border-emerald-500/30 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition">
@@ -148,11 +148,6 @@
                         <!-- Populated via JS -->
                     </div>
                 </div>
-
-                <div class="pt-2 border-t border-slate-800/80">
-                    <div class="text-[11px] text-slate-400 mb-1.5 font-medium">통합 비주얼 스타일 프롬프트 (자동 조립)</div>
-                    <textarea id="inputVisualStyle" rows="2" oninput="app.onUserInputChange()" placeholder="예: Cinematic film still, 35mm photograph, moody lighting..." class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 transition"></textarea>
-                </div>
             </div>
 
             <!-- Section 4: Camera Direction -->
@@ -164,7 +159,7 @@
                     <span class="text-[11px] text-slate-400">무브먼트 20종, 스피드, 프레이밍</span>
                 </div>
 
-                <!-- 4.1 Movement (20 types categorized with individual reset) -->
+                <!-- 4.1 Movement -->
                 <div>
                     <div class="text-xs font-semibold text-slate-300 mb-3 flex items-center justify-between">
                         <div class="flex items-center gap-2">
@@ -173,12 +168,10 @@
                         </div>
                         <span id="selectedMovementName" class="text-emerald-400 font-normal">선택 안 함</span>
                     </div>
-                    <div id="movementCategoriesContainer" class="space-y-4">
-                        <!-- Dynamically populated categories -->
-                    </div>
+                    <div id="movementCategoriesContainer" class="space-y-4"></div>
                 </div>
 
-                <!-- 4.2 Speed with reset -->
+                <!-- 4.2 Speed -->
                 <div class="border-t border-slate-800 pt-4">
                     <div class="text-xs font-semibold text-slate-300 mb-3 flex items-center justify-between">
                         <div class="flex items-center gap-2">
@@ -187,12 +180,10 @@
                         </div>
                         <span id="selectedSpeedName" class="text-emerald-400 font-normal">표준 속도</span>
                     </div>
-                    <div id="speedOptionsContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                        <!-- Populated via JS -->
-                    </div>
+                    <div id="speedOptionsContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
                 </div>
 
-                <!-- 4.3 Framing & Composition with individual resets -->
+                <!-- 4.3 Framing & Composition -->
                 <div class="border-t border-slate-800 pt-4">
                     <div class="text-xs font-semibold text-slate-300 mb-3 flex items-center justify-between">
                         <div class="flex items-center gap-2">
@@ -201,17 +192,13 @@
                         </div>
                         <span id="selectedFramingName" class="text-emerald-400 font-normal">선택 안 함</span>
                     </div>
-                    <div id="framingOptionsContainer" class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                        <!-- Populated via JS -->
-                    </div>
+                    <div id="framingOptionsContainer" class="grid grid-cols-1 sm:grid-cols-3 gap-2"></div>
                     <div class="my-4 border-t border-slate-800/80"></div>
                     <div class="flex items-center justify-between mb-2">
                         <div class="text-[11px] text-slate-400 font-medium">인물 수 및 추가 샷 타입 (7종)</div>
                         <button onclick="app.clearShotType()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded transition">선택 해제</button>
                     </div>
-                    <div id="shotTypesOptionsContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                        <!-- Populated via JS -->
-                    </div>
+                    <div id="shotTypesOptionsContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
                 </div>
             </div>
 
@@ -224,36 +211,26 @@
                     <span class="text-[11px] text-slate-400">구글 플로우 및 옴니 표준</span>
                 </div>
 
-                <!-- Platform Reference & Question Buttons -->
                 <div>
-                    <div class="text-xs text-slate-400 mb-2 font-medium">
-                        <span>주요 AI 플랫폼 및 구글 옴니 가이드</span>
-                    </div>
-                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-2" id="platformBadgesContainer">
-                        <!-- Rendered dynamically -->
-                    </div>
+                    <div class="text-xs text-slate-400 mb-2 font-medium">주요 AI 플랫폼 및 구글 옴니 가이드</div>
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-2" id="platformBadgesContainer"></div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-slate-800">
-                    <!-- Cut Duration -->
                     <div>
                         <div class="text-xs text-slate-400 mb-1.5 font-medium flex items-center justify-between">
                             <span>[Cut Duration / 컷 길이]</span>
                             <button onclick="app.clearDuration()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded transition">초기화</button>
                         </div>
-                        <input type="text" id="inputDuration" oninput="app.onUserInputChange()" placeholder="예: 5s, 10s 또는 Google Omni 실시간 스트리밍" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition">
+                        <input type="text" id="inputDuration" oninput="app.onUserInputChange()" placeholder="예: 5s, 10s 또는 Google Omni 실시간" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition">
                     </div>
-
-                    <!-- Audio -->
                     <div>
                         <div class="text-xs text-slate-400 mb-1.5 font-medium flex items-center justify-between">
                             <span>[Audio / Sound FX]</span>
                             <button onclick="app.clearAudio()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded transition">초기화</button>
                         </div>
-                        <input type="text" id="inputAudio" oninput="app.onUserInputChange()" placeholder="예: Google Omni native audio sync, sound effects" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition">
+                        <input type="text" id="inputAudio" oninput="app.onUserInputChange()" placeholder="예: Google Omni native audio sync" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition">
                     </div>
-
-                    <!-- Aspect Ratio -->
                     <div>
                         <div class="text-xs text-slate-400 mb-1.5 font-medium">[화면 비율]</div>
                         <select id="selectAspect" onchange="app.onUserInputChange()" class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition">
@@ -281,7 +258,7 @@
                     <span id="charCount" class="text-[11px] text-slate-400 bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800">0자</span>
                 </div>
 
-                <!-- Action Controls Bar (Translate & Reset) -->
+                <!-- Action Controls Bar -->
                 <div class="flex items-center gap-2 py-3 border-b border-slate-800/80">
                     <button onclick="app.translateToggle()" id="langToggleBtn" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3 py-2 rounded-lg border border-slate-700 transition flex items-center justify-center gap-1.5">
                         <i class="fa-solid fa-globe text-emerald-400"></i> <span id="langToggleText">한 / 영</span>
@@ -298,7 +275,6 @@
                     </div>
                 </div>
 
-                <!-- Full-Width Copy Button -->
                 <div class="pb-3">
                     <button onclick="app.copyFinalPrompt()" class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-xs font-semibold py-2.5 px-4 rounded-xl shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-2">
                         <i class="fa-solid fa-copy"></i> <span>프롬프트 복사</span>
@@ -309,8 +285,8 @@
                     <div class="font-semibold text-slate-300 flex items-center gap-1.5">
                         <i class="fa-solid fa-circle-info text-emerald-400"></i> Google Veo & Google Omni 가이드
                     </div>
-                    <p>• <b>Google Omni 연동</b>: 구글 옴니 모델은 멀티모달 오디오와 비디오를 동시에 생성하므로 다중 캐릭터 및 오디오 싱크 지침을 명확히 포함하는 것이 유리합니다.</p>
-                    <p>• <b>다중 캐릭터/스타일 추가 (+)</b>: 여러 명의 인물(예: 인물 1, 인물 2)이나 각각의 의상/스타일 요소를 `+` 버튼으로 자유롭게 추가해 정밀한 씬 제어가 가능합니다.</p>
+                    <p>• <b>실시간 한영 변환</b>: 상단 '한/영' 버튼을 누르면 사용자가 작성한 문장과 옵션이 실시간으로 번역되어 적용됩니다.</p>
+                    <p>• <b>Google Omni 연동</b>: 멀티모달 오디오와 비디오를 동시에 생성하는 옴니 표준에 맞추어 컷 제어가 가능합니다.</p>
                 </div>
 
             </div>
@@ -456,7 +432,7 @@
                     aspect: "--ar 16:9",
                     envImageBase64: null,
                     userCustomPrompt: null,
-                    isTranslated: false
+                    isKorean: false
                 };
                 this.initUI();
             }
@@ -472,7 +448,7 @@
                                     <div class="flex items-center justify-between bg-slate-900 hover:bg-slate-850 p-2.5 rounded-lg border border-slate-800 transition group cursor-pointer" onclick="app.selectMovement('${item.id}', '${item.name}', '${item.koName}', '${item.enPrompt}')">
                                         <div class="flex items-center gap-2">
                                             <input type="radio" name="movementRadio" id="mov_${item.id}" class="text-emerald-600 focus:ring-emerald-500 bg-slate-950 border-slate-700 pointer-events-none">
-                                            <span class="text-xs text-slate-200 font-medium">${this.state.isTranslated ? item.koName : item.name}</span>
+                                            <span class="text-xs text-slate-200 font-medium">${this.state.isKorean ? item.koName : item.name}</span>
                                         </div>
                                         <button type="button" onclick="event.stopPropagation(); app.showInfo('${item.name}', '${item.desc}', '${item.ex}')" class="text-slate-500 hover:text-emerald-400 p-1 transition">
                                             <i class="fa-solid fa-circle-question"></i>
@@ -488,7 +464,7 @@
                 if (speedContainer) {
                     speedContainer.innerHTML = speedOptions.map(spd => `
                         <button type="button" onclick="app.selectSpeed('${spd.id}')" id="spd_${spd.id}" class="speed-btn p-2.5 rounded-xl border border-slate-800 bg-slate-950/40 hover:bg-slate-850 text-left text-xs font-medium text-slate-300 transition flex flex-col justify-between">
-                            <span class="text-white font-semibold">${this.state.isTranslated ? spd.koName : spd.name}</span>
+                            <span class="text-white font-semibold">${this.state.isKorean ? spd.koName : spd.name}</span>
                             <span class="text-[10px] text-slate-500 mt-1">${spd.id}</span>
                         </button>
                     `).join('');
@@ -501,7 +477,7 @@
                         <div class="flex items-center justify-between bg-slate-950/40 hover:bg-slate-850 p-2.5 rounded-xl border border-slate-800 transition cursor-pointer" onclick="app.selectFraming('${frm.id}', '${frm.name}', '${frm.koName}', '${frm.enPrompt}')">
                             <div class="flex items-center gap-2">
                                 <input type="radio" name="framingRadio" id="frm_${frm.id}" class="text-emerald-600 focus:ring-emerald-500 bg-slate-950 border-slate-700 pointer-events-none">
-                                <span class="text-xs text-slate-200 font-medium">${this.state.isTranslated ? frm.koName : frm.name}</span>
+                                <span class="text-xs text-slate-200 font-medium">${this.state.isKorean ? frm.koName : frm.name}</span>
                             </div>
                             <button type="button" onclick="event.stopPropagation(); app.showInfo('${frm.name}', '${frm.desc}', '${frm.ex}')" class="text-slate-500 hover:text-emerald-400 p-1 transition">
                                 <i class="fa-solid fa-circle-question"></i>
@@ -516,7 +492,7 @@
                         <div class="flex items-center justify-between bg-slate-950/40 hover:bg-slate-850 p-2.5 rounded-xl border border-slate-800 transition cursor-pointer" onclick="app.selectShotType('${st.id}', '${st.name}', '${st.koName}', '${st.enPrompt}')">
                             <div class="flex items-center gap-2">
                                 <input type="radio" name="shotTypeRadio" id="st_${st.id}" class="text-emerald-600 focus:ring-emerald-500 bg-slate-950 border-slate-700 pointer-events-none">
-                                <span class="text-xs text-slate-200 font-medium">${this.state.isTranslated ? st.koName : st.name}</span>
+                                <span class="text-xs text-slate-200 font-medium">${this.state.isKorean ? st.koName : st.name}</span>
                             </div>
                             <button type="button" onclick="event.stopPropagation(); app.showInfo('${st.name}', '${st.desc}', '${st.ex}')" class="text-slate-500 hover:text-emerald-400 p-1 transition">
                                 <i class="fa-solid fa-circle-question"></i>
@@ -650,62 +626,9 @@
                         throw new Error("Invalid response");
                     }
                 } catch (err) {
-                    // Fallback to detailed timestamp-based unique mock style if offline
                     row.text = `Custom analyzed style aesthetic #${id}, unique color palette, professional grade lighting`;
                     const textInput = document.getElementById(`styleTextInput_${id}`);
                     if (textInput) textInput.value = row.text;
-                } finally {
-                    btnElem.innerHTML = originalText;
-                    btnElem.disabled = false;
-                    this.update();
-                }
-            }
-
-            async analyzeImageAI(type) {
-                const base64Img = this.state.envImageBase64;
-                if (!base64Img) {
-                    this.showInfo("알림", "먼저 배경 참고 이미지를 업로드해주세요.", "분석할 참고 이미지가 필요합니다.");
-                    return;
-                }
-
-                const btnElem = event.target;
-                const originalText = btnElem.innerHTML;
-                btnElem.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> 분석 중...`;
-                btnElem.disabled = true;
-
-                try {
-                    const apiKey = "";
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-                    
-                    const base64DataOnly = base64Img.split(',')[1];
-                    const mimeType = base64Img.substring(base64Img.indexOf(':') + 1, base64Img.indexOf(';'));
-
-                    const payload = {
-                        contents: [{
-                            role: "user",
-                            parts: [
-                                { text: "Analyze this environment image in rich detail. Describe architecture, terrain, lighting, atmosphere, and background elements in specific English prompt keywords without generic fillers." },
-                                { inlineData: { mimeType: mimeType, data: base64DataOnly } }
-                            ]
-                        }]
-                    };
-
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    const result = await response.json();
-                    const candidate = result.candidates?.[0];
-                    if (candidate && candidate.content?.parts?.[0]?.text) {
-                        const generatedText = candidate.content.parts[0].text.trim().replace(/^["']|["']$/g, '');
-                        document.getElementById('inputEnvironment').value = generatedText;
-                        this.state.environment = generatedText;
-                    }
-                } catch (err) {
-                    document.getElementById('inputEnvironment').value = "Detailed atmospheric background setting, custom lighting environment";
-                    this.state.environment = document.getElementById('inputEnvironment').value;
                 } finally {
                     btnElem.innerHTML = originalText;
                     btnElem.disabled = false;
@@ -753,9 +676,11 @@
                     if (candidate && candidate.content?.parts?.[0]?.text) {
                         const generatedText = candidate.content.parts[0].text.trim().replace(/^["']|["']$/g, '');
                         document.getElementById('inputEnvironment').value = generatedText;
+                        this.state.environment = generatedText;
                     }
                 } catch (err) {
                     document.getElementById('inputEnvironment').value = "Unique atmospheric background setting, custom lighting grade";
+                    this.state.environment = document.getElementById('inputEnvironment').value;
                 } finally {
                     btnElem.innerHTML = originalText;
                     btnElem.disabled = false;
@@ -796,7 +721,7 @@
                 const radio = document.getElementById(`mov_${id}`);
                 if (radio) radio.checked = true;
                 const nameElem = document.getElementById('selectedMovementName');
-                if (nameElem) nameElem.innerText = this.state.isTranslated ? koName : name;
+                if (nameElem) nameElem.innerText = this.state.isKorean ? koName : name;
                 this.update();
             }
 
@@ -825,7 +750,7 @@
                 const spdObj = speedOptions.find(s => s.id === this.state.speed);
                 const nameElem = document.getElementById('selectedSpeedName');
                 if (nameElem && spdObj) {
-                    nameElem.innerText = this.state.isTranslated ? spdObj.koName : spdObj.name;
+                    nameElem.innerText = this.state.isKorean ? spdObj.koName : spdObj.name;
                 }
             }
 
@@ -845,7 +770,7 @@
                 const radio = document.getElementById(`frm_${id}`);
                 if (radio) radio.checked = true;
                 const nameElem = document.getElementById('selectedFramingName');
-                if (nameElem) nameElem.innerText = this.state.isTranslated ? koName : name;
+                if (nameElem) nameElem.innerText = this.state.isKorean ? koName : name;
                 this.update();
             }
 
@@ -948,29 +873,29 @@
                 let styleCombined = this.state.visualStyleRows.map(r => r.text).filter(t => t.trim() !== "").join(", ");
 
                 let parts = [];
-                if (this.state.characterLock) parts.push(`[IMPORTANT] ${this.state.characterLock}`);
+                if (this.state.characterLock) parts.push(this.state.isKorean ? `[중요] 캐릭터 고정: ${this.state.characterLock}` : `[IMPORTANT] ${this.state.characterLock}`);
                 if (this.state.subject) parts.push(this.state.subject);
-                if (this.state.locking) parts.push(this.state.isTranslated ? `잠금: ${this.state.locking}` : `Locking: ${this.state.locking}`);
+                if (this.state.locking) parts.push(this.state.isKorean ? `잠금: ${this.state.locking}` : `Locking: ${this.state.locking}`);
                 if (this.state.environment) parts.push(this.state.environment);
                 if (styleCombined) parts.push(styleCombined);
                 
                 if (this.state.movement) {
-                    parts.push(this.state.isTranslated ? this.state.movement.koName : this.state.movement.enPrompt);
+                    parts.push(this.state.isKorean ? this.state.movement.koName : this.state.movement.enPrompt);
                 }
                 
                 const spdObj = speedOptions.find(s => s.id === this.state.speed);
                 if (spdObj && this.state.speed !== 'normal') {
-                    parts.push(this.state.isTranslated ? spdObj.koName : spdObj.enPrompt);
+                    parts.push(this.state.isKorean ? spdObj.koName : spdObj.enPrompt);
                 }
                 
                 if (this.state.framing) {
-                    parts.push(this.state.isTranslated ? this.state.framing.koName : this.state.framing.enPrompt);
+                    parts.push(this.state.isKorean ? this.state.framing.koName : this.state.framing.enPrompt);
                 }
                 if (this.state.shotType) {
-                    parts.push(this.state.isTranslated ? this.state.shotType.koName : this.state.shotType.enPrompt);
+                    parts.push(this.state.isKorean ? this.state.shotType.koName : this.state.shotType.enPrompt);
                 }
-                if (this.state.duration) parts.push(this.state.isTranslated ? `길이: ${this.state.duration}` : `Duration: ${this.state.duration}`);
-                if (this.state.audio) parts.push(this.state.isTranslated ? `오디오: ${this.state.audio}` : `Audio: ${this.state.audio}`);
+                if (this.state.duration) parts.push(this.state.isKorean ? `컷 길이: ${this.state.duration}` : `Duration: ${this.state.duration}`);
+                if (this.state.audio) parts.push(this.state.isKorean ? `오디오: ${this.state.audio}` : `Audio: ${this.state.audio}`);
                 if (this.state.aspect) parts.push(this.state.aspect);
 
                 return parts.join(", ");
@@ -998,11 +923,49 @@
             }
 
             async translateToggle() {
-                this.state.isTranslated = !this.state.isTranslated;
+                this.state.isKorean = !this.state.isKorean;
                 const btnText = document.getElementById('langToggleText');
-                if (btnText) btnText.innerText = this.state.isTranslated ? "영 / 한" : "한 / 영";
+                if (btnText) btnText.innerText = this.state.isKorean ? "한 / 영" : "영 / 한";
 
-                // Immediately re-render movement, framing, and speed labels instantly without losing state
+                const subjElem = document.getElementById('inputSubject');
+                const lockElem = document.getElementById('inputLocking');
+                const envElem = document.getElementById('inputEnvironment');
+
+                if ((subjElem?.value || lockElem?.value || envElem?.value)) {
+                    try {
+                        const apiKey = "";
+                        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+                        const targetLang = this.state.isKorean ? "Korean" : "English";
+                        
+                        const textToTranslate = `Subject: ${subjElem.value}\nLocking: ${lockElem.value}\nEnvironment: ${envElem.value}`;
+                        const payload = {
+                            contents: [{
+                                role: "user",
+                                parts: [{ text: `Translate the following video prompt text into natural cinematic ${targetLang}. Return ONLY the translated text in key-value format or direct sentence matching the input structure:\n${textToTranslate}` }]
+                            }]
+                        };
+
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        const result = await response.json();
+                        const translated = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                        if (translated) {
+                            // Simple parse back if formatted
+                            const lines = translated.split('\n');
+                            for (let line of lines) {
+                                if (line.startsWith('Subject:') && subjElem) subjElem.value = line.replace('Subject:', '').trim();
+                                if (line.startsWith('Locking:') && lockElem) lockElem.value = line.replace('Locking:', '').trim();
+                                if (line.startsWith('Environment:') && envElem) envElem.value = line.replace('Environment:', '').trim();
+                            }
+                        }
+                    } catch (e) {
+                        // Offline or fallback translation toggle
+                    }
+                }
+
                 this.initUI();
                 this.state.userCustomPrompt = null;
                 this.update();
@@ -1024,7 +987,7 @@
                 this.state.shotType = null;
                 this.state.speed = "normal";
                 this.state.userCustomPrompt = null;
-                this.state.isTranslated = false;
+                this.state.isKorean = false;
 
                 const btnText = document.getElementById('langToggleText');
                 if (btnText) btnText.innerText = "한 / 영";
