@@ -98,35 +98,22 @@
                 </div>
             </div>
 
-            <!-- Section 2: Scene + Environment (AI Enabled) -->
+            <!-- Section 2: Scene + Environment -->
             <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 shadow-xl backdrop-blur-sm">
                 <div class="flex items-center justify-between mb-3">
                     <label class="text-sm font-bold text-emerald-400 flex items-center gap-2">
-                        <i class="fa-solid fa-mountain-sun text-emerald-500"></i> 2. [Scene + Environment] (AI 분석 가능)
+                        <i class="fa-solid fa-mountain-sun text-emerald-500"></i> 2. [Scene + Environment]
                     </label>
                     <button onclick="app.clearEnvironment()" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded transition">초기화</button>
                 </div>
                 <div class="space-y-3">
-                    <div class="flex gap-2 items-center">
-                        <input type="file" id="envImageInput" accept="image/*" class="hidden" onchange="app.handleImageUpload(event, 'env')">
-                        <button onclick="document.getElementById('envImageInput').click()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs py-2 px-3 rounded-xl border border-slate-700 transition flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-image text-emerald-400"></i> <span id="envImageLabel">배경/환경 참고 이미지 업로드</span>
-                        </button>
-                        <button onclick="app.analyzeImageAI('env')" class="bg-emerald-600/80 hover:bg-emerald-600 text-white text-xs py-2 px-4 rounded-xl transition flex items-center gap-1.5 font-medium shadow-md shadow-emerald-600/20">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i> AI 배경 분석
-                        </button>
-                    </div>
-                    <div id="envImagePreviewContainer" class="hidden relative rounded-xl overflow-hidden border border-slate-800 h-24 bg-slate-950">
-                        <img id="envImagePreview" class="w-full h-full object-cover">
-                        <button onclick="app.removeImage('env')" class="absolute top-2 right-2 bg-slate-900/80 hover:bg-rose-600 text-white p-1.5 rounded-lg text-xs transition"><i class="fa-solid fa-xmark"></i></button>
-                    </div>
                     <div>
-                        <textarea id="inputEnvironment" rows="2" oninput="app.onUserInputChange()" placeholder="배경 프롬프트를 직접 입력하거나 AI 배경 분석을 이용하세요..." class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 transition"></textarea>
+                        <textarea id="inputEnvironment" rows="2" oninput="app.onUserInputChange()" placeholder="배경 및 환경 프롬프트를 직접 입력하세요 (예: Neon-drenched futuristic Tokyo street, heavy rain, volumetric lighting)..." class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 transition"></textarea>
                     </div>
                 </div>
             </div>
 
-            <!-- Section 3: Visual Style (AI Enabled with Multiple Dynamic Inputs) -->
+            <!-- Section 3: Visual Style & Multiple Characters -->
             <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 shadow-xl backdrop-blur-sm space-y-4">
                 <div class="flex items-center justify-between mb-3">
                     <label class="text-sm font-bold text-emerald-400 flex items-center gap-2">
@@ -285,8 +272,8 @@
                     <div class="font-semibold text-slate-300 flex items-center gap-1.5">
                         <i class="fa-solid fa-circle-info text-emerald-400"></i> Google Veo & Google Omni 가이드
                     </div>
-                    <p>• <b>실시간 한영 변환</b>: 상단 '한/영' 버튼을 누르면 사용자가 작성한 문장과 옵션이 실시간으로 번역되어 적용됩니다.</p>
-                    <p>• <b>Google Omni 연동</b>: 멀티모달 오디오와 비디오를 동시에 생성하는 옴니 표준에 맞추어 컷 제어가 가능합니다.</p>
+                    <p>• <b>실시간 한영 변환</b>: '한/영' 버튼을 누르면 즉시 국문/영문 표준 키워드로 전환됩니다.</p>
+                    <p>• <b>Google Omni 연동</b>: 멀티모달 오디오와 비디오를 동시에 생성하는 옴니 표준을 지원합니다.</p>
                 </div>
 
             </div>
@@ -332,46 +319,46 @@
             {
                 category: "접근",
                 items: [
-                    { id: "dolly_in", name: "DOLLY IN (달리 인)", enPrompt: "dolly in", koName: "달리 인", desc: "카메라가 인물을 향해 곧게 밀고 들어갑니다.", ex: "깨닫는 순간, 각성하는 순간에 사용, 공간이 열리는 느낌" },
-                    { id: "slow_zoom_in", name: "SLOW ZOOM IN (슬로 줌 인)", enPrompt: "slow zoom in", koName: "슬로 줌 인", desc: "카메라는 세워두고 렌즈만 당깁니다.", ex: "공간이 눌리며 압박감, 조용한 긴장에 사용" },
-                    { id: "dolly_zoom", name: "DOLLY ZOOM (돌리 줌)", enPrompt: "dolly zoom", koName: "돌리 줌", desc: "뒤로 빠지면서 동시에 줌인합니다.", ex: "인물은 그대로, 배경만 뒤틀림, 발밑이 꺼지는 순간, 충격, 히치콕 샷" }
+                    { id: "dolly_in", name: "DOLLY IN (달리 인)", enPrompt: "dolly in", koName: "달리 인 (카메라가 인물을 향해 곧게 밀고 들어감)", desc: "카메라가 인물을 향해 곧게 밀고 들어갑니다.", ex: "깨닫는 순간, 각성하는 순간에 사용, 공간이 열리는 느낌" },
+                    { id: "slow_zoom_in", name: "SLOW ZOOM IN (슬로 줌 인)", enPrompt: "slow zoom in", koName: "슬로 줌 인 (카메라는 세워두고 렌즈만 당김)", desc: "카메라는 세워두고 렌즈만 당깁니다.", ex: "공간이 눌리며 압박감, 조용한 긴장에 사용" },
+                    { id: "dolly_zoom", name: "DOLLY ZOOM (돌리 줌)", enPrompt: "dolly zoom", koName: "돌리 줌 (뒤로 빠지면서 동시에 줌인)", desc: "뒤로 빠지면서 동시에 줌인합니다.", ex: "인물은 그대로, 배경만 뒤틀림, 발밑이 꺼지는 순간, 충격, 히치콕 샷" }
                 ]
             },
             {
                 category: "회전ㆍ이동",
                 items: [
-                    { id: "arc", name: "ARC (아크)", enPrompt: "arc camera movement", koName: "아크", desc: "인물 주위를 곡선으로 한 바퀴 돕니다.", ex: "첫 등장, 공간을 한 번에 설명할 때 사용" },
-                    { id: "side_tracking", name: "SIDE TRACKING (사이드 트래킹)", enPrompt: "side tracking shot", koName: "사이드 트래킹", desc: "인물 옆에서 나란히 평행으로 달립니다.", ex: "인물 옆에서 나란히 평행으로 달립니다., 이동의 리듬" },
-                    { id: "follow_shot", name: "FOLLOW SHOT (팔로우 샷)", enPrompt: "follow shot", koName: "팔로우 샷", desc: "인물 뒤를 어깨 높이로 따라 갑니다.", ex: "이동, 추격, 몰입도가 가장 높은 샷" },
-                    { id: "reverse_tracking", name: "REVERSE TRACKING (리버스 트래킹)", enPrompt: "reverse tracking shot", koName: "리버스 트래킹", desc: "인물 앞에서 뒤로 물러나며 찍습니다.", ex: "걸으면서 대사 하는 씬은 무조건 이것 사용" },
-                    { id: "whip_pan", name: "WHIP PAN (휩 팬)", enPrompt: "whip pan", koName: "휩 팬", desc: "카메라를 빠르게 휘둘러 잔상을 남깁니다.", ex: "컷을 전환하거나 타격감을 줄 때" }
+                    { id: "arc", name: "ARC (아크)", enPrompt: "arc camera movement", koName: "아크 (인물 주위를 곡선으로 한 바퀴 돎)", desc: "인물 주위를 곡선으로 한 바퀴 돕니다.", ex: "첫 등장, 공간을 한 번에 설명할 때 사용" },
+                    { id: "side_tracking", name: "SIDE TRACKING (사이드 트래킹)", enPrompt: "side tracking shot", koName: "사이드 트래킹 (인물 옆에서 나란히 평행 이동)", desc: "인물 옆에서 나란히 평행으로 달립니다.", ex: "이동의 리듬감 표현" },
+                    { id: "follow_shot", name: "FOLLOW SHOT (팔로우 샷)", enPrompt: "follow shot", koName: "팔로우 샷 (인물 뒤를 따라감)", desc: "인물 뒤를 어깨 높이로 따라 갑니다.", ex: "이동, 추격, 몰입도가 가장 높은 샷" },
+                    { id: "reverse_tracking", name: "REVERSE TRACKING (리버스 트래킹)", enPrompt: "reverse tracking shot", koName: "리버스 트래킹 (인물 앞에서 뒤로 물러남)", desc: "인물 앞에서 뒤로 물러나며 찍습니다.", ex: "걸으면서 대사 하는 씬에 최적" },
+                    { id: "whip_pan", name: "WHIP PAN (휩 팬)", enPrompt: "whip pan", koName: "휩 팬 (빠르게 휘둘러 잔상 생성)", desc: "카메라를 빠르게 휘둘러 잔상을 남깁니다.", ex: "컷을 전환하거나 타격감을 줄 때" }
                 ]
             },
             {
                 category: "높이",
                 items: [
-                    { id: "crane_up", name: "CRANE UP (크레인 업)", enPrompt: "crane up", koName: "크레인 업", desc: "렌즈는 수평, 몸만 수직으로 솟구칩니다.", ex: "씬을 닫을 때, 엔딩에서 씁니다. 인물이 점점 작아짐" },
-                    { id: "drone_pull_back", name: "DRONE PULL BACK (드론 풀백)", enPrompt: "drone pull back", koName: "드론 풀백", desc: "항공 촬영에서 피사체에 바짝 붙은 상태에서 드론을 뒤로 빼면서 위로 상승", ex: "웅장한 스케일과 공간감 표현" },
-                    { id: "low_angle", name: "LOW ANGLE (로우 앵글)", enPrompt: "low angle shot", koName: "로우 앵글", desc: "카메라를 지면 가까이 두고 올려다봄", ex: "위압감, 영웅 프레이밍" },
-                    { id: "high_angle", name: "HIGH ANGLE (하이 앵글)", enPrompt: "high angle shot", koName: "하이 앵글", desc: "카메라를 반대로 위에서 내려다봄", ex: "무력함, 고립, 감시당하는 느낌." },
-                    { id: "overhead", name: "OVERHEAD (오버헤드)", enPrompt: "overhead shot", koName: "오버헤드", desc: "정확히 수직 90도로 내리 꽂습니다.", ex: "상황을 한 컷에 요약할 때 사용" }
+                    { id: "crane_up", name: "CRANE UP (크레인 업)", enPrompt: "crane up", koName: "크레인 업 (수직으로 솟구침)", desc: "렌즈는 수평, 몸만 수직으로 솟구칩니다.", ex: "씬을 닫을 때, 엔딩에서 씁니다." },
+                    { id: "drone_pull_back", name: "DRONE PULL BACK (드론 풀백)", enPrompt: "drone pull back", koName: "드론 풀백 (드론을 뒤로 빼며 상승)", desc: "항공 촬영에서 피사체에 바짝 붙은 상태에서 드론을 뒤로 빼면서 위로 상승", ex: "웅장한 스케일과 공간감 표현" },
+                    { id: "low_angle", name: "LOW ANGLE (로우 앵글)", enPrompt: "low angle shot", koName: "로우 앵글 (지면에서 올려다봄)", desc: "카메라를 지면 가까이 두고 올려다봄", ex: "위압감, 영웅 프레이밍" },
+                    { id: "high_angle", name: "HIGH ANGLE (하이 앵글)", enPrompt: "high angle shot", koName: "하이 앵글 (위에서 내려다봄)", desc: "카메라를 반대로 위에서 내려다봄", ex: "무력함, 고립, 감시당하는 느낌" },
+                    { id: "overhead", name: "OVERHEAD (오버헤드)", enPrompt: "overhead shot", koName: "오버헤드 (수직 90도 하향 샷)", desc: "정확히 수직 90도로 내리 꽂습니다.", ex: "상황을 한 컷에 요약할 때 사용" }
                 ]
             },
             {
                 category: "시점",
                 items: [
-                    { id: "handheld", name: "HANDHELD (핸드헬드)", enPrompt: "handheld camera", koName: "핸드헬드", desc: "사람이 손으로 든 미세한 흔들림입니다.", ex: "현장감, 불안, 리얼리티에 사용" },
-                    { id: "snorricam", name: "SNORRICAM (스노리캠)", enPrompt: "snorricam shot", koName: "스노리캠", desc: "카메라를 인물 몸에 붙여버립니다.", ex: "얼굴은 고정, 배경만 흔들림." },
-                    { id: "first_person", name: "FIRST PERSON POV (1인칭 시점)", enPrompt: "first person POV", koName: "1인칭 시점", desc: "인물의 눈높이에서 그대로 전진합니다.", ex: "관객을 인물 안에." },
-                    { id: "rear_shot", name: "REAR SHOT (리어 샷)", enPrompt: "rear shot", koName: "리어 샷", desc: "인물 뒤에 고정하고 아예 안 움직입니다.", ex: "표정을 감출 때, 뒷모습만 화면에 꽉 참" }
+                    { id: "handheld", name: "HANDHELD (핸드헬드)", enPrompt: "handheld camera", koName: "핸드헬드 (미세한 손떨림)", desc: "사람이 손으로 든 미세한 흔들림입니다.", ex: "현장감, 불안, 리얼리티에 사용" },
+                    { id: "snorricam", name: "SNORRICAM (스노리캠)", enPrompt: "snorricam shot", koName: "스노리캠 (인물 몸에 고정)", desc: "카메라를 인물 몸에 붙여버립니다.", ex: "얼굴은 고정, 배경만 흔들림" },
+                    { id: "first_person", name: "FIRST PERSON POV (1인칭 시점)", enPrompt: "first person POV", koName: "1인칭 시점 (눈높이 전진)", desc: "인물의 눈높이에서 그대로 전진합니다.", ex: "관객을 인물 안에 몰입시킴" },
+                    { id: "rear_shot", name: "REAR SHOT (리어 샷)", enPrompt: "rear shot", koName: "리어 샷 (인물 뒷모습 고정)", desc: "인물 뒤에 고정하고 아예 안 움직입니다.", ex: "표정을 감출 때 사용" }
                 ]
             },
             {
-                category: "외곡ㆍ초점",
+                category: "왜곡ㆍ초점",
                 items: [
-                    { id: "dutch_angle", name: "DUTCH ANGLE (더치 앵글)", enPrompt: "dutch angle", koName: "더치 앵글", desc: "수평선을 20도쯤 기울입니다.", ex: "불안, 왜곡" },
-                    { id: "rack_focus", name: "RACK FOCUS (랙 포커스)", enPrompt: "rack focus", koName: "랙 포커스", desc: "카메라는 고정, 초점만 앞뒤로 넘깁니다.", ex: "시선을 강제로 옮길 때" },
-                    { id: "push_past", name: "PUSH PAST (푸시 패스트)", enPrompt: "push past shot", koName: "푸시 패스트", desc: "문이나 창을 통과해 다른 공간으로 넘어갑니다.", ex: "전환을 카메라 공간으로 수행" }
+                    { id: "dutch_angle", name: "DUTCH ANGLE (더치 앵글)", enPrompt: "dutch angle", koName: "더치 앵글 (수평선 기울임)", desc: "수평선을 20도쯤 기울입니다.", ex: "불안, 왜곡된 심리 표현" },
+                    { id: "rack_focus", name: "RACK FOCUS (랙 포커스)", enPrompt: "rack focus", koName: "랙 포커스 (초점 이동)", desc: "카메라는 고정, 초점만 앞뒤로 넘깁니다.", ex: "시선을 강제로 옮길 때" },
+                    { id: "push_past", name: "PUSH PAST (푸시 패스트)", enPrompt: "push past shot", koName: "푸시 패스트 (공간 통과)", desc: "문이나 창을 통과해 다른 공간으로 넘어갑니다.", ex: "색다른 공간 전환 연출" }
                 ]
             }
         ];
@@ -384,25 +371,25 @@
         ];
 
         const framingOptions = [
-            { id: "extreme_long", name: "EXTREME LONG SHOT (익스트림 롱샷)", enPrompt: "extreme long shot", koName: "익스트림 롱샷", desc: "인물이 점처럼 작습니다.", ex: "공간이 주인공일 때" },
-            { id: "long_shot", name: "LONG SHOT (롱샷)", enPrompt: "long shot", koName: "롱샷", desc: "전신 + 위아래 넉넉한 여백", ex: "설정샷" },
-            { id: "full_shot", name: "FULL SHOT (풀샷)", enPrompt: "full shot", koName: "풀샷", desc: "머리끝부터 발끝까지 딱 맞게", ex: "의상과 동작 전체" },
-            { id: "medium_long", name: "MEDIUM LONG SHOT (미디엄 롱샷)", enPrompt: "medium long shot", koName: "미디엄 롱샷", desc: "무릎 아래에서 자릅니다.", ex: "두 사람 대화" },
-            { id: "medium_shot", name: "MEDIUM SHOT (미디엄샷)", enPrompt: "medium shot", koName: "미디엄샷", desc: "허리에서 자릅니다.", ex: "대화 장면의 기본값" },
-            { id: "medium_close", name: "MEDIUM CLOSE-UP (미디엄 클로즈업)", enPrompt: "medium close-up", koName: "미디엄 클로즈업", desc: "가슴 중간에서 자릅니다.", ex: "뉴스와 인터뷰 표준" },
-            { id: "close_up", name: "CLOSE-UP (클로즈업)", enPrompt: "close-up", koName: "클로즈업", desc: "머리와 어깨만 남습니다.", ex: "감정 전달" },
-            { id: "big_close_up", name: "BIG CLOSE-UP (빅 클로즈업)", enPrompt: "big close-up", koName: "빅 클로즈업", desc: "이마부터 턱까지", ex: "감정 최고조" },
-            { id: "extreme_close", name: "EXTREME CLOSE-UP (익스트림 클로즈업)", enPrompt: "extreme close-up", koName: "익스트림 클로즈업", desc: "눈만 화면에 꽉 찹니다.", ex: "디테일과 긴장" }
+            { id: "extreme_long", name: "EXTREME LONG SHOT (익스트림 롱샷)", enPrompt: "extreme long shot", koName: "익스트림 롱샷 (인물이 점처럼 작음)", desc: "인물이 점처럼 작습니다.", ex: "광활한 공간이 주인공일 때" },
+            { id: "long_shot", name: "LONG SHOT (롱샷)", enPrompt: "long shot", koName: "롱샷 (전신 및 넉넉한 여백)", desc: "전신 + 위아래 넉넉한 여백", ex: "공간 설정샷" },
+            { id: "full_shot", name: "FULL SHOT (풀샷)", enPrompt: "full shot", koName: "풀샷 (머리부터 발끝까지)", desc: "머리끝부터 발끝까지 딱 맞게", ex: "의상과 전신 동작 표현" },
+            { id: "medium_long", name: "MEDIUM LONG SHOT (미디엄 롱샷)", enPrompt: "medium long shot", koName: "미디엄 롱샷 (무릎 아래 컷)", desc: "무릎 아래에서 자릅니다.", ex: "두 사람 대화" },
+            { id: "medium_shot", name: "MEDIUM SHOT (미디엄샷)", enPrompt: "medium shot", koName: "미디엄샷 (허리 컷)", desc: "허리에서 자릅니다.", ex: "대화 장면의 기본 표준" },
+            { id: "medium_close", name: "MEDIUM CLOSE-UP (미디엄 클로즈업)", enPrompt: "medium close-up", koName: "미디엄 클로즈업 (가슴 컷)", desc: "가슴 중간에서 자릅니다.", ex: "인터뷰 표준" },
+            { id: "close_up", name: "CLOSE-UP (클로즈업)", enPrompt: "close-up", koName: "클로즈업 (머리와 어깨)", desc: "머리와 어깨만 남습니다.", ex: "감정 전달 극대화" },
+            { id: "big_close_up", name: "BIG CLOSE-UP (빅 클로즈업)", enPrompt: "big close-up", koName: "빅 클로즈업 (이마부터 턱)", desc: "이마부터 턱까지", ex: "감정 최고조" },
+            { id: "extreme_close", name: "EXTREME CLOSE-UP (익스트림 클로즈업)", enPrompt: "extreme close-up", koName: "익스트림 클로즈업 (눈 컷)", desc: "눈만 화면에 꽉 찹니다.", ex: "극한의 디테일과 긴장감" }
         ];
 
         const shotTypesOptions = [
-            { id: "single", name: "SINGLE (싱글)", enPrompt: "single shot", koName: "싱글", desc: "인물 1인 중심의 샷", ex: "심리 묘사" },
-            { id: "two_shot", name: "TWO SHOT (투샷)", enPrompt: "two shot", koName: "투샷", desc: "인물 2명", ex: "관계성과 대화" },
-            { id: "three_shot", name: "THREE SHOT (쓰리샷)", enPrompt: "three shot", koName: "쓰리샷", desc: "인물 3명", ex: "그룹 구도" },
-            { id: "over_shoulder", name: "OVER THE SHOULDER (오버더 숄더)", enPrompt: "over the shoulder shot", koName: "오버더 숄더", desc: "상대방 어깨 너머", ex: "대화 시 몰입감" },
-            { id: "insert", name: "INSERT SHOT (인서트)", enPrompt: "insert shot", koName: "인서트", desc: "특정 사물 디테일", ex: "핵심 소품 강조" },
-            { id: "cut_away", name: "CUT AWAY (컷 어웨이)", enPrompt: "cut away shot", koName: "컷 어웨이", desc: "배경이나 상황 전환", ex: "시간 경과" },
-            { id: "reaction", name: "REACTION SHOT (리액션샷)", enPrompt: "reaction shot", koName: "리액션샷", desc: "표정 반응", ex: "감정적 울림" }
+            { id: "single", name: "SINGLE (싱글)", enPrompt: "single shot", koName: "싱글 (인물 1인)", desc: "인물 1인 중심의 샷", ex: "심리 묘사" },
+            { id: "two_shot", name: "TWO SHOT (투샷)", enPrompt: "two shot", koName: "투샷 (인물 2명)", desc: "인물 2명", ex: "관계성과 대화" },
+            { id: "three_shot", name: "THREE SHOT (쓰리샷)", enPrompt: "three shot", koName: "쓰리샷 (인물 3명)", desc: "인물 3명", ex: "그룹 구도" },
+            { id: "over_shoulder", name: "OVER THE SHOULDER (오버더 숄더)", enPrompt: "over the shoulder shot", koName: "오버더 숄더 (어깨 너머)", desc: "상대방 어깨 너머", ex: "대화 시 몰입감" },
+            { id: "insert", name: "INSERT SHOT (인서트)", enPrompt: "insert shot", koName: "인서트 (소품 디테일)", desc: "특정 사물 디테일", ex: "핵심 소품 강조" },
+            { id: "cut_away", name: "CUT AWAY (컷 어웨이)", enPrompt: "cut away shot", koName: "컷 어웨이 (배경 전환)", desc: "배경이나 상황 전환", ex: "시간 경과" },
+            { id: "reaction", name: "REACTION SHOT (리액션샷)", enPrompt: "reaction shot", koName: "리액션샷 (표정 반응)", desc: "표정 반응", ex: "감정적 울림 전달" }
         ];
 
         const platformGuides = [
@@ -421,7 +408,7 @@
                     locking: "",
                     environment: "",
                     visualStyleRows: [
-                        { id: 1, text: "Cinematic film still, 35mm photograph, moody lighting", imageBase64: null }
+                        { id: 1, text: "Cinematic film still, 35mm photograph, moody lighting" }
                     ],
                     movement: null,
                     speed: "normal",
@@ -430,7 +417,6 @@
                     duration: "5s",
                     audio: "",
                     aspect: "--ar 16:9",
-                    envImageBase64: null,
                     userCustomPrompt: null,
                     isKorean: false
                 };
@@ -530,15 +516,6 @@
                             <span class="text-[11px] font-semibold text-emerald-400">스타일 / 인물 레이어 #${index + 1}</span>
                             ${this.state.visualStyleRows.length > 1 ? `<button onclick="app.removeVisualStyleRow(${row.id})" class="text-slate-500 hover:text-rose-500 text-xs transition"><i class="fa-solid fa-trash-can"></i></button>` : ''}
                         </div>
-                        <div class="flex gap-2 items-center">
-                            <input type="file" id="styleFileInput_${row.id}" accept="image/*" class="hidden" onchange="app.handleVisualStyleImageUpload(event, ${row.id})">
-                            <button onclick="document.getElementById('styleFileInput_${row.id}').click()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs py-2 px-3 rounded-xl border border-slate-700 transition flex items-center gap-1.5 whitespace-nowrap">
-                                <i class="fa-solid fa-image text-emerald-400"></i> <span id="styleFileLabel_${row.id}">${row.imageBase64 ? '이미지 첨부됨' : '이미지 첨부'}</span>
-                            </button>
-                            <button onclick="app.analyzeVisualStyleAI(${row.id})" class="bg-emerald-600/80 hover:bg-emerald-600 text-white text-xs py-2 px-3 rounded-xl transition flex items-center gap-1 font-medium whitespace-nowrap">
-                                <i class="fa-solid fa-wand-magic-sparkles"></i> AI 분석
-                            </button>
-                        </div>
                         <div>
                             <input type="text" id="styleTextInput_${row.id}" value="${row.text}" oninput="app.updateVisualStyleRowText(${row.id}, this.value)" placeholder="예: Character 1: Detailed face, professional lighting..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition">
                         </div>
@@ -548,7 +525,7 @@
 
             addVisualStyleRow() {
                 const newId = Date.now();
-                this.state.visualStyleRows.push({ id: newId, text: "", imageBase64: null });
+                this.state.visualStyleRows.push({ id: newId, text: "" });
                 this.renderVisualStyleRows();
                 this.update();
             }
@@ -562,165 +539,6 @@
             updateVisualStyleRowText(id, val) {
                 const row = this.state.visualStyleRows.find(r => r.id === id);
                 if (row) row.text = val;
-                this.update();
-            }
-
-            handleVisualStyleImageUpload(event, id) {
-                const file = event.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const base64 = e.target.result;
-                    const row = this.state.visualStyleRows.find(r => r.id === id);
-                    if (row) row.imageBase64 = base64;
-                    const labelElem = document.getElementById(`styleFileLabel_${id}`);
-                    if (labelElem) labelElem.innerText = file.name;
-                    this.update();
-                };
-                reader.readAsDataURL(file);
-            }
-
-            async analyzeVisualStyleAI(id) {
-                const row = this.state.visualStyleRows.find(r => r.id === id);
-                if (!row || !row.imageBase64) {
-                    this.showInfo("알림", "먼저 해당 레이어에 이미지를 업로드해주세요.", "참고 이미지가 필요합니다.");
-                    return;
-                }
-
-                const btnElem = event.target;
-                const originalText = btnElem.innerHTML;
-                btnElem.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> AI 분석 중...`;
-                btnElem.disabled = true;
-
-                try {
-                    // GitHub 배포 시 사용할 API Key (필요시 본인 키 입력 가능)
-                    const apiKey = ""; 
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-                    
-                    const base64DataOnly = row.imageBase64.split(',')[1];
-                    const mimeType = row.imageBase64.substring(row.imageBase64.indexOf(':') + 1, row.imageBase64.indexOf(';'));
-
-                    const payload = {
-                        contents: [{
-                            role: "user",
-                            parts: [
-                                { text: "Analyze this specific uploaded image in depth. Extract unique visual style traits, color grading, lighting setup, cinematic composition, and texture. Return ONLY concrete, vivid English prompt keywords describing this specific image style without any introductory or conversational text." },
-                                { inlineData: { mimeType: mimeType || 'image/jpeg', data: base64DataOnly } }
-                            ]
-                        }]
-                    };
-
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`API Error: ${response.status}`);
-                    }
-
-                    const result = await response.json();
-                    const candidate = result.candidates?.[0];
-                    if (candidate && candidate.content?.parts?.[0]?.text) {
-                        const generatedText = candidate.content.parts[0].text.trim().replace(/^["']|["']$/g, '');
-                        row.text = generatedText;
-                        const textInput = document.getElementById(`styleTextInput_${id}`);
-                        if (textInput) textInput.value = generatedText;
-                    } else {
-                        throw new Error("Invalid Gemini response structure");
-                    }
-                } catch (err) {
-                    console.error("Gemini AI Analysis Error:", err);
-                    // 실패 시 이미지 특성 기반 맞춤형 키워드 부여
-                    row.text = `Custom analyzed visual style #${id}, professional cinematic lighting, rich color palette, high fidelity`;
-                    const textInput = document.getElementById(`styleTextInput_${id}`);
-                    if (textInput) textInput.value = row.text;
-                    this.showInfo("AI 분석 안내", "네트워크 환경 또는 API 키 상태로 인해 기본 스타일 분석 결과가 적용되었습니다.", "API 키를 확인해주세요.");
-                } finally {
-                    btnElem.innerHTML = originalText;
-                    btnElem.disabled = false;
-                    this.update();
-                }
-            }
-
-            async analyzeImageAI(type) {
-                const base64Img = this.state.envImageBase64;
-                if (!base64Img) {
-                    this.showInfo("알림", "먼저 배경 참고 이미지를 업로드해주세요.", "분석할 참고 이미지가 필요합니다.");
-                    return;
-                }
-
-                const btnElem = event.target;
-                const originalText = btnElem.innerHTML;
-                btnElem.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> 분석 중...`;
-                btnElem.disabled = true;
-
-                try {
-                    const apiKey = "";
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-                    
-                    const base64DataOnly = base64Img.split(',')[1];
-                    const mimeType = base64Img.substring(base64Img.indexOf(':') + 1, base64Img.indexOf(';'));
-
-                    const payload = {
-                        contents: [{
-                            role: "user",
-                            parts: [
-                                { text: "Analyze this environment background image thoroughly. Describe architecture, terrain, atmosphere, and exact lighting details in English prompt keywords." },
-                                { inlineData: { mimeType: mimeType || 'image/jpeg', data: base64DataOnly } }
-                            ]
-                        }]
-                    };
-
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`API Error: ${response.status}`);
-                    }
-
-                    const result = await response.json();
-                    const candidate = result.candidates?.[0];
-                    if (candidate && candidate.content?.parts?.[0]?.text) {
-                        const generatedText = candidate.content.parts[0].text.trim().replace(/^["']|["']$/g, '');
-                        document.getElementById('inputEnvironment').value = generatedText;
-                        this.state.environment = generatedText;
-                    }
-                } catch (err) {
-                    console.error("Environment AI Analysis Error:", err);
-                    document.getElementById('inputEnvironment').value = "Detailed atmospheric environment, cinematic background depth";
-                    this.state.environment = document.getElementById('inputEnvironment').value;
-                } finally {
-                    btnElem.innerHTML = originalText;
-                    btnElem.disabled = false;
-                    this.update();
-                }
-            }
-
-            handleImageUpload(event, type) {
-                const file = event.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const base64 = e.target.result;
-                    this.state.envImageBase64 = base64;
-                    document.getElementById('envImagePreview').src = base64;
-                    document.getElementById('envImagePreviewContainer').classList.remove('hidden');
-                    document.getElementById('envImageLabel').innerText = file.name;
-                    this.update();
-                };
-                reader.readAsDataURL(file);
-            }
-
-            removeImage(type) {
-                this.state.envImageBase64 = null;
-                document.getElementById('envImagePreviewContainer').classList.add('hidden');
-                document.getElementById('envImageLabel').innerText = "배경/환경 참고 이미지 업로드";
-                document.getElementById('envImageInput').value = "";
                 this.update();
             }
 
@@ -838,7 +656,7 @@
             }
 
             clearVisualStyle() {
-                this.state.visualStyleRows = [{ id: Date.now(), text: "", imageBase64: null }];
+                this.state.visualStyleRows = [{ id: Date.now(), text: "" }];
                 this.renderVisualStyleRows();
                 this.update();
             }
@@ -935,49 +753,10 @@
                 if (charCountElem) charCountElem.innerText = `${finalString.length}자`;
             }
 
-            async translateToggle() {
+            translateToggle() {
                 this.state.isKorean = !this.state.isKorean;
                 const btnText = document.getElementById('langToggleText');
                 if (btnText) btnText.innerText = this.state.isKorean ? "한 / 영" : "영 / 한";
-
-                const subjElem = document.getElementById('inputSubject');
-                const lockElem = document.getElementById('inputLocking');
-                const envElem = document.getElementById('inputEnvironment');
-
-                if ((subjElem?.value || lockElem?.value || envElem?.value)) {
-                    try {
-                        const apiKey = "";
-                        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-                        const targetLang = this.state.isKorean ? "Korean" : "English";
-                        
-                        const textToTranslate = `Subject: ${subjElem.value}\nLocking: ${lockElem.value}\nEnvironment: ${envElem.value}`;
-                        const payload = {
-                            contents: [{
-                                role: "user",
-                                parts: [{ text: `Translate the following video prompt text into natural cinematic ${targetLang}. Return ONLY the translated text in key-value format or direct sentence matching the input structure:\n${textToTranslate}` }]
-                            }]
-                        };
-
-                        const response = await fetch(apiUrl, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload)
-                        });
-                        const result = await response.json();
-                        const translated = result.candidates?.[0]?.content?.parts?.[0]?.text;
-                        if (translated) {
-                            // Simple parse back if formatted
-                            const lines = translated.split('\n');
-                            for (let line of lines) {
-                                if (line.startsWith('Subject:') && subjElem) subjElem.value = line.replace('Subject:', '').trim();
-                                if (line.startsWith('Locking:') && lockElem) lockElem.value = line.replace('Locking:', '').trim();
-                                if (line.startsWith('Environment:') && envElem) envElem.value = line.replace('Environment:', '').trim();
-                            }
-                        }
-                    } catch (e) {
-                        // Offline or fallback translation toggle
-                    }
-                }
 
                 this.initUI();
                 this.state.userCustomPrompt = null;
@@ -993,8 +772,7 @@
                 document.getElementById('inputDuration').value = "5s";
 
                 this.state.characterLock = "Maintain exact same character appearance across all cuts (hairstyle, accessories, outfit)";
-                this.removeImage('env');
-                this.state.visualStyleRows = [{ id: Date.now(), text: "", imageBase64: null }];
+                this.state.visualStyleRows = [{ id: Date.now(), text: "" }];
                 this.state.movement = null;
                 this.state.framing = null;
                 this.state.shotType = null;
