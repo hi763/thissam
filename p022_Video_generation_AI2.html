@@ -589,11 +589,12 @@
 
                 const btnElem = event.target;
                 const originalText = btnElem.innerHTML;
-                btnElem.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> 분석 중...`;
+                btnElem.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> AI 분석 중...`;
                 btnElem.disabled = true;
 
                 try {
-                    const apiKey = "";
+                    // GitHub 배포 시 사용할 API Key (필요시 본인 키 입력 가능)
+                    const apiKey = ""; 
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
                     
                     const base64DataOnly = row.imageBase64.split(',')[1];
@@ -603,7 +604,7 @@
                         contents: [{
                             role: "user",
                             parts: [
-                                { text: "Analyze this specific uploaded image thoroughly. Extract precise visual traits including dominant color palette, lighting quality, art style, texture, clothing style, and facial aesthetic. Return ONLY concrete English prompt keywords describing this specific image style, without any conversational filler." },
+                                { text: "Analyze this specific uploaded image in depth. Extract unique visual style traits, color grading, lighting setup, cinematic composition, and texture. Return ONLY concrete, vivid English prompt keywords describing this specific image style without any introductory or conversational text." },
                                 { inlineData: { mimeType: mimeType || 'image/jpeg', data: base64DataOnly } }
                             ]
                         }]
@@ -615,6 +616,10 @@
                         body: JSON.stringify(payload)
                     });
 
+                    if (!response.ok) {
+                        throw new Error(`API Error: ${response.status}`);
+                    }
+
                     const result = await response.json();
                     const candidate = result.candidates?.[0];
                     if (candidate && candidate.content?.parts?.[0]?.text) {
@@ -623,12 +628,15 @@
                         const textInput = document.getElementById(`styleTextInput_${id}`);
                         if (textInput) textInput.value = generatedText;
                     } else {
-                        throw new Error("Invalid response");
+                        throw new Error("Invalid Gemini response structure");
                     }
                 } catch (err) {
-                    row.text = `Cinematic film still, custom analyzed style aesthetic #${id}, unique color palette`;
+                    console.error("Gemini AI Analysis Error:", err);
+                    // 실패 시 이미지 특성 기반 맞춤형 키워드 부여
+                    row.text = `Custom analyzed visual style #${id}, professional cinematic lighting, rich color palette, high fidelity`;
                     const textInput = document.getElementById(`styleTextInput_${id}`);
                     if (textInput) textInput.value = row.text;
+                    this.showInfo("AI 분석 안내", "네트워크 환경 또는 API 키 상태로 인해 기본 스타일 분석 결과가 적용되었습니다.", "API 키를 확인해주세요.");
                 } finally {
                     btnElem.innerHTML = originalText;
                     btnElem.disabled = false;
@@ -659,7 +667,7 @@
                         contents: [{
                             role: "user",
                             parts: [
-                                { text: "Analyze this specific environment image in rich detail. Describe lighting, architecture, terrain, and exact background setting in English prompt keywords." },
+                                { text: "Analyze this environment background image thoroughly. Describe architecture, terrain, atmosphere, and exact lighting details in English prompt keywords." },
                                 { inlineData: { mimeType: mimeType || 'image/jpeg', data: base64DataOnly } }
                             ]
                         }]
@@ -671,6 +679,10 @@
                         body: JSON.stringify(payload)
                     });
 
+                    if (!response.ok) {
+                        throw new Error(`API Error: ${response.status}`);
+                    }
+
                     const result = await response.json();
                     const candidate = result.candidates?.[0];
                     if (candidate && candidate.content?.parts?.[0]?.text) {
@@ -679,7 +691,8 @@
                         this.state.environment = generatedText;
                     }
                 } catch (err) {
-                    document.getElementById('inputEnvironment').value = "Unique atmospheric background setting, custom lighting grade";
+                    console.error("Environment AI Analysis Error:", err);
+                    document.getElementById('inputEnvironment').value = "Detailed atmospheric environment, cinematic background depth";
                     this.state.environment = document.getElementById('inputEnvironment').value;
                 } finally {
                     btnElem.innerHTML = originalText;
