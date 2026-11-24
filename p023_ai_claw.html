@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta content="width=device-width,initial-scale=1" name="viewport"/>
   <title>
-   AI 마법의 인형 뽑기 V1.3
+   AI 마법의 인형 뽑기 V2.0
   </title>
   <style>
 
@@ -238,12 +238,42 @@ small {
    
 }
 }
+
+/* 짧은 가로 화면: 게임과 카메라를 한 화면에 유지 */
+@media (orientation: landscape) {
+    body { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+    header { flex: none; padding: 5px 12px; flex-wrap: nowrap; }
+    h1 { font-size: clamp(16px, 2.5vw, 28px); }
+    header button { padding: 7px; font-size: 13px; }
+    main { flex: 1; min-height: 0; grid-template-columns: minmax(0, 2fr) minmax(230px, 1fr); gap: 8px; padding: 4px 10px 10px; }
+    .machine { height: 100%; min-height: 0; display: flex; flex-direction: column; padding: 6px; border-width: 5px; }
+    #game { flex: 1; min-height: 0; width: 100%; height: 0; object-fit: contain; margin: 4px 0; }
+    .sign { font-size: 16px; padding: 4px; }
+    #message { min-height: 24px; font-size: 16px; }
+    .controls { flex-wrap: nowrap; gap: 4px; }
+    .controls button { font-size: 18px; padding: 5px 9px; min-width: 36px; }
+    aside { min-height: 0; overflow-y: auto; padding: 8px; }
+    .modes button { font-size: 12px; padding: 6px; }
+    #camera { max-width: 100%; width: auto; margin: auto; }
+    #video { max-height: 24dvh; object-fit: contain; }
+    #overlay { object-fit: contain; }
+    .guide { font-size: 12px; padding: 5px; line-height: 1.35; }
+    #status, #tracking { font-size: 12px; margin: 4px 0; padding: 4px; }
+    aside h2 { font-size: 15px; margin: 5px 0; }
+    #collection { grid-template-columns: repeat(9,1fr); gap: 2px; font-size: 18px; }
+    #collection span { min-height: 24px; }
+    #reset { padding: 5px; font-size: 12px; }
+    aside p:last-child { margin: 4px 0; font-size: 11px; }
+}
+.machine { background: linear-gradient(120deg,#ff78bd,#a98aff,#65dce9); box-shadow: inset 0 0 0 3px #ffeaa0, 0 4px 0 #d68ad9; }
+.sign { background: linear-gradient(90deg,#fff3a0,#fffbe8,#fff3a0); }
+dialog { max-height: 90dvh; overflow: auto; }
 </style>
  </head>
  <body>
   <header>
    <h1>
-    🧸 AI 마법의 인형 뽑기 V1.3
+    🧸 AI 마법의 인형 뽑기 V2.0
    </h1>
    <div>
     <button id="full">
@@ -347,6 +377,17 @@ small {
     <input id="sound" type="checkbox"/>
     효과음
    </label>
+   <label>신체 조작 방식
+    <select id="poseMode">
+      <option value="two">한 손 이동 / 양손 아래 뽑기</option>
+      <option value="one">한 손 이동 / 아래로 내리면 뽑기</option>
+    </select>
+   </label>
+   <label>움직임 범위 (작을수록 민감)
+    <input id="range" type="range" min="15" max="80" value="45"/>
+   </label>
+   <button id="calibrate">현재 손 위치를 중앙으로 보정</button>
+   <p id="calibrationInfo">기본 중앙 위치 사용</p>
    <label>
     인형 테마
     <select id="theme">
@@ -404,6 +445,37 @@ function finish(t) { if (t) {
 }
 else
     $('message').textContent = '한 번 더 해볼까요?'; anim = null; }
+// 직접 그린 입체 봉제 인형: 동물 테마 9종, 다른 테마는 쿠션형 장난감.
+function drawToy(t, px, py, scale) {
+    ctx.save();
+    ctx.translate(px,py);
+    ctx.scale(scale,scale);
+    const i = toys.indexOf(t);
+    const colors = ['#c88b58','#f9d4e8','#e6ae72','#f4a26b','#f5f4ff','#ef914c','#aab9d2','#91d879','#bc8b68'];
+    const color = colors[i] || '#f4b6da';
+    function oval(x,y,rx,ry,c) {
+        const g = ctx.createRadialGradient(x-rx*.35,y-ry*.45,1,x,y,Math.max(rx,ry));
+        g.addColorStop(0,'#fff9f0'); g.addColorStop(.35,c); g.addColorStop(1,c);
+        ctx.fillStyle=g; ctx.strokeStyle='rgba(92,52,82,.18)'; ctx.lineWidth=1.4;
+        ctx.beginPath(); ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2); ctx.fill(); ctx.stroke();
+    }
+    if ($('theme').value === 'animals') {
+        oval(0,17,24,22,color); oval(-18,29,13,9,color); oval(18,29,13,9,color);
+        const earY=i===1?-38:-24, earH=i===1?23:13;
+        oval(-21,earY,12,earH,i===4?'#42435b':color); oval(21,earY,12,earH,i===4?'#42435b':color);
+        oval(0,-8,29,25,color);
+        if(i===4){oval(-12,-9,9,11,'#42435b');oval(12,-9,9,11,'#42435b');}
+        oval(-10,-10,3,4,'#34304b'); oval(10,-10,3,4,'#34304b');
+        oval(0,4,12,8,'#fff0d8'); oval(0,1,4,3,'#704a59');
+        oval(-19,1,5,3,'#f4a0a9'); oval(19,1,5,3,'#f4a0a9');
+        ctx.strokeStyle='#704a59'; ctx.beginPath();ctx.arc(0,4,5,0,Math.PI);ctx.stroke();
+        if(i===0){oval(-6,18,8,5,'#e96389');oval(6,18,8,5,'#e96389');}
+    } else {
+        oval(0,0,38,35,color);
+        ctx.font='53px system-ui'; ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(t.e,0,0);
+    }
+    ctx.restore();
+}
 function draw(now) {
     let dt = Math.min(40, now - (draw.last || now));
     draw.last = now;
@@ -431,10 +503,15 @@ function draw(now) {
             grab();
     }
     ctx.clearRect(0, 0, 800, 470);
-    ctx.fillStyle = '#d9f8ff';
-    ctx.fillRect(0, 0, 800, 470);
+    const glass = ctx.createLinearGradient(0,0,800,470);
+    glass.addColorStop(0,'#e8fdff'); glass.addColorStop(.55,'#fff4fc'); glass.addColorStop(1,'#d5f5ff');
+    ctx.fillStyle = glass; ctx.fillRect(0,0,800,470);
+    for(let j=0;j<19;j++){ctx.fillStyle=j%2?'#ffd86b':'#ff9bd6';ctx.beginPath();ctx.arc(22+j*42,15,5,0,Math.PI*2);ctx.fill();}
+    ctx.fillStyle='#7955b4';ctx.fillRect(695,395,85,60);ctx.fillStyle='#fff1a0';ctx.font='bold 15px system-ui';ctx.textAlign='center';ctx.fillText('출구',737,445);
     ctx.fillStyle = '#e9d8ff';
     ctx.fillRect(20, 215, 760, 240);
+    ctx.fillStyle='#7955b4'; ctx.fillRect(695,395,85,60);
+    ctx.fillStyle='#fff1a0'; ctx.font='bold 15px system-ui'; ctx.textAlign='center'; ctx.fillText('출구',737,445);
     ctx.strokeStyle = '#fff';
     ctx.lineWidth = 3;
     for (let i = 0; i < 8; i++) {
@@ -450,7 +527,7 @@ function draw(now) {
     ctx.font = '76px system-ui'; // 집게 이동 → 하강 → 잡기 → 상승 → 출구 이동
     let ax = x, ay = 110 + (y - 220) * .25, carried = null, closed = false;
     if (anim) {
-        const p = (now - anim.start) / 2600;
+        const p = (now - anim.start) / 3400;
         const t = anim.t;
         const tx = t?.x ?? anim.x, ty = t?.y ?? anim.y;
         const top = 110 + (ty - 220) * .25;
@@ -479,12 +556,17 @@ function draw(now) {
             carried = t;
             $('message').textContent = '인형을 들어 올려요!';
         }
-        else {
-            ax = tx + (735 - tx) * (p - .83) / .17;
+        else if (p < .93) {
+            ax = tx + (735 - tx) * (p - .83) / .10;
             ay = top;
             closed = true;
             carried = t;
             $('message').textContent = '출구로 이동해요!';
+        } else {
+            ax = 735; ay = top; closed = false;
+            $('message').textContent = '인형이 출구로 쏙!';
+            if (t) drawToy(t,735,top+48+(p-.93)/.07*180,0.8);
+            carried = t;
         }
     }
     const target = toys.filter(t => !t.won).sort((a, b) => Math.hypot(a.x - x, a.y - y) - Math.hypot(b.x - x, b.y - y))[0];
@@ -504,7 +586,7 @@ function draw(now) {
         ctx.beginPath();
         ctx.ellipse(t.x, t.y + 35, 37, 10, 0, 0, 7);
         ctx.fill();
-        ctx.fillText(t.e, t.x, t.y);
+        drawToy(t,t.x,t.y,1);
     }
     ctx.strokeStyle = '#8651ad';
     ctx.lineWidth = 2;
@@ -537,8 +619,8 @@ function draw(now) {
     ctx.lineTo(ax + 35, ay + 35);
     ctx.lineTo(ax + (closed ? 7 : 20), ay + 52);
     ctx.stroke();
-    if (carried)
-        ctx.fillText(carried.e, ax, ay + 48);
+    if (carried && closed)
+        drawToy(carried, ax, ay + 48, .8);
     requestAnimationFrame(draw);
 }
 requestAnimationFrame(draw);
@@ -568,9 +650,16 @@ $('full').onclick = () => { if (document.fullscreenElement)
     document.exitFullscreen();
 else
     document.documentElement.requestFullscreen?.().catch(() => { }); };
-function stop() { token++; stream?.getTracks().forEach(t => t.stop()); stream = null; $('video').srcObject = null; $('camera').hidden = true; clearOverlay(); model?.close(); model = null; gesture = false; lastVideo = -1; held.clear(); }
+function stop() { center = null; lastPoint = null; poseReady = false; activeWrist = null; poseSince = 0; token++; stream?.getTracks().forEach(t => t.stop()); stream = null; $('video').srcObject = null; $('camera').hidden = true; clearOverlay(); model?.close(); model = null; gesture = false; lastVideo = -1; held.clear(); }
 // 모드별 학생용 안내
-const guides = { manual: '<strong>터치 / PC 조작</strong>① 방향 버튼을 길게 누르거나 방향키를 눌러요.<br>② 노란색으로 표시된 인형을 확인해요.<br>③ 뽑기 버튼 또는 스페이스바를 눌러요.', hand: '<strong>AI 손 인식</strong>① 밝은 곳에서 카메라에 손 전체를 보여 주세요. 손 위에 초록색 선과 점이 나타나면 인식 성공!<br>② 손바닥을 편안하게 펼쳐 왼쪽·오른쪽·위·아래로 움직여요. 손가락을 완전히 펴지 않아도 이동할 수 있어요.<br>③ 원하는 인형이 노랗게 표시되면 주먹을 잠시 쥐어요. 노란 선으로 바뀌면 뽑기 동작 인식!<br>④ 다시 손을 펼치면 다음 인형을 고를 수 있어요.', pose: '<strong>AI 신체 인식</strong>① 카메라에 양쪽 어깨와 손이 보이게 앉거나 서요.<br>② 오른손을 상하좌우로 움직여요.<br>③ 왼손을 어깨보다 높이 들면 뽑아요.<br>④ 왼손을 내린 뒤 다시 시작해요.' };
+let center = null, lastPoint = null, poseReady = false, activeWrist = null, poseSince = 0;
+$('calibrate').onclick = () => {
+    if (!lastPoint || performance.now()-lastPoint.time > 1000) { $('calibrationInfo').textContent = '손을 카메라에 보여 주세요.'; return; }
+    center = {x:lastPoint.x,y:lastPoint.y};
+    $('calibrationInfo').textContent = '중앙 위치 보정 완료';
+};
+$('poseMode').onchange = () => { poseReady = false; poseSince = 0; };
+const guides = { manual: '<strong>터치 / PC 조작</strong>① 방향 버튼을 길게 누르거나 방향키를 눌러요.<br>② 노란색으로 표시된 인형을 확인해요.<br>③ 뽑기 버튼 또는 스페이스바를 눌러요.', hand: '<strong>AI 손 인식</strong>① 밝은 곳에서 카메라에 손 전체를 보여 주세요. 손 위에 초록색 선과 점이 나타나면 인식 성공!<br>② 손바닥을 편안하게 펼쳐 왼쪽·오른쪽·위·아래로 움직여요. 손가락을 완전히 펴지 않아도 이동할 수 있어요.<br>③ 원하는 인형이 노랗게 표시되면 주먹을 잠시 쥐어요. 노란 선으로 바뀌면 뽑기 동작 인식!<br>④ 다시 손을 펼치면 다음 인형을 고를 수 있어요.', pose: '<strong>AI 신체 인식</strong>① 양쪽 어깨가 보이게 앉아요.<br>② 어느 손이든 하나를 올려 상하좌우로 움직여요.<br>③ 양손을 어깨 아래에 보여 주면 뽑아요.<br>한 손 모드는 선생님 설정에서 선택해요.' };
 $('guide').innerHTML = guides.manual;
 function select(m) { mode = m; $('guide').innerHTML = guides[m]; $('tracking').textContent = m === 'manual' ? '터치 조작 준비 완료' : '카메라 인식 준비 중'; for (const id of ['manual', 'hand', 'pose'])
     $(id).classList.toggle('active', id === m); }
@@ -599,7 +688,7 @@ async function start(m) { stop(); select(m); let id = token; let localModel = nu
         return;
     }
     model = localModel;
-    $('status').textContent = m === 'hand' ? '손을 펼쳐 움직이고 주먹을 쥐면 뽑아요.' : '오른손을 움직이고 왼손을 어깨 위로 들면 뽑아요.';
+    $('status').textContent = m === 'hand' ? '손을 펼쳐 움직이고 주먹을 쥐면 뽑아요.' : '한 손으로 이동하고 양손을 아래에 보여 주세요.';
     track(id, m);
 }
 catch (e) {
@@ -679,10 +768,20 @@ function track(id, m) {
             const r = model.detectForVideo(video, performance.now());
             const p = r.landmarks?.[0];
             if (p) {
-                const q = m === 'hand' ? p[9] : p[16];
+                // 신체 모드: 먼저 올린 손을 유지하고, 아래 동작은 별도로 판별합니다.
+                const valid = i => (p[i]?.visibility ?? 0) > .45 && p[i].y >= 0 && p[i].y <= 1 && p[i].x >= 0 && p[i].x <= 1;
+                const raised = i => valid(i) && valid(i-4) && p[i].y < p[i-4].y + .025;
+                const lowered = i => valid(i) && valid(i-4) && p[i].y > p[i-4].y + .10;
+                if (m === 'pose') {
+                    if (!raised(activeWrist || 15)) activeWrist = [15,16].find(raised) || activeWrist;
+                    if (activeWrist && raised(activeWrist) && !$('dialog').open && !anim) poseReady = true;
+                }
+                const q = m === 'hand' ? p[9] : p[activeWrist || 15];
+                const poseGrab = poseReady && ($('poseMode').value === 'one' ? !!activeWrist && lowered(activeWrist) : lowered(15) && lowered(16));
+                if (m === 'hand' || (activeWrist && raised(activeWrist))) lastPoint = {x:q.x,y:q.y,time:performance.now()};
                 const w = r.worldLandmarks?.[0] || p;
                 const folded = m === 'hand' ? [5,9,13,17].filter(i => fingerAngle(w[i],w[i+1],w[i+3]) < 125).length : 0;
-                const g = m === 'hand' ? folded >= 3 : p[15].y < p[11].y-.05 && (p[15].visibility ?? 1) > .5;
+                const g = m === 'hand' ? folded >= 3 : poseGrab;
                 const open = m === 'hand' ? folded <= 1 : !g;
                 paintLandmarks(p,m,g);
                 if (!$('dialog').open) {
@@ -691,14 +790,20 @@ function track(id, m) {
                     if (openFrames >= 3) armed = true;
                     // 주먹이 아닌 손은 이동 허용: 완전히 펼치기 어려운 학생도 조작 가능.
                     if (!anim && !g && Number.isFinite(q.x) && Number.isFinite(q.y)
-                        && (m === 'hand' || (q.visibility ?? 1) > .5)) {
+                        && (m === 'hand' || (activeWrist && raised(activeWrist)))) {
                         const gain = Number($('speed').value)/5;
-                        const tx = 400+(.5-q.x)*1200*gain;
-                        const ty = 325+(q.y-.5)*650*gain;
+                        const span = Number($('range').value)/100;
+                        const tx = 400+((center?.x ?? .5)-q.x)*670/span*gain;
+                        const ty = 325+(q.y-(center?.y ?? (m==='pose' ? .30 : .5)))*205/span*gain;
                         x += (Math.max(65,Math.min(735,tx))-x)*.30;
                         y += (Math.max(220,Math.min(425,ty))-y)*.30;
                     }
-                    if (fistFrames >= 3 && armed && !anim) {
+                    if (m === 'pose') {
+                        if (!g) poseSince = 0;
+                        else if (!poseSince) poseSince = performance.now();
+                    }
+                    if ((m === 'hand' ? fistFrames >= 3 && armed : g && poseSince && performance.now()-poseSince >= 350) && !anim) {
+                        if (m === 'pose') { poseReady = false; poseSince = 0; }
                         armed = false;
                         grab();
                     }
@@ -707,10 +812,11 @@ function track(id, m) {
                     openFrames = fistFrames = 0;
                 }
                 $('tracking').dataset.state = g ? 'grab' : 'ok';
-                $('tracking').textContent = m === 'hand' ? (g ? '✊ 주먹 인식 · 뽑기 동작' : open ? '✋ 손바닥 인식 · 이동 가능' : '손 인식 · 이동 가능') : (g ? '왼손 올림 · 뽑기 동작' : '신체 인식 · 오른손으로 이동');
+                $('tracking').textContent = m === 'hand' ? (g ? '✊ 주먹 인식 · 뽑기 동작' : open ? '✋ 손바닥 인식 · 이동 가능' : '손 인식 · 이동 가능') : (g ? '손 내림 · 뽑기 동작' : poseReady ? '한 손 이동 · 뽑기 준비' : '한 손을 올려 주세요');
                 $('tracking').textContent += ` | 관절 ${p.length}개 · X ${q.x.toFixed(2)} / Y ${q.y.toFixed(2)}`;
             } else {
                 clearOverlay();
+                poseReady = false; poseSince = 0;
                 $('tracking').dataset.state = '';
                 $('tracking').textContent = m === 'hand' ? '손을 찾는 중 · 밝은 곳에서 손 전체를 보여 주세요' : '몸을 찾는 중 · 양쪽 어깨와 손을 보여 주세요';
             }
